@@ -4,6 +4,7 @@ import "./App.css";
 class App extends Component {
   state = {
     pageController: 1,
+    haha: 0,
   };
 
   gameModeButtonPress = () => {
