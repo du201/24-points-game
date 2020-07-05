@@ -88,7 +88,7 @@ class App extends Component {
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
-            <h1 className="cover-heading">2nd Page (solvePage)</h1>
+            <input type="range" min="2" max="6" value="4" step="1" />
           </div>
         ) : this.state.pageController === "gamePage" ? (
           <div>
