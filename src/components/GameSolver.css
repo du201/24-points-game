@@ -1,0 +1,6 @@
+.scrollTextBox {
+  width: 300px;
+  height: 60px;
+  margin: auto;
+  overflow: auto;
+}

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import ReturnHomePageButton from "./components/ReturnHomePageButton";
+import GameSolver from "./components/GameSolver";
 
 class App extends Component {
   state = {
@@ -88,7 +89,7 @@ class App extends Component {
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
-            <input type="range" min="2" max="6" value="4" step="1" />
+            <GameSolver />
           </div>
         ) : this.state.pageController === "gamePage" ? (
           <div>
