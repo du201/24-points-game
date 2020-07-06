@@ -81,7 +81,13 @@ class App extends Component {
               className="btn btn-primary m-3"
               onClick={this.gameModeButtonPress}
             >
-              Game
+              Multi Players
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={this.enterSinglePlayerButtonPress}
+            >
+              Single Player
             </button>
           </div>
         ) : this.state.pageController === "solvePage" ? (
@@ -111,13 +117,6 @@ class App extends Component {
               onClick={this.enterRoomButtonPress}
             >
               Enter Other's Room
-            </button>
-            <p className="mt-3">Single Player</p>
-            <button
-              className="btn btn-primary"
-              onClick={this.enterSinglePlayerButtonPress}
-            >
-              Start the Game
             </button>
           </div>
         ) : this.state.pageController === "createRoomPage" ? (

@@ -14,14 +14,6 @@ class GameSolver extends Component {
       { id: 5, value: 0 },
       { id: 6, value: 0 },
     ],
-    /*
-    firstNum: 0,
-    secondNum: 0,
-    thirdNum: 0,
-    fourthNum: 0,
-    fifthNum: 0,
-    sixthNum: 0,
-    */
   };
 
   sliderChangeHandler = (event) => {
