@@ -1,7 +1,10 @@
 .background {
-  text-align: center;
-  padding: 200px 0;
-  background-color: pink;
+  padding: 200px;
   height: 100vh;
+  background-color: pink;
   width: 100%;
+  text-align: center;
+}
+
+.centerBlock {
 }

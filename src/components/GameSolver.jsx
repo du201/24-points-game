@@ -34,43 +34,48 @@ class GameSolver extends Component {
 
   render() {
     return (
-      <React.Fragment>
-        <div>
-          Number of slots: {this.state.numberNum}
-          <br></br>
-          <input
-            type="range"
-            min="2"
-            max="6"
-            value={this.state.numberNum}
-            id="slots"
-            onChange={this.sliderChangeHandler}
-          ></input>
-        </div>
-        <form id="form">
-          {this.state.numberCollection.map((eachNum) => {
-            return eachNum.id <= this.state.numberNum ? (
-              <NumberInputRow
-                onChange={this.inputNumHandler}
-                value={eachNum.value}
-                id={eachNum.id}
-                key={eachNum.id}
-              />
-            ) : null;
-          })}
-        </form>
+      <React.Fragment className="wrapper">
+        <div className="solverInputSection">
+          <div>
+            Number of slots: {this.state.numberNum}
+            <br></br>
+            <input
+              type="range"
+              min="2"
+              max="6"
+              value={this.state.numberNum}
+              id="slots"
+              onChange={this.sliderChangeHandler}
+            ></input>
+          </div>
+          <form id="form">
+            {this.state.numberCollection.map((eachNum) => {
+              return eachNum.id <= this.state.numberNum ? (
+                <NumberInputRow
+                  onChange={this.inputNumHandler}
+                  value={eachNum.value}
+                  id={eachNum.id}
+                  key={eachNum.id}
+                />
+              ) : null;
+            })}
+          </form>
 
-        <button
-          type="button"
-          name="button"
-          onClick={() => {
-            run(this.state.numberNum);
-          }}
-        >
-          Calculate
-        </button>
-        <section id="count"></section>
-        <section id="answers" className="scrollTextBox"></section>
+          <button
+            className="btn btn-primary mt-2"
+            type="button"
+            name="button"
+            onClick={() => {
+              run(this.state.numberNum);
+            }}
+          >
+            Calculate
+          </button>
+        </div>
+        <div className="solverOutputSection">
+          <section id="count"></section>
+          <section id="answers" className="scrollTextBox"></section>
+        </div>
       </React.Fragment>
     );
   }

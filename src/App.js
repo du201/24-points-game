@@ -69,7 +69,7 @@ class App extends Component {
       //<div className="App">
       <div className="background">
         {this.state.pageController === "homePage" ? (
-          <div>
+          <div className="centerBlock">
             <h1 className="cover-heading">1st Page (homePage)</h1>
             <button
               className="btn btn-primary m-3"

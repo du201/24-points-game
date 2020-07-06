@@ -1,8 +1,18 @@
 .scrollTextBox {
   position: relative;
-  top: -20px;
+  top: -10px;
   width: 300px;
-  height: 60px;
+  height: 300px;
   margin: auto;
   overflow: auto;
+}
+
+.solverInputSection {
+  float: left;
+  width: 50%;
+}
+
+.solverOutputSection {
+  float: left;
+  width: 50%;
 }
