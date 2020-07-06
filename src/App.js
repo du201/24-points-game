@@ -81,13 +81,13 @@ class App extends Component {
               className="btn btn-primary m-3"
               onClick={this.gameModeButtonPress}
             >
-              Multi Players
+              Multiplayer
             </button>
             <button
               className="btn btn-primary"
               onClick={this.enterSinglePlayerButtonPress}
             >
-              Single Player
+              Singleplayer
             </button>
           </div>
         ) : this.state.pageController === "solvePage" ? (
@@ -105,18 +105,18 @@ class App extends Component {
             <h1 className="cover-heading">
               3rd Page (Create Room or Enter Room)
             </h1>
-            <p>Multi Players</p>
+            <p>Multiplayer</p>
             <button
               className="btn btn-primary mr-1"
               onClick={this.createRoomButtonPress}
             >
-              Create New Room
+              New Room
             </button>
             <button
               className="btn btn-primary ml-1"
               onClick={this.enterRoomButtonPress}
             >
-              Enter Other's Room
+              Join Room
             </button>
           </div>
         ) : this.state.pageController === "createRoomPage" ? (
@@ -129,13 +129,13 @@ class App extends Component {
               <br />
               Room Number: ###
               <br />
-              Please Wait For Other Players Entering The Room
+              Please wait for other players to join
             </h1>
             <button
               className="btn btn-primary m-3"
               onClick={this.startGameButtonPress}
             >
-              Start the Game
+              Start
             </button>
           </div>
         ) : this.state.pageController === "enterRoomNumPage" ? (
@@ -157,7 +157,7 @@ class App extends Component {
               className="btn btn-primary m-3"
               onClick={this.enterRoomKeyButtonPress}
             >
-              Enter the Room
+              Join
             </button>
           </div>
         ) : this.state.pageController === "waitForHostPage" ? (

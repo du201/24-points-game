@@ -1,20 +1,22 @@
-let TIMES = "×";
-let DIVIDES = "÷";
-let PLUS = "+";
-let MINUS = "-";
+const TIMES = "×";
+const DIVIDES = "÷";
+const PLUS = "+";
+const MINUS = "-";
 let operators = [TIMES, DIVIDES, PLUS, MINUS];
 let target = 24;
 let answers = new Set();
 
 class Expression {
   constructor(value, left, op, right) {
-    if (left === undefined && op === undefined && right === undefined) {
+    if (value !== null && left === undefined &&
+        op === undefined && right === undefined) {
       this.isNumber = true;
       this.value = value;
       this.left = null;
       this.right = null;
       this.operator = null;
-    } else {
+    } else if (value === null && left !== undefined &&
+               op !== undefined && right !== undefined) {
       this.isNumber = false;
       this.value = null;
       this.left = left;
@@ -51,19 +53,19 @@ class Expression {
   }
 
   times(other) {
-    return new Expression(0, this, TIMES, other);
+    return new Expression(null, this, TIMES, other);
   }
 
   divides(other) {
-    return new Expression(0, this, DIVIDES, other);
+    return new Expression(null, this, DIVIDES, other);
   }
 
   plus(other) {
-    return new Expression(0, this, PLUS, other);
+    return new Expression(null, this, PLUS, other);
   }
 
   minus(other) {
-    return new Expression(0, this, MINUS, other);
+    return new Expression(null, this, MINUS, other);
   }
 
   toString() {
@@ -97,106 +99,109 @@ class Expression {
 }
 
 function arrayCopy(x) {
-  let y = Array();
+  let y = [];
   for (let item of x) {
     y.push(item);
   }
   return y;
 }
 
-function solve(numList) {
-  if (numList === null || numList.length === 0) {
+function solve(expList) {
+  if (expList === null || expList.length === 0) {
     return;
   }
-  if (
-    numList.length === 1 &&
-    Math.abs(numList[0].getValue() - target) < Number.EPSILON
-  ) {
-    answers.add(numList[0].toString());
+  if (expList.length === 1 &&
+      Math.abs(expList[0].getValue() - target) < Number.EPSILON) {
+    answers.add(expList[0].toString());
     return;
   }
 
-  for (let i = 0; i < numList.length; i++) {
-    for (let j = i + 1; j < numList.length; j++) {
-      let x = numList[i];
-      let y = numList[j];
-      let remainList = new Array();
-      for (let k = 0; k < numList.length; k++) {
+  for (let i = 0; i < expList.length; i++) {
+    for (let j = i + 1; j < expList.length; j++) {
+      let x = expList[i];
+      let y = expList[j];
+      let remainList = [];
+
+      for (let k = 0; k < expList.length; k++) {
         if (k !== i && k !== j) {
-          remainList.push(numList[k]);
+          remainList.push(expList[k]);
         }
       }
 
       if (operators.includes(PLUS)) {
-        let newNumList = arrayCopy(remainList);
-        newNumList.push(x.plus(y));
-        solve(newNumList);
+        let newExpList = arrayCopy(remainList);
+        newExpList.push(x.plus(y));
+        solve(newExpList);
       }
+
       if (operators.includes(MINUS)) {
-        let newNumList = arrayCopy(remainList);
-        newNumList.push(x.minus(y));
-        solve(newNumList);
+        let newExpList = arrayCopy(remainList);
+        newExpList.push(x.minus(y));
+        solve(newExpList);
         if (x.getValue() !== y.getValue()) {
-          newNumList = arrayCopy(remainList);
-          newNumList.push(y.minus(x));
-          solve(newNumList);
+          newExpList = arrayCopy(remainList);
+          newExpList.push(y.minus(x));
+          solve(newExpList);
         }
       }
+
       if (operators.includes(TIMES)) {
-        let newNumList = arrayCopy(remainList);
-        newNumList.push(x.times(y));
-        solve(newNumList);
+        let newExpList = arrayCopy(remainList);
+        newExpList.push(x.times(y));
+        solve(newExpList);
       }
+
       if (operators.includes(DIVIDES)) {
         if (y.getValue() !== 0) {
-          let newNumList = arrayCopy(remainList);
-          newNumList.push(x.divides(y));
-          solve(newNumList);
+          let newExpList = arrayCopy(remainList);
+          newExpList.push(x.divides(y));
+          solve(newExpList);
         }
-        if (x.getValue() !== 0 && x.getValue() != y.getValue()) {
-          let newNumList = arrayCopy(remainList);
-          newNumList.push(y.divides(x));
-          solve(newNumList);
+        if (x.getValue() !== 0 && x.getValue() !== y.getValue()) {
+          let newExpList = arrayCopy(remainList);
+          newExpList.push(y.divides(x));
+          solve(newExpList);
         }
       }
     }
   }
 }
 
-//https://www.w3schools.com/howto/howto_js_rangeslider.asp
-
-function run(numberNum) {
-  var form = document.getElementById("form");
-  let numbers = Array();
-  answers = new Set();
-  for (let i = 0; i < numberNum; i++) {
-    let value = parseInt(form[i].value);
-
-    numbers.push(value);
-  }
-
-  let numList = Array();
-  for (let n of numbers) {
-    numList.push(new Expression(n));
-  }
-  solve(numList);
-
+function printResults() {
   let result = "";
   for (let x of answers) {
     result += "<section>" + x + "</section>";
   }
 
-  let count_element = document.getElementById("count");
-  let answer_element = document.getElementById("answers");
+  let countElement = document.getElementById("count");
+  let answerElement = document.getElementById("answers");
   let size = answers.size;
+
   if (size === 0) {
-    count_element.innerHTML = "<p>There are no answers</p>";
+    countElement.innerHTML = "<p>There are no answers</p>";
   } else if (size === 1) {
-    count_element.innerHTML = "<p>There is 1 answer</p>";
+    countElement.innerHTML = "<p>There is 1 answer</p>";
   } else {
-    count_element.innerHTML = "<p>There are " + answers.size + " answers</p>";
+    countElement.innerHTML = "<p>There are " + answers.size + " answers</p>";
   }
-  answer_element.innerHTML = result;
+  answerElement.innerHTML = result;
+}
+
+function run(numOfSlots) {
+  let form = document.getElementById("form");
+  let numbers = [];
+  answers.clear();
+  for (let i = 0; i < numOfSlots; i++) {
+    let value = parseInt(form[i].value);
+    numbers.push(value);
+  }
+
+  let expList = [];
+  for (let n of numbers) {
+    expList.push(new Expression(n));
+  }
+  solve(expList);
+  printResults();
 }
 
 export default run;
