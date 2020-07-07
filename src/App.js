@@ -2,11 +2,17 @@ import React, { Component } from "react";
 import "./App.css";
 import ReturnHomePageButton from "./components/ReturnHomePageButton";
 import GameSolver from "./components/GameSolver";
+import io from "socket.io-client";
+
+const server = "http://localhost:2000";
+const socket = io.connect(server);
 
 class App extends Component {
   state = {
     pageController: "homePage",
     haha: 0,
+    username: "",
+    roomNumber: null,
   };
 
   gameModeButtonPress = () => {
@@ -28,16 +34,39 @@ class App extends Component {
     console.log("called");
   };
 
+  hasValidUsername = () => {
+    let name = this.state.username;
+    if (name === undefined || name === "") {
+      alert("please enter a valid nickname");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   createRoomButtonPress = () => {
-    this.setState({
-      pageController: "createRoomPage",
-    });
+    if (this.hasValidUsername()) {
+      socket.emit("createRoom", this.state.username)
+      socket.on("createRoomSuccess", (roomNum) => {
+        this.setState({
+          pageController: "createRoomPage",
+          roomNumber: roomNum,
+        });
+        socket.off("createRoomFailure")
+      });
+      socket.on("createRoomFailure", (msg) => {
+        alert(msg)
+        socket.off("createRoomFailure")
+      });
+    }
   };
 
-  enterRoomButtonPress = () => {
-    this.setState({
-      pageController: "enterRoomNumPage",
-    });
+  joinRoomButtonPress = () => {
+    if (this.hasValidUsername()) {
+      this.setState({
+        pageController: "joinRoomNumPage",
+      });
+    }
   };
 
   startGameButtonPress = () => {
@@ -46,15 +75,25 @@ class App extends Component {
     });
   };
 
-  enterRoomKeyButtonPress = () => {
-    this.setState({
-      pageController: "waitForHostPage",
+  joinRoomKeyButtonPress = () => {
+    socket.emit("joinRoom", {username: this.state.username,
+                             room: this.state.roomNumber})
+    socket.on("joinRoomSuccess", () => {
+      this.setState({
+        pageController: "waitForHostPage",
+        roomNumber: this.state.roomNumber,
+      });
+      socket.off("joinRoomSuccess")
+    });
+    socket.on("joinRoomFailure", (msg) => {
+      alert(msg)
+      socket.off("joinRoomFailure")
     });
   };
 
   exitRoomKeyButtonPress = () => {
     this.setState({
-      pageController: "enterRoomNumPage",
+      pageController: "joinRoomNumPage",
     });
   };
 
@@ -64,11 +103,9 @@ class App extends Component {
     });
   };
 
-  render() {
-    return (
-      //<div className="App">
-      <div className="background">
-        {this.state.pageController === "homePage" ? (
+  renderSwitch(pageName) {
+    switch(pageName) {
+      case "homePage": return (
           <div className="centerBlock">
             <h1 className="cover-heading">1st Page (homePage)</h1>
             <button
@@ -90,14 +127,16 @@ class App extends Component {
               Singleplayer
             </button>
           </div>
-        ) : this.state.pageController === "solvePage" ? (
+        );
+      case "solvePage": return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
             <GameSolver />
           </div>
-        ) : this.state.pageController === "gamePage" ? (
+        );
+      case "gamePage": return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -106,6 +145,12 @@ class App extends Component {
               3rd Page (Create Room or Enter Room)
             </h1>
             <p>Multiplayer</p>
+            <p>Enter your nickname</p>
+            <input
+              className="form-control"
+              type="text"
+              onChange={(event) => this.setState({username: event.target.value})}
+            ></input>
             <button
               className="btn btn-primary mr-1"
               onClick={this.createRoomButtonPress}
@@ -114,12 +159,13 @@ class App extends Component {
             </button>
             <button
               className="btn btn-primary ml-1"
-              onClick={this.enterRoomButtonPress}
+              onClick={this.joinRoomButtonPress}
             >
               Join Room
             </button>
           </div>
-        ) : this.state.pageController === "createRoomPage" ? (
+        );
+      case "createRoomPage": return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -127,7 +173,9 @@ class App extends Component {
             <h1 className="cover-heading">
               4th Page
               <br />
-              Room Number: ###
+              Nickname: {this.state.username}
+              <br />
+              Room Number: {this.state.roomNumber}
               <br />
               Please wait for other players to join
             </h1>
@@ -138,7 +186,8 @@ class App extends Component {
               Start
             </button>
           </div>
-        ) : this.state.pageController === "enterRoomNumPage" ? (
+        );
+      case "joinRoomNumPage": return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -151,16 +200,17 @@ class App extends Component {
             <input
               className="form-control"
               type="text"
-              placeholder="Default input"
+              onChange={(event) => this.setState({roomNumber: event.target.value})}
             ></input>
             <button
               className="btn btn-primary m-3"
-              onClick={this.enterRoomKeyButtonPress}
+              onClick={this.joinRoomKeyButtonPress}
             >
               Join
             </button>
           </div>
-        ) : this.state.pageController === "waitForHostPage" ? (
+        );
+      case "waitForHostPage": return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -177,23 +227,32 @@ class App extends Component {
               Exit the Room
             </button>
           </div>
-        ) : this.state.pageController === "multiPlayerGamePage" ? (
+        );
+      case "multiPlayerGamePage": return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
             <h1 className="cover-heading">Game In Progress...(multiplayer)</h1>
           </div>
-        ) : this.state.pageController === "singlePlayerGamePage" ? (
+        )
+      case "singlePlayerGamePage": return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
             <h1 className="cover-heading">Game In Progress...(singleplayer)</h1>
           </div>
-        ) : null}
+        );
+      default: return null;
+    }
+  }
+
+  render() {
+    return (
+      <div className="background">
+        {this.renderSwitch(this.state.pageController)}
       </div>
-      //</div>
     );
   }
 }
