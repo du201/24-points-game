@@ -37,6 +37,26 @@ function roomStrToInt(str) {
   return num;
 }
 
+/**
+ * Finds an available room number.
+ *
+ * @return {number} A random room number if the room is empty; returns null if
+ *                  no rooms are available
+ */
+function findAvailableRoomNum() {
+  let roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT);
+  if (roomList.length === MAX_ROOM_COUNT) {
+    return null;
+  }
+
+  // Generate a new random number if there are collisions.
+  while (roomList[roomNum] !== null && roomList[roomNum] !== undefined) {
+    roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT);
+  }
+
+  return roomNum;
+}
+
 class RequestHandler {
   constructor(socket) {
     this.socket = socket;
@@ -66,18 +86,13 @@ class RequestHandler {
   createRoomHandler(username) {
     this.socket.username = username;
 
-    let roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT);
-    if (roomList.length === MAX_ROOM_COUNT) {
+    let roomNum = findAvailableRoomNum();
+    if (roomNum === null) {
       this.socket.emit(
         "createRoomFailure",
         "No rooms available, please try again later"
       );
       return;
-    }
-
-    // Generate a new random number if there are collisions.
-    while (roomList[roomNum] !== null && roomList[roomNum] !== undefined) {
-      roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT);
     }
 
     let roomStr = roomIntToStr(roomNum);
@@ -92,7 +107,8 @@ class RequestHandler {
 
     let roomNum = roomStrToInt(room);
     if (roomNum === -1) {
-      this.socket.emit("joinRoomFailure", "Invalid room number, please try again");
+      this.socket.emit("joinRoomFailure",
+                       "Invalid room number, please try again");
       return;
     }
 
@@ -104,7 +120,8 @@ class RequestHandler {
       return;
     }
     if (roomList[roomNum].map((skt) => skt.username).includes(username)) {
-      this.socket.emit("joinRoomFailure", "Username taken, please try another one");
+      this.socket.emit("joinRoomFailure",
+                       "Username taken, please try another one");
       return;
     }
 
