@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import ReturnHomePageButton from "./components/ReturnHomePageButton";
 import GameSolver from "./components/GameSolver";
+import MenuSetting from "./components/MenuSetting";
 import io from "socket.io-client";
 
 const server = "http://localhost:2000";
@@ -13,6 +14,7 @@ class App extends Component {
     haha: 0,
     username: "",
     roomNumber: null,
+    gameModeSetting: { slotNum: 4 },
   };
 
   gameModeButtonPress = () => {
@@ -99,6 +101,10 @@ class App extends Component {
     });
   };
 
+  slotNumChangeHandler = (event) => {
+    this.setState({ gameModeSetting: { slotNum: event.target.value } });
+  };
+
   renderSwitch(pageName) {
     switch (pageName) {
       case "homePage": //1
@@ -172,6 +178,10 @@ class App extends Component {
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
+            <MenuSetting
+              slotNumChangeHandler={this.slotNumChangeHandler}
+              slotNum={this.state.gameModeSetting.slotNum}
+            ></MenuSetting>
             <h1 className="cover-heading">
               4th Page
               <br />

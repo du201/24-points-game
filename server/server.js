@@ -21,53 +21,57 @@ function roomStrToInt(str) {
 }
 
 const SERVER = APP.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`)
+  console.log(`listening on port ${PORT}`);
 });
 const IO = require("socket.io")(SERVER);
 let roomList = {};
 
-IO.on("connection", socket => {
+IO.on("connection", (socket) => {
   // Listening for createRoom request
   socket.on("createRoom", (username) => {
-    socket.username = username
+    socket.username = username;
 
-    let roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT)
+    let roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT);
     if (roomList.length === MAX_ROOM_COUNT) {
-      socket.emit("createRoomFailure",
-                  "No rooms available, please try again later")
-      return
+      socket.emit(
+        "createRoomFailure",
+        "No rooms available, please try again later"
+      );
+      return;
     }
 
+    //looping until find a valid room number
     while (roomList[roomNum] !== null && roomList[roomNum] !== undefined) {
       roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT);
     }
 
-    let roomStr = roomIntToStr(roomNum)
-    socket.emit("createRoomSuccess", roomStr)
-    socket.roomNum = roomNum
-    roomList[roomNum] = [socket]
-    console.log(`Player ${socket.username} created room ${roomStr}`)
+    let roomStr = roomIntToStr(roomNum);
+    socket.emit("createRoomSuccess", roomStr);
+    socket.roomNum = roomNum;
+    roomList[roomNum] = [socket];
+    console.log(`Player ${socket.username} created room ${roomStr}`);
   });
 
   // Listening for joinRoom request
-  socket.on("joinRoom", ({username, room}) => {
-    socket.username = username
+  socket.on("joinRoom", ({ username, room }) => {
+    socket.username = username;
 
-    let roomNum = roomStrToInt(room)
+    let roomNum = roomStrToInt(room);
     if (roomNum === -1) {
-      socket.emit("joinRoomFailure",
-                  "Invalid room number, please try again")
-      return
+      socket.emit("joinRoomFailure", "Invalid room number, please try again");
+      return;
     }
     if (roomList[roomNum] === undefined || roomList[roomNum] === null) {
-      socket.emit("joinRoomFailure",
-                  "This room does not exist, please try again")
-      return
+      socket.emit(
+        "joinRoomFailure",
+        "This room does not exist, please try again"
+      );
+      return;
     }
 
-    socket.emit("joinRoomSuccess")
-    socket.roomNum = roomNum
-    roomList[roomNum].push(username)
-    console.log(`Player ${socket.username} joined room ${room}`)
+    socket.emit("joinRoomSuccess");
+    socket.roomNum = roomNum;
+    roomList[roomNum].push(username);
+    console.log(`Player ${socket.username} joined room ${room}`);
   });
 });
