@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import ReturnHomePageButton from "./components/ReturnHomePageButton";
+import CancelRoomCreateButton from "./components/CancelRoomCreateButton";
 import GameSolver from "./components/GameSolver";
 import MenuSetting from "./components/MenuSetting";
 import io from "socket.io-client";
@@ -20,19 +21,25 @@ class App extends Component {
 
   gameModeButtonPress = () => {
     this.setState({
-      pageController: "gamePage",
+      pageController: "gamePage", //to page 3
     });
   };
 
   solveModeButtonPress = () => {
     this.setState({
-      pageController: "solvePage",
+      pageController: "solvePage", //to page 2
     });
   };
 
   returnHomePageButtonPress = () => {
     this.setState({
-      pageController: "homePage",
+      pageController: "homePage", //to page 1
+    });
+  };
+
+  cancelRoomCreateButtonPress = () => {
+    this.setState({
+      pageController: "gamePage", //to page 3
     });
   };
 
@@ -42,6 +49,7 @@ class App extends Component {
   };
 
   createRoomButtonPress = () => {
+    //to page 4
     if (this.hasValidUsername()) {
       socket.emit("createRoom", this.state.username);
       socket.once("createRoomSuccess", (roomNum) => {
@@ -60,6 +68,7 @@ class App extends Component {
   };
 
   joinRoomButtonPress = () => {
+    // to page 5
     if (this.hasValidUsername()) {
       this.setState({
         pageController: "joinRoomNumPage",
@@ -70,6 +79,7 @@ class App extends Component {
   };
 
   startGameButtonPress = () => {
+    // to page 7
     this.setState({
       pageController: "multiPlayerGamePage",
     });
@@ -215,9 +225,9 @@ class App extends Component {
             >
               Setting
             </button>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
+            <CancelRoomCreateButton
+              onCancel={this.cancelRoomCreateButtonPress}
+            ></CancelRoomCreateButton>
             <div
               style={{
                 display:
@@ -247,9 +257,9 @@ class App extends Component {
       case "joinRoomNumPage": //5
         return (
           <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
+            <CancelRoomCreateButton
+              onCancel={this.cancelRoomCreateButtonPress}
+            ></CancelRoomCreateButton>
             <h1 className="cover-heading">
               5th Page
               <br />
