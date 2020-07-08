@@ -101,7 +101,7 @@ class App extends Component {
 
   renderSwitch(pageName) {
     switch (pageName) {
-      case "homePage":
+      case "homePage": //1
         return (
           <div className="centerBlock">
             <h1 className="cover-heading">1st Page (homePage123)</h1>
@@ -125,7 +125,7 @@ class App extends Component {
             </button>
           </div>
         );
-      case "solvePage":
+      case "solvePage": //2
         return (
           <div>
             <ReturnHomePageButton
@@ -134,7 +134,7 @@ class App extends Component {
             <GameSolver />
           </div>
         );
-      case "gamePage":
+      case "gamePage": //3
         return (
           <div>
             <ReturnHomePageButton
@@ -146,7 +146,7 @@ class App extends Component {
             <p>Multiplayer</p>
             <p>Enter your nickname</p>
             <input
-              className="form-control"
+              className="form-control mb-2"
               type="text"
               onChange={(event) =>
                 this.setState({ username: event.target.value })
@@ -166,7 +166,7 @@ class App extends Component {
             </button>
           </div>
         );
-      case "createRoomPage":
+      case "createRoomPage": //4
         return (
           <div>
             <ReturnHomePageButton
@@ -189,7 +189,7 @@ class App extends Component {
             </button>
           </div>
         );
-      case "joinRoomNumPage":
+      case "joinRoomNumPage": //5
         return (
           <div>
             <ReturnHomePageButton
@@ -200,6 +200,9 @@ class App extends Component {
               <br />
               Please Enter the Room #
             </h1>
+            <p>
+              Your nickname: <strong>{this.state.username}</strong>
+            </p>
             <input
               className="form-control"
               type="text"
@@ -215,7 +218,7 @@ class App extends Component {
             </button>
           </div>
         );
-      case "waitForHostPage":
+      case "waitForHostPage": //6
         return (
           <div>
             <ReturnHomePageButton
@@ -234,7 +237,7 @@ class App extends Component {
             </button>
           </div>
         );
-      case "multiPlayerGamePage":
+      case "multiPlayerGamePage": //7
         return (
           <div>
             <ReturnHomePageButton
@@ -243,7 +246,7 @@ class App extends Component {
             <h1 className="cover-heading">Game In Progress...(multiplayer)</h1>
           </div>
         );
-      case "singlePlayerGamePage":
+      case "singlePlayerGamePage": //8
         return (
           <div>
             <ReturnHomePageButton
