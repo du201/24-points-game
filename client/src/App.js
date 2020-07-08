@@ -35,12 +35,12 @@ class App extends Component {
 
   hasValidUsername = () => {
     let name = this.state.username;
-    return (!(name === undefined || name === ""));
-  }
+    return !(name === undefined || name === "");
+  };
 
   createRoomButtonPress = () => {
     if (this.hasValidUsername()) {
-      socket.emit("createRoom", this.state.username)
+      socket.emit("createRoom", this.state.username);
       socket.once("createRoomSuccess", (roomNum) => {
         this.setState({
           pageController: "createRoomPage",
@@ -48,7 +48,7 @@ class App extends Component {
         });
       });
       socket.once("createRoomFailure", (msg) => {
-        alert(msg)
+        alert(msg);
       });
     } else {
       alert("please enter a valid nickname");
@@ -72,8 +72,10 @@ class App extends Component {
   };
 
   joinRoomKeyButtonPress = () => {
-    socket.emit("joinRoom", {username: this.state.username,
-                             room: this.state.roomNumber})
+    socket.emit("joinRoom", {
+      username: this.state.username,
+      room: this.state.roomNumber,
+    });
     socket.once("joinRoomSuccess", () => {
       this.setState({
         pageController: "waitForHostPage",
@@ -81,7 +83,7 @@ class App extends Component {
       });
     });
     socket.once("joinRoomFailure", (msg) => {
-      alert(msg)
+      alert(msg);
     });
   };
 
@@ -98,10 +100,11 @@ class App extends Component {
   };
 
   renderSwitch(pageName) {
-    switch(pageName) {
-      case "homePage": return (
+    switch (pageName) {
+      case "homePage":
+        return (
           <div className="centerBlock">
-            <h1 className="cover-heading">1st Page (homePage)</h1>
+            <h1 className="cover-heading">1st Page (homePage123)</h1>
             <button
               className="btn btn-primary m-3"
               onClick={this.solveModeButtonPress}
@@ -122,7 +125,8 @@ class App extends Component {
             </button>
           </div>
         );
-      case "solvePage": return (
+      case "solvePage":
+        return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -130,7 +134,8 @@ class App extends Component {
             <GameSolver />
           </div>
         );
-      case "gamePage": return (
+      case "gamePage":
+        return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -143,7 +148,9 @@ class App extends Component {
             <input
               className="form-control"
               type="text"
-              onChange={(event) => this.setState({username: event.target.value})}
+              onChange={(event) =>
+                this.setState({ username: event.target.value })
+              }
             ></input>
             <button
               className="btn btn-primary mr-1"
@@ -159,7 +166,8 @@ class App extends Component {
             </button>
           </div>
         );
-      case "createRoomPage": return (
+      case "createRoomPage":
+        return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -181,7 +189,8 @@ class App extends Component {
             </button>
           </div>
         );
-      case "joinRoomNumPage": return (
+      case "joinRoomNumPage":
+        return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -194,7 +203,9 @@ class App extends Component {
             <input
               className="form-control"
               type="text"
-              onChange={(event) => this.setState({roomNumber: event.target.value})}
+              onChange={(event) =>
+                this.setState({ roomNumber: event.target.value })
+              }
             ></input>
             <button
               className="btn btn-primary m-3"
@@ -204,7 +215,8 @@ class App extends Component {
             </button>
           </div>
         );
-      case "waitForHostPage": return (
+      case "waitForHostPage":
+        return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -222,15 +234,17 @@ class App extends Component {
             </button>
           </div>
         );
-      case "multiPlayerGamePage": return (
+      case "multiPlayerGamePage":
+        return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
             <h1 className="cover-heading">Game In Progress...(multiplayer)</h1>
           </div>
-        )
-      case "singlePlayerGamePage": return (
+        );
+      case "singlePlayerGamePage":
+        return (
           <div>
             <ReturnHomePageButton
               onReturn={this.returnHomePageButtonPress}
@@ -238,7 +252,8 @@ class App extends Component {
             <h1 className="cover-heading">Game In Progress...(singleplayer)</h1>
           </div>
         );
-      default: return null;
+      default:
+        return null;
     }
   }
 
