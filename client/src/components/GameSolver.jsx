@@ -37,7 +37,7 @@ class GameSolver extends Component {
       <React.Fragment className="wrapper">
         <div className="solverInputSection">
           <div>
-            Number of slots: {this.state.numberNum}
+            Number of slotsss: {this.state.numberNum}
             <br></br>
             <input
               type="range"
