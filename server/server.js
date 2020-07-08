@@ -126,8 +126,12 @@ IO.on("connection", (socket) => {
       );
       return;
     }
+
     if (roomList[roomNum].map((skt) => skt.username).includes(username)) {
-      socket.emit("joinRoomFailure", "Username taken, please try another one");
+      socket.emit(
+        "usernameDuplicate",
+        "Username taken, please try another one"
+      );
       return;
     }
 

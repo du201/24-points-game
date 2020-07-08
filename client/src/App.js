@@ -17,6 +17,7 @@ class App extends Component {
     roomNumber: null,
     gameModeSettingMenuOpen: false,
     gameModeSetting: { slotNum: 4, targetNum: 24 },
+    reenterUsername: false,
   };
 
   gameModeButtonPress = () => {
@@ -98,6 +99,10 @@ class App extends Component {
     });
     socket.once("joinRoomFailure", (msg) => {
       alert(msg);
+    });
+    socket.once("usernameDuplicate", (msg) => {
+      alert(msg);
+      this.setState({ reenterUsername: true });
     });
   };
 
