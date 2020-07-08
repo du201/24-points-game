@@ -15,7 +15,7 @@ input[type="checkbox"][id^="check"] {
   display: none;
 }
 
-label {
+label[for^="check"] {
   border: 1px solid #fff;
   padding: 10px;
   display: block;
@@ -24,7 +24,7 @@ label {
   cursor: pointer;
 }
 
-label:before {
+label[for^="check"]:before {
   background-color: white;
   color: white;
   content: " ";
@@ -53,7 +53,7 @@ label img {
   border-color: #ddd;
 }
 
-:checked + label:before {
+:checked + label[for^="check"]:before {
   content: "✓";
   background-color: grey;
   transform: scale(1);

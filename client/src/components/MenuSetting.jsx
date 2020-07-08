@@ -106,6 +106,32 @@ const MenuSetting = (props) => {
                   </label>
                 </li>
               </ul>
+              <p>Answer Shown</p>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="exampleRadios"
+                  id="exampleRadios1"
+                  value="option1"
+                  checked
+                />
+                <label class="form-check-label" for="exampleRadios1">
+                  One
+                </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="exampleRadios"
+                  id="exampleRadios2"
+                  value="option2"
+                />
+                <label class="form-check-label" for="exampleRadios2">
+                  All
+                </label>
+              </div>
             </div>
           </div>
         </div>
