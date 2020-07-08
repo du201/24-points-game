@@ -136,7 +136,7 @@ class App extends Component {
       case "homePage": //1
         return (
           <div className="centerBlock">
-            <h1 className="cover-heading">1st Page (homePage123)</h1>
+            <h1 className="cover-heading">1st Page (homePage)</h1>
             <button
               className="btn btn-primary m-3"
               onClick={this.solveModeButtonPress}
