@@ -14,7 +14,8 @@ class App extends Component {
     haha: 0,
     username: "",
     roomNumber: null,
-    gameModeSetting: { slotNum: 4 },
+    gameModeSettingMenuOpen: false,
+    gameModeSetting: { slotNum: 4, targetNum: 24 },
   };
 
   gameModeButtonPress = () => {
@@ -47,6 +48,7 @@ class App extends Component {
         this.setState({
           pageController: "createRoomPage",
           roomNumber: roomNum,
+          gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
         });
       });
       socket.once("createRoomFailure", (msg) => {
@@ -102,7 +104,21 @@ class App extends Component {
   };
 
   slotNumChangeHandler = (event) => {
-    this.setState({ gameModeSetting: { slotNum: event.target.value } });
+    let copy_gameModeSetting = { ...this.state.gameModeSetting };
+    copy_gameModeSetting.slotNum = parseInt(event.target.value, 10);
+    this.setState({ gameModeSetting: copy_gameModeSetting });
+  };
+
+  targetNumChangeHandler = (event) => {
+    let copy_gameModeSetting = { ...this.state.gameModeSetting };
+    copy_gameModeSetting.targetNum = parseInt(event.target.value, 10);
+    this.setState({ gameModeSetting: copy_gameModeSetting });
+  };
+
+  menuCloseHandler = () => {
+    this.setState({
+      gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
+    });
   };
 
   renderSwitch(pageName) {
@@ -175,28 +191,57 @@ class App extends Component {
       case "createRoomPage": //4
         return (
           <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
             <MenuSetting
               slotNumChangeHandler={this.slotNumChangeHandler}
               slotNum={this.state.gameModeSetting.slotNum}
+              targetNumChangeHandler={this.targetNumChangeHandler}
+              targetNum={this.state.gameModeSetting.targetNum}
+              showMenuBoolean={this.state.gameModeSettingMenuOpen}
+              menuCloseHandler={this.menuCloseHandler}
             ></MenuSetting>
-            <h1 className="cover-heading">
-              4th Page
-              <br />
-              Nickname: {this.state.username}
-              <br />
-              Room Number: {this.state.roomNumber}
-              <br />
-              Please wait for other players to join
-            </h1>
             <button
-              className="btn btn-primary m-3"
-              onClick={this.startGameButtonPress}
+              className="btn btn-info m-3 topRightCorner"
+              style={{
+                display:
+                  this.state.gameModeSettingMenuOpen === false
+                    ? "block"
+                    : "none",
+              }}
+              onClick={() => {
+                this.setState({
+                  gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
+                });
+              }}
             >
-              Start
+              Setting
             </button>
+            <ReturnHomePageButton
+              onReturn={this.returnHomePageButtonPress}
+            ></ReturnHomePageButton>
+            <div
+              style={{
+                display:
+                  this.state.gameModeSettingMenuOpen === false
+                    ? "block"
+                    : "none",
+              }}
+            >
+              <h1 className="cover-heading">
+                4th Page
+                <br />
+                Nickname: {this.state.username}
+                <br />
+                Room Number: {this.state.roomNumber}
+                <br />
+                Please wait for other players to join
+              </h1>
+              <button
+                className="btn btn-primary m-3"
+                onClick={this.startGameButtonPress}
+              >
+                Start
+              </button>
+            </div>
           </div>
         );
       case "joinRoomNumPage": //5
