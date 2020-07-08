@@ -31,33 +31,27 @@ class App extends Component {
     this.setState({
       pageController: "homePage",
     });
-    console.log("called");
   };
 
   hasValidUsername = () => {
     let name = this.state.username;
-    if (name === undefined || name === "") {
-      alert("please enter a valid nickname");
-      return false;
-    } else {
-      return true;
-    }
+    return (!(name === undefined || name === ""));
   }
 
   createRoomButtonPress = () => {
     if (this.hasValidUsername()) {
       socket.emit("createRoom", this.state.username)
-      socket.on("createRoomSuccess", (roomNum) => {
+      socket.once("createRoomSuccess", (roomNum) => {
         this.setState({
           pageController: "createRoomPage",
           roomNumber: roomNum,
         });
-        socket.off("createRoomFailure")
       });
-      socket.on("createRoomFailure", (msg) => {
+      socket.once("createRoomFailure", (msg) => {
         alert(msg)
-        socket.off("createRoomFailure")
       });
+    } else {
+      alert("please enter a valid nickname");
     }
   };
 
@@ -66,6 +60,8 @@ class App extends Component {
       this.setState({
         pageController: "joinRoomNumPage",
       });
+    } else {
+      alert("please enter a valid nickname");
     }
   };
 
@@ -78,16 +74,14 @@ class App extends Component {
   joinRoomKeyButtonPress = () => {
     socket.emit("joinRoom", {username: this.state.username,
                              room: this.state.roomNumber})
-    socket.on("joinRoomSuccess", () => {
+    socket.once("joinRoomSuccess", () => {
       this.setState({
         pageController: "waitForHostPage",
         roomNumber: this.state.roomNumber,
       });
-      socket.off("joinRoomSuccess")
     });
-    socket.on("joinRoomFailure", (msg) => {
+    socket.once("joinRoomFailure", (msg) => {
       alert(msg)
-      socket.off("joinRoomFailure")
     });
   };
 

@@ -4,10 +4,6 @@ const PORT = 2000;
 const MAX_ROOM_COUNT = 10000;
 const MAX_PLAYER_COUNT = 10;
 
-const SERVER = APP.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`)
-});
-
 function roomIntToStr(num) {
   let str = num.toString();
   while (str.length < MAX_ROOM_COUNT.toString().length - 1) {
@@ -24,6 +20,9 @@ function roomStrToInt(str) {
   return num;
 }
 
+const SERVER = APP.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`)
+});
 const IO = require("socket.io")(SERVER);
 let roomList = {};
 
@@ -39,7 +38,7 @@ IO.on("connection", socket => {
       return
     }
 
-    while (roomList[roomNum] != null) {
+    while (roomList[roomNum] !== null && roomList[roomNum] !== undefined) {
       roomNum = Math.floor(Math.random() * MAX_ROOM_COUNT);
     }
 
@@ -53,6 +52,7 @@ IO.on("connection", socket => {
   // Listening for joinRoom request
   socket.on("joinRoom", ({username, room}) => {
     socket.username = username
+
     let roomNum = roomStrToInt(room)
     if (roomNum === -1) {
       socket.emit("joinRoomFailure",
