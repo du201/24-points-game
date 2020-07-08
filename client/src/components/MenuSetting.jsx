@@ -6,7 +6,7 @@ const MenuSetting = (props) => {
   console.log(showMenuBooleanStyle);
   let display = { display: showMenuBooleanStyle };
   return (
-    <div className="jumbotron">
+    <div className="jumbotron" style={display}>
       <h1 className="display-4">Game Setting</h1>
       <div className="accordion" id="accordionExample">
         <div className="card">
@@ -121,7 +121,7 @@ const MenuSetting = (props) => {
       <hr className="my-4" />
       */}
       <a
-        className="btn btn-primary btn-lg"
+        className="btn btn-primary btn-lg mt-2"
         href="#"
         role="button"
         onClick={props.menuCloseHandler}
