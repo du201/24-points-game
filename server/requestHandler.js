@@ -2,7 +2,7 @@
 const MAX_ROOM_COUNT = 10000;
 // Maximum players in a room.
 const MAX_PLAYER_COUNT = 10;
-
+const Room = require("./Room.js");
 /*
  * This is a dictionary that stores all the rooms and their users, with room
  * numbers(int) as keys and arrays of sockets as thier corresponding values.
@@ -57,51 +57,53 @@ function findAvailableRoomNum() {
   return roomNum;
 }
 
+/** @class RequestHandler contains all the handlers for incoming requests. */
 class RequestHandler {
+  /**
+   * Creates an instance of RequestHandler.
+   *
+   * @constructor
+   * @author: Zhengze Gong (harry8698)
+   * @param {socket} socket The target socket
+   */
   constructor(socket) {
     this.socket = socket;
   }
 
+  /**
+   * Handles disconnections. When a player disconnects, remove this player from
+   * the room.
+   */
   disconnectHandler() {
-    if (this.socket.roomNum !== null) {
-      let socketList = roomList[this.socket.roomNum];
-      let index = socketList.indexOf(this.socket);
-      roomList[this.socket.roomNum].splice(index, 1);
-
-      if (socketList.length === 0) {
-        // No players are in the room.
-        roomList[this.socket.roomNum] = null;
-        // no need to broadcast here because there are no remaining players.
-      } else {
-        // TODO: broadcast the updated player list to all remaining players.
-      }
-      /*
-       * socket.username is not null because it is always defined before the
-       * definition of socket.roomNum.
-       */
-      console.log(`Player ${this.socket.username} has left room ${this.socket.roomNum}`);
-    }
+    this.leaveRoomHandler();
   }
 
+  /**
+   * Handles createRoom requests. if a player sends this request, assign
+   * a room for this player if possible and create a player list for this room
+   * number.
+   */
   createRoomHandler(username) {
     this.socket.username = username;
 
     let roomNum = findAvailableRoomNum();
     if (roomNum === null) {
-      this.socket.emit(
-        "createRoomFailure",
-        "No rooms available, please try again later"
-      );
+      this.socket.emit("createRoomFailure",
+                       "No rooms available, please try again later");
       return;
     }
 
     let roomStr = roomIntToStr(roomNum);
     this.socket.emit("createRoomSuccess", roomStr);
-    this.socket.roomNum = roomNum;
-    roomList[roomNum] = [this.socket];
+    roomList[roomNum] = new Room(roomNum);
+    roomList[roomNum].addPlayer(this.socket, true);
     console.log(`Player ${this.socket.username} created room ${roomStr}`);
   }
 
+  /**
+   * Handles joinRoom requests. if a player sends this request, add this
+   * player to the player list of this room if it exists.
+   */
   joinRoomHandler({ username, room }) {
     this.socket.username = username;
 
@@ -119,16 +121,48 @@ class RequestHandler {
       );
       return;
     }
-    if (roomList[roomNum].map((skt) => skt.username).includes(username)) {
+    if (roomList[roomNum].hasUsername(username)) {
       this.socket.emit("joinRoomFailure",
                        "Username taken, please try another one");
       return;
     }
+    if (roomList[roomNum].isRunning()) {
+      this.socket.emit("joinRoomFailure",
+                       "Game in progress, please try another room");
+    }
 
     this.socket.emit("joinRoomSuccess");
-    this.socket.roomNum = roomNum;
-    roomList[roomNum].push(this.socket);
+    roomList[roomNum].addPlayer(this.socket);
     console.log(`Player ${this.socket.username} joined room ${room}`);
+  }
+
+  /**
+   * Handles leaveRoom requests. if a player sends this request, remove this
+   * player from this player's room and broadcast the updated player list to
+   * the remaining players (if there are any).
+   */
+  leaveRoomHandler() {
+    if (this.socket.roomNum !== null) {
+      roomList[this.socket.roomNum].removePlayer(this.socket);
+
+      if (roomList[this.socket.roomNum].isEmpty()) {
+        // No players are in the room.
+        roomList[this.socket.roomNum] = null;
+        // no need to broadcast here because there are no remaining players.
+      } else {
+        let socketList = roomList[this.socket.roomNum].getConnectionList();
+
+        socketList.forEach((skt) => {
+          skt.emit("roster",
+                   roomList[this.socket.roomNum].getUsernameList());
+        });
+      }
+      /*
+       * socket.username is not null because it is always defined before the
+       * definition of socket.roomNum.
+       */
+      console.log(`Player ${this.socket.username} has left room ${this.socket.roomNum}`);
+    }
   }
 }
 
