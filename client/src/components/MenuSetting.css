@@ -64,3 +64,19 @@ label img {
   /* box-shadow: 0 0 5px #333; */
   z-index: -1;
 }
+
+.my-container {
+  border: 1px solid green;
+}
+
+.my-row {
+  border: 3px solide red;
+}
+
+.my-col {
+  border: 3px dotted blue;
+}
+
+.small-input-size {
+  width: 4em;
+}
