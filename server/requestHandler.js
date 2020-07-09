@@ -5,9 +5,9 @@ const MAX_PLAYER_COUNT = 10;
 const Room = require("./Room.js");
 /*
  * This is a dictionary that stores all the rooms and their users, with room
- * numbers(int) as keys and arrays of sockets as thier corresponding values.
+ * numbers(int) as keys and instances of Room as thier corresponding values.
  */
-let roomList = {};
+var roomList = {};
 
 /**
  * Converts a number into a string with "0" paddings at the front.
@@ -88,8 +88,10 @@ class RequestHandler {
 
     let roomNum = findAvailableRoomNum();
     if (roomNum === null) {
-      this.socket.emit("createRoomFailure",
-                       "No rooms available, please try again later");
+      this.socket.emit(
+        "createRoomFailure",
+        "No rooms available, please try again later"
+      );
       return;
     }
 
@@ -109,8 +111,10 @@ class RequestHandler {
 
     let roomNum = roomStrToInt(room);
     if (roomNum === -1) {
-      this.socket.emit("joinRoomFailure",
-                       "Invalid room number, please try again");
+      this.socket.emit(
+        "joinRoomFailure",
+        "Invalid room number, please try again"
+      );
       return;
     }
 
@@ -122,13 +126,17 @@ class RequestHandler {
       return;
     }
     if (roomList[roomNum].hasUsername(username)) {
-      this.socket.emit("joinRoomFailure",
-                       "Username taken, please try another one");
+      this.socket.emit(
+        "joinRoomFailure",
+        "Username taken, please try another one"
+      );
       return;
     }
     if (roomList[roomNum].isRunning()) {
-      this.socket.emit("joinRoomFailure",
-                       "Game in progress, please try another room");
+      this.socket.emit(
+        "joinRoomFailure",
+        "Game in progress, please try another room"
+      );
     }
 
     this.socket.emit("joinRoomSuccess");
@@ -153,15 +161,18 @@ class RequestHandler {
         let socketList = roomList[this.socket.roomNum].getConnectionList();
 
         socketList.forEach((skt) => {
-          skt.emit("roster",
-                   roomList[this.socket.roomNum].getUsernameList());
+          skt.emit(
+            "roster",
+            roomList[this.socket.roomNum].getUsernameList()
+          );
         });
       }
       /*
        * socket.username is not null because it is always defined before the
        * definition of socket.roomNum.
        */
-      console.log(`Player ${this.socket.username} has left room ${this.socket.roomNum}`);
+      console.log(`Player ${this.socket.username} has left room ` +
+                  `${this.socket.roomNum}`);
     }
   }
 }
