@@ -1,11 +1,6 @@
 .background {
   padding: 200px;
-  height: 100vh;
-  background-color: pink;
-  width: 100%;
-  text-align: center;
 }
-
 .topRightCorner {
   position: absolute;
   top: 10px;

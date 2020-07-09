@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Helmet } from "react-helmet";
 import "./App.css";
 import ReturnHomePageButton from "./components/ReturnHomePageButton";
 import CancelRoomCreateButton from "./components/CancelRoomCreateButton";
@@ -6,6 +7,8 @@ import GameSolver from "./components/GameSolver";
 import MenuSetting from "./components/MenuSetting";
 import NameInputUI from "./components/NameInputUI";
 import io from "socket.io-client";
+import tabImage from "./tabImage.png";
+
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
@@ -17,7 +20,7 @@ const socket = io.connect(server);
 
 class App extends Component {
   state = {
-    pageController: "homePage",
+    pageController: "createRoomPage", //default should be homePage
     username: "",
     roomNumber: null,
     gameModeSettingMenuOpen: false,
@@ -444,7 +447,7 @@ class App extends Component {
             <p>
               Your nickname: <strong>{this.state.username}</strong>
             </p>
-            <form>
+            <div className="container">
               <div className="row">
                 <div className="col">
                   <NameInputUI
@@ -457,7 +460,7 @@ class App extends Component {
                 <div className="col">
                   <form className="form-inline justify-content-center">
                     <div className="form-group mx-sm-3 mb-2">
-                      <label for="inputPassword2" className="sr-only">
+                      <label htmlFor="inputPassword2" className="sr-only">
                         Password
                       </label>
                       <input
@@ -480,7 +483,7 @@ class App extends Component {
                   </form>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         );
       case "waitForHostPage": //6
@@ -528,6 +531,23 @@ class App extends Component {
   render() {
     return (
       <div className="background">
+        <Helmet>
+          <meta charSet="UTF-8" />
+          <title>
+            {this.state.gameModeBasicSetting.targetNum.toString(10)}-points-game
+          </title>
+          <meta
+            name="description"
+            content="This is an online platform for playing 24-point-game with your friends"
+          />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <style>{`
+            body {
+              background-color:pink
+            }          
+          `}</style>
+          <link rel="shortcut icon" href={tabImage} />
+        </Helmet>
         {this.renderSwitch(this.state.pageController)}
       </div>
     );

@@ -11,6 +11,7 @@
     "popper.js": "^1.16.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-helmet": "^6.1.0",
     "react-scripts": "3.4.1",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.9.6"

@@ -9,7 +9,7 @@ const MenuSetting = (props) => {
   let showMenuBooleanStyle = props.showMenuBoolean === false ? "none" : "block";
   let display = { display: showMenuBooleanStyle };
   return (
-    <div className="jumbotron" style={display}>
+    <div className="jumbotron setting-menu" style={display}>
       <h1 className="display-4">Game Settings</h1>
       <div className="accordion" id="accordionExample">
         <div className="card">
@@ -80,14 +80,18 @@ const MenuSetting = (props) => {
             aria-labelledby="headingTwo"
             data-parent="#accordionExample"
           >
+            {/*Checkbox for available operators */}
             <div className="card-body">
-              <span>Available Operators: </span>
               <ul>
+                <li>
+                  <span>Available Operators: </span>
+                </li>
                 <li>
                   <input
                     type="checkbox"
                     id="checkMultiply"
                     value={TIMES}
+                    className="small-checkbox"
                     onChange={props.onAvailableOperatorCheckbox}
                     defaultChecked={props.availableOperator.includes(TIMES)}
                   />
@@ -133,58 +137,65 @@ const MenuSetting = (props) => {
                 </li>
               </ul>
 
-              {/*Radio button determines one or more answers to be shown */}
-              <p>Answer Shown</p>
-              <div className="container my-container">
-                <div className="row my-row">
-                  <div className="col my-col">
-                    <form>
-                      <div className="form-check">
-                        <label>
-                          <input
-                            type="radio"
-                            name="oneOrAllAnswers"
-                            value="one"
-                            onChange={props.onOneOrAllAnswerRadioButton}
-                            defaultChecked={props.oneOrAllAnswerShown === "one"}
-                            className="form-check-input"
-                          />
-                          One
-                        </label>
-                      </div>
+              {/*The container for the advanced setting  */}
+              <div className="container my-container lead">
 
-                      <div className="form-check">
-                        <label>
-                          <input
-                            type="radio"
-                            name="oneOrAllAnswers"
-                            value="all"
-                            onChange={props.onOneOrAllAnswerRadioButton}
-                            defaultChecked={props.oneOrAllAnswerShown === "all"}
-                            className="form-check-input"
-                          />
-                          All
-                        </label>
-                      </div>
-                    </form>
+                {/*This row has radio button determines one or more answers to be shown */}
+                <div className="row my-row justify-content-between align-items-center">
+                  <div className="col-3 my-col">Answer Shown</div>
+                  <div className="col-2 my-col">
+                    <div className="form-check">
+                      <input
+                        type="radio"
+                        name="oneOrAllAnswers"
+                        value="one"
+                        id="one"
+                        onChange={props.onOneOrAllAnswerRadioButton}
+                        defaultChecked={props.oneOrAllAnswerShown === "one"}
+                        className="form-check-input"
+                      />
+                      <label for="one" className="form-check-label small">
+                        One
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-2 my-col">
+                    <div className="form-check">
+                      <input
+                        type="radio"
+                        name="oneOrAllAnswers"
+                        value="all"
+                        id="all"
+                        onChange={props.onOneOrAllAnswerRadioButton}
+                        defaultChecked={props.oneOrAllAnswerShown === "all"}
+                        className="form-check-input"
+                      />
+                      <label for="all" className="form-check-label small">
+                        All
+                      </label>
+                    </div>
                   </div>
                 </div>
-                Range of Available Number
-                <div className="row my-row justify-content-center">
-                  <div className="col-4 my-col">
-                    Lower Bound
+
+                {/*This row is the range of available number */}
+                <div className="row my-row justify-content-between align-items-center">
+                  <div className="col-4 my-col">Range of Available Number</div>
+                  <div className="col-2 my-col">
+                    <label for="lower-bound"><span className="small-font">Lower Bound</span></label>
                     <input
-                      className="small-input-size"
+                      className="form-control"
                       type="number"
+                      id="lower-bound"
                       onChange={props.onRangeOfAvailableNumberLowBoundInput}
                       value={props.rangeOfAvailableNumberLowBound}
                     ></input>
                   </div>
-                  <div className="col-4 my-col">
-                    Upper Bound
+                  <div className="col-2 my-col">
+                    <label for="higher-bound small-font"><span className="small-font">Upper Bound</span></label>
                     <input
-                      className="small-input-size"
+                      className="form-control"
                       type="number"
+                      id="higher-bound"
                       onChange={props.onRangeOfAvailableNumberHighBoundInput}
                       value={props.rangeOfAvailableNumberHighBound}
                     ></input>

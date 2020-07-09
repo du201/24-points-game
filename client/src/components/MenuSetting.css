@@ -11,6 +11,10 @@ li {
   display: inline-block;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 input[type="checkbox"][id^="check"] {
   display: none;
 }
@@ -43,8 +47,8 @@ label[for^="check"]:before {
 }
 
 label img {
-  height: 100px;
-  width: 100px;
+  height: 15px;
+  width: 15px;
   transition-duration: 0.2s;
   transform-origin: 50% 50%;
 }
@@ -79,4 +83,13 @@ label img {
 
 .small-input-size {
   width: 4em;
+}
+
+.setting-menu {
+  position: relative;
+  bottom: 150px;
+}
+
+.small-font {
+  font-size:70%;
 }
