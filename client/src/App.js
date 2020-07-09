@@ -68,6 +68,7 @@ class App extends Component {
     this.setState({
       pageController: "gamePage", //to page 3
     });
+    socket.emit("exitRoom");
   };
 
   createRoomButtonPress = () => {

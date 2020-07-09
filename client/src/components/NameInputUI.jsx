@@ -5,7 +5,7 @@ const NameInputUI = (props) => {
   return (
     <form className="form-inline justify-content-center">
       <div className="form-group mx-sm-3 mb-2">
-        <label for="inputPassword2" className="sr-only">
+        <label htmlFor="inputPassword2" className="sr-only">
           Password
         </label>
         <input
