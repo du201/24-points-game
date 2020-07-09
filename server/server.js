@@ -40,4 +40,13 @@ IO.on("connection", (socket) => {
   socket.on("joinRoom", ({ username, room }) => {
     requestHandler.joinRoomHandler({ username, room });
   });
+
+  /*
+   * Listens for leaveRoom request, if a player sends this request, remove this
+   * player from this player's room and broadcast the updated player list to
+   * the remaining players (if there are any).
+   */
+  socket.on("exitRoom", () => {
+    requestHandler.leaveRoomHandler();
+  });
 });
