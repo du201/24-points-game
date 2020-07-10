@@ -34,7 +34,7 @@ class GameSolver extends Component {
 
   render() {
     return (
-      <React.Fragment className="wrapper">
+      <div className="wrapper">
         <div className="solverInputSection">
           <div>
             Number of slotsss: {this.state.numberNum}
@@ -76,7 +76,7 @@ class GameSolver extends Component {
           <section id="count"></section>
           <section id="answers" className="scrollTextBox"></section>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

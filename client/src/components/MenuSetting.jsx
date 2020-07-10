@@ -11,6 +11,7 @@ const MenuSetting = (props) => {
   return (
     <div className="jumbotron setting-menu" style={display}>
       <h1 className="display-4">Game Settings</h1>
+      {/*Basic part of the setting menu */}
       <div className="accordion" id="accordionExample">
         <div className="card">
           <div className="card-header" id="headingOne">
@@ -35,31 +36,39 @@ const MenuSetting = (props) => {
             data-parent="#accordionExample"
           >
             <div className="card-body">
-              <div>
-                Number of slots: {props.slotNum}
-                <br></br>
-                <input
-                  type="range"
-                  min="2"
-                  max="6"
-                  value={props.slotNum}
-                  id="slots"
-                  onChange={props.slotNumChangeHandler}
-                ></input>
-              </div>
-              <div>
-                Target Number: {props.targetNum}
-                <br></br>
-                <input
-                  type="number"
-                  onChange={props.targetNumChangeHandler}
-                  value={props.targetNum}
-                ></input>
-              </div>
+              <form>
+                <div className="form-group row align-items-center">
+                  <label htmlFor="slot" className="col-4 col-form-label col-form-label-sm lead">Number of slots: {props.slotNum}</label>
+                  <div className="col-4">
+                    <input
+                      className="form-control-range"
+                      type="range"
+                      min="2"
+                      max="6"
+                      value={props.slotNum}
+                      id="slots"
+                      onChange={props.slotNumChangeHandler}
+                    ></input>
+                  </div>
+                </div>
+                <div className="form-group row align-items-center">
+                  <label htmlFor="targetNum" className="col-4 col-form-label col-form-label-sm lead">Target Number: {props.targetNum}</label>
+                  <div className="col-4">
+                    <input
+                      className="form-control"
+                      type="number"
+                      id="targetNum"
+                      onChange={props.targetNumChangeHandler}
+                      value={props.targetNum}
+                    ></input>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
-        </div>
-        <div className="card">
+        </div >
+        {/*Advanced part of the setting menu */}
+        < div className="card" >
           <div className="card-header" id="headingTwo">
             <h2 className="mb-0">
               <button
@@ -82,10 +91,8 @@ const MenuSetting = (props) => {
           >
             {/*Checkbox for available operators */}
             <div className="card-body">
-              <ul>
-                <li>
-                  <span>Available Operators: </span>
-                </li>
+              <ul className="lead">
+                <span className="operator-title-shift col-form-label-sm">Available Operators: </span>
                 <li>
                   <input
                     type="checkbox"
@@ -141,10 +148,10 @@ const MenuSetting = (props) => {
               <div className="container my-container lead">
 
                 {/*This row has radio button determines one or more answers to be shown */}
-                <div className="row my-row justify-content-between align-items-center">
-                  <div className="col-3 my-col">Answer Shown</div>
-                  <div className="col-2 my-col">
-                    <div className="form-check">
+                <div className="row my-row">
+                  <label className="col-form-label-sm">Answer Shown</label>
+                  <div className="col-auto my-col">
+                    <div className="form-check form-check-inline">
                       <input
                         type="radio"
                         name="oneOrAllAnswers"
@@ -154,13 +161,13 @@ const MenuSetting = (props) => {
                         defaultChecked={props.oneOrAllAnswerShown === "one"}
                         className="form-check-input"
                       />
-                      <label for="one" className="form-check-label small">
+                      <label htmlFor="one" className="form-check-label col-form-label-sm">
                         One
-                      </label>
+                        </label>
                     </div>
                   </div>
-                  <div className="col-2 my-col">
-                    <div className="form-check">
+                  <div className="col-auto my-col">
+                    <div className="form-check form-check-inline">
                       <input
                         type="radio"
                         name="oneOrAllAnswers"
@@ -170,76 +177,80 @@ const MenuSetting = (props) => {
                         defaultChecked={props.oneOrAllAnswerShown === "all"}
                         className="form-check-input"
                       />
-                      <label for="all" className="form-check-label small">
+                      <label htmlFor="all" className="form-check-label col-form-label-sm">
                         All
-                      </label>
+                        </label>
                     </div>
                   </div>
                 </div>
 
                 {/*This row is the range of available number */}
-                <div className="row my-row justify-content-between align-items-center">
-                  <div className="col-4 my-col">Range of Available Number</div>
-                  <div className="col-2 my-col">
-                    <label for="lower-bound"><span className="small-font">Lower Bound</span></label>
+                <div className="row my-row align-items-center">
+                  <label className="col-form-label-sm">Range of Available Number</label>
+                  <div className="col-4 my-col">
                     <input
-                      className="form-control"
+                      className="form-control form-control-sm"
                       type="number"
                       id="lower-bound"
                       onChange={props.onRangeOfAvailableNumberLowBoundInput}
                       value={props.rangeOfAvailableNumberLowBound}
+                      placeholder="Lower Bound"
                     ></input>
                   </div>
-                  <div className="col-2 my-col">
-                    <label for="higher-bound small-font"><span className="small-font">Upper Bound</span></label>
+                  <div className="col-4 my-col">
                     <input
-                      className="form-control"
+                      className="form-control form-control-sm"
                       type="number"
                       id="higher-bound"
                       onChange={props.onRangeOfAvailableNumberHighBoundInput}
                       value={props.rangeOfAvailableNumberHighBound}
+                      placeholder="Upper Bound"
                     ></input>
                   </div>
                 </div>
-                <div className="row my-row">
-                  <div className="col my-col">
-                    Maximum Number of Repeated Number
-                    <input
-                      className="small-input-size ml-2"
-                      type="number"
-                      onChange={props.onMaxRepeatNumInput}
-                      value={props.maxRepeatNum}
-                    ></input>
-                  </div>
+                <div className="row my-row mb-2">
+                  <form className="form-inline">
+                    <div className="form-group">
+                      <label htmlFor="maxRepeatNum" className="col-form-label col-form-label-sm">Maximum Number of Repeated Number</label>
+                      <input
+                        id="maxRepeatNum"
+                        className="form-control form-control-sm ml-2"
+                        type="number"
+                        onChange={props.onMaxRepeatNumInput}
+                        value={props.maxRepeatNum}
+                      ></input>
+                    </div>
+                  </form>
+                </div>
+                <div className="row my-row mb-2">
+                  <form className="form-inline">
+                    <div className="form-group">
+                      <label htmlFor="timeBetweenRound" className="col-form-label col-form-label-sm">Time (ms) Between Each Round</label>
+                      <input
+                        id="timeBetweenRound"
+                        className="form-control form-control-sm ml-2"
+                        type="number"
+                        onChange={props.onTimeBetweenRoundInput}
+                        value={props.timeBetweenRound}
+                      ></input>
+                    </div>
+                  </form>
                 </div>
                 <div className="row my-row">
-                  <div className="col my-col">
-                    Time (ms) Between Each Round
-                    <input
-                      className="ml-2"
-                      type="number"
-                      onChange={props.onTimeBetweenRoundInput}
-                      value={props.timeBetweenRound}
-                    ></input>
-                  </div>
-                </div>
-                <div className="row my-row">
-                  <div className="col my-col">
-                    <span>Number of Rounds: {props.numOfRound} </span>
-                    <input
-                      type="range"
-                      min="10"
-                      max="20"
-                      value={props.numOfRound}
-                      onChange={props.onNumOfRoundInput}
-                    ></input>
-                  </div>
+                  <span className="col-form-label col-form-label-sm mr-2">Number of Rounds: {props.numOfRound} </span>
+                  <input
+                    type="range"
+                    min="10"
+                    max="20"
+                    value={props.numOfRound}
+                    onChange={props.onNumOfRoundInput}
+                  ></input>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
       <a
         className="btn btn-primary btn-lg mt-2"
         href="#"
@@ -248,7 +259,7 @@ const MenuSetting = (props) => {
       >
         Apply
       </a>
-    </div>
+    </div >
   );
 };
 

@@ -93,3 +93,12 @@ label img {
 .small-font {
   font-size:70%;
 }
+
+.operator-title-shift {
+  position: relative;
+  left: -36px;
+}
+
+.text-align-left {
+  text-align: left;
+}

@@ -186,19 +186,19 @@ class App extends Component {
   };
 
   rangeOfAvailableNumberLowBoundInputHandler = (event) => {
-    this.setState({ rangeOfAvailableNumberLowBound: event.target.value });
+    this.setState({ rangeOfAvailableNumberLowBound: parseInt(event.target.value, 10) });
   };
 
   rangeOfAvailableNumberHighBoundInputHandler = (event) => {
-    this.setState({ rangeOfAvailableNumberHighBound: event.target.value });
+    this.setState({ rangeOfAvailableNumberHighBound: parseInt(event.target.value, 10) });
   };
 
   maxRepeatNumInputHandler = (event) => {
-    this.setState({ maxRepeatNum: event.target.value });
+    this.setState({ maxRepeatNum: parseInt(event.target.value, 10) });
   };
 
   timeBetweenRoundInputHandler = (event) => {
-    this.setState({ timeBetweenRound: event.target.value });
+    this.setState({ timeBetweenRound: parseInt(event.target.value, 10) });
   };
 
   numOfRoundInputHandler = (event) => {
