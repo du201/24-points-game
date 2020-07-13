@@ -53,6 +53,7 @@ class Room {
    * @param {socket} socket The player's socket to be removed
    */
   removePlayer(socket) {
+    socket.roomNum = null;
     this.socketList.delete(socket);
   }
 

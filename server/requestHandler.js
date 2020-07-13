@@ -158,28 +158,42 @@ class RequestHandler {
    * the remaining players (if there are any).
    */
   leaveRoomHandler() {
-    if (this.socket.roomNum !== null) {
-      roomList[this.socket.roomNum].removePlayer(this.socket);
+    let room = this.socket.roomNum;
+    if (room !== null) {
+      roomList[room].removePlayer(this.socket);
 
-      if (roomList[this.socket.roomNum].isEmpty()) {
-        roomList[this.socket.roomNum] = null;
+      if (roomList[room].isEmpty()) {
+        roomList[room] = null;
         // No need to broadcast here because there are no remaining players.
       } else {
-        let socketList = roomList[this.socket.roomNum].getConnectionList();
+        let socketList = roomList[room].getConnectionList();
 
-        socketList.forEach((skt) => {
-          skt.emit(
-            "roster",
-            roomList[this.socket.roomNum].getUsernameList()
-          );
-        });
+        if (this.socket.isHost && !roomList[room].isRunning()) {
+          // Host leaves before the game starts
+          roomList[room] = null;
+          socketList.forEach(skt => {
+            roomList[room].removePlayer(skt);
+            skt.emit("roomClosed")
+          });
+        } else {
+          socketList.forEach((skt) => {
+            skt.emit(
+              "roster",
+              roomList[room].getUsernameList()
+            );
+          });
+        }
       }
       /*
        * socket.username is not null because it is always defined before the
        * definition of socket.roomNum.
        */
       console.log(`Player ${this.socket.username} has left room ` +
-                  `${this.socket.roomNum}`);
+                  `${room}`);
+
+      if (roomList[room] === null) {
+        console.log(`Room ${room} is closed`);
+      }
     }
   }
 }
