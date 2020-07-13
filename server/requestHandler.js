@@ -112,7 +112,7 @@ class RequestHandler {
     if (roomNum === -1) {
       this.socket.emit(
         "joinRoomFailure",
-        "Invalid room number, please try again"
+        "invalidRoomNumber"
       );
       return;
     }
@@ -120,21 +120,21 @@ class RequestHandler {
     if (roomList[roomNum] === undefined || roomList[roomNum] === null) {
       this.socket.emit(
         "joinRoomFailure",
-        "This room does not exist, please try again"
+        "roomDoesNotExist"
       );
       return;
     }
     if (roomList[roomNum].hasUsername(username)) {
       this.socket.emit(
         "joinRoomFailure",
-        "Username taken, please try another one"
+        "usernameTaken"
       );
       return;
     }
     if (roomList[roomNum].isRunning()) {
       this.socket.emit(
         "joinRoomFailure",
-        "Game in progress, please try another room"
+        "gameInProgress"
       );
     }
 
