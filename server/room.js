@@ -1,3 +1,8 @@
+const TIMES = "×";
+const DIVIDES = "÷";
+const PLUS = "+";
+const MINUS = "-";
+
 /** @class Room represents game rooms. */
 class Room {
   /**
@@ -7,13 +12,28 @@ class Room {
    * @author: Zhengze Gong (harry8698)
    * @param {number} number The room's number
    */
-  constructor(number) {
-    // Represents the number of the room instance.
+  constructor(number, host) {
+    // Represents the number of this room instance.
     this.number = number;
-    // Represents if the game in the room is in progress.
+    // Represents if the game in this room is in progress.
     this.inProgress = false;
-    // Represents all the connections to the room instance.
+    // Represents all the connections to this room instance.
     this.socketList = new Set();
+    // Represents the (default) game settings in this room instance.
+    this.settings = {
+      numOfSlots: 4,
+      targetNumber: 24,
+      availableOperators: [TIMES, DIVIDES, PLUS, MINUS],
+      showNoSols: false,
+      rangeLo: 1,
+      rangeHi: 13,
+      maxNumOfRepeats: 4,
+      roundInterval: 30000,
+      numOfRounds: 10
+    };
+    this.host = host;
+    host.isHost = true;
+    this.addPlayer(host);
   }
 
   /**

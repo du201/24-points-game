@@ -97,8 +97,7 @@ class RequestHandler {
 
     let roomStr = roomIntToStr(roomNum);
     this.socket.emit("createRoomSuccess", roomStr);
-    roomList[roomNum] = new Room(roomNum);
-    roomList[roomNum].addPlayer(this.socket, true);
+    roomList[roomNum] = new Room(roomNum, this.socket);
     console.log(`Player ${this.socket.username} created room ${roomStr}`);
   }
 
@@ -141,6 +140,15 @@ class RequestHandler {
 
     this.socket.emit("joinRoomSuccess");
     roomList[roomNum].addPlayer(this.socket);
+
+    let socketList = roomList[roomNum].getConnectionList();
+    socketList.forEach((skt) => {
+      skt.emit(
+        "roster",
+        roomList[roomNum].getUsernameList()
+      );
+    });
+
     console.log(`Player ${this.socket.username} joined room ${room}`);
   }
 
@@ -154,9 +162,8 @@ class RequestHandler {
       roomList[this.socket.roomNum].removePlayer(this.socket);
 
       if (roomList[this.socket.roomNum].isEmpty()) {
-        // No players are in the room.
         roomList[this.socket.roomNum] = null;
-        // no need to broadcast here because there are no remaining players.
+        // No need to broadcast here because there are no remaining players.
       } else {
         let socketList = roomList[this.socket.roomNum].getConnectionList();
 

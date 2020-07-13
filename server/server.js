@@ -14,6 +14,7 @@ const IO = require("socket.io")(SERVER);
 IO.on("connection", (socket) => {
   socket.username = null;
   socket.roomNum = null;
+  socket.isHost = false;
   let requestHandler = new RequestHandler(socket);
 
   /*
