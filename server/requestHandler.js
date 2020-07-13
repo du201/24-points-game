@@ -90,7 +90,7 @@ class RequestHandler {
     if (roomNum === null) {
       this.socket.emit(
         "createRoomFailure",
-        "No rooms available, please try again later"
+        "noAvailableRooms"
       );
       return;
     }
@@ -195,6 +195,11 @@ class RequestHandler {
         console.log(`Room ${room} is closed`);
       }
     }
+  }
+
+  changeSettingsHandler(settings) {
+    roomList[this.socket.roomNum].changeSettings(settings);
+    this.socket.emit("settings", settings);
   }
 }
 

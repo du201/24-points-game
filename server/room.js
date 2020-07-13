@@ -24,7 +24,6 @@ class Room {
       numOfSlots: 4,
       targetNumber: 24,
       availableOperators: [TIMES, DIVIDES, PLUS, MINUS],
-      showNoSols: false,
       rangeLo: 1,
       rangeHi: 13,
       maxNumOfRepeats: 4,
@@ -125,7 +124,67 @@ class Room {
 
   // TODO: implement this
   changeSettings(settings) {
-    return;
+    if (settings.hasOwnProperty("numOfSlots")) {
+      if (Number.isInterger(settings.numOfSlots) &&
+          settings.numOfSlots >= 2 &&
+          settings.numOfSlots <= 6) {
+        this.settings.numOfSlots = settings.numOfSlots;
+      }
+    }
+    if (settings.hasOwnProperty("targetNumber")) {
+      if (Number.isInterger(settings.targetNumber)) {
+        this.settings.targetNumber = settings.targetNumber;
+      }
+    }
+    if (settings.hasOwnProperty("availableOperators")) {
+      if (Array.isArray(settings.availableOperators) &&
+          settings.availableOperators.every(op => {
+            [TIMES, DIVIDES, PLUS, MINUS].includes(op);
+          })) {
+        this.settings.availableOperators = settings.availableOperators;
+      }
+    }
+    if (settings.hasOwnProperty("rangeLo")) {
+      if (Number.isInterger(settings.rangeLo)) {
+        this.settings.rangeLo = settings.rangeLo;
+      }
+    }
+    if (settings.hasOwnProperty("rangeHi")) {
+      if (Number.isInterger(settings.rangeHi)) {
+        if (settings.rangeHi >= settings.rangeLo) {
+          this.settings.rangeHi = settings.rangeHi;
+        } else {
+          settings.rangeLo = 1;
+          settings.rangeHi = 13;
+        }
+      }
+    }
+    if (settings.hasOwnProperty("maxNumOfRepeats")) {
+      if (Number.isInterger(settings.maxNumOfRepeats) &&
+          settings.maxNumOfRepeats >= 1 &&
+          settings.maxNumOfRepeats <= settings.numOfSlots) {
+        this.settings.maxNumOfRepeats = settings.maxNumOfRepeats;
+      }
+    }
+    if (settings.hasOwnProperty("roundInterval")) {
+      if (Number.isInterger(settings.roundInterval) &&
+          settings.roundInterval >= 10000 &&
+          settings.roundInterval <= 60000) {
+        this.settings.roundInterval = settings.roundInterval;
+      }
+    }
+    if (settings.hasOwnProperty("numOfRounds")) {
+      if (Number.isInterger(settings.numOfRounds) &&
+          settings.numOfRounds.every(num => {
+            [10, 15, 20].includes(num);
+          })) {
+        this.settings.numOfRounds = settings.numOfRounds;
+      }
+    }
+  }
+
+  getSettings() {
+    return this.settings;
   }
 
   // TODO: implement this
