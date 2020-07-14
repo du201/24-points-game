@@ -122,7 +122,13 @@ class Room {
     return this.getNumOfPlayers() === 0;
   }
 
-  // TODO: implement this
+  /**
+   * Validates and changes the settings in this room instance. All validated
+   * settings properties will be applied, while invalid properties will retain
+   * their default values.
+   *
+   * @param {object} settings Input settings
+   */
   changeSettings(settings) {
     if (settings.hasOwnProperty("numOfSlots")) {
       if (Number.isInterger(settings.numOfSlots) &&
@@ -183,6 +189,11 @@ class Room {
     }
   }
 
+  /**
+   * Returns the settings in this room instance.
+   *
+   * @return {object} The settings in this room
+   */
   getSettings() {
     return this.settings;
   }
