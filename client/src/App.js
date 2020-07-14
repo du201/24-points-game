@@ -6,40 +6,55 @@ import CancelRoomCreateButton from "./components/CancelRoomCreateButton";
 import GameSolver from "./components/GameSolver";
 import MenuSetting from "./components/MenuSetting";
 import NameInputUI from "./components/NameInputUI";
+import GameBoard from "./components/GameBoard";
 import io from "socket.io-client";
 import tabImage from "./tabImage.png";
+import calculate from "./calculate.js";
+import checkValid from "./checkValid.js"
+
 
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
 const MINUS = "-";
 let operators = [TIMES, DIVIDES, PLUS, MINUS];
+let timeoutStatus = null;
 
 const server = "http://localhost:2000";
 const socket = io.connect(server);
 
 class App extends Component {
   state = {
-    pageController: "createRoomPage", //default should be homePage
-    username: "",
-    roomNumber: null,
-    gameModeSettingMenuOpen: false,
-    oneOrAllAnswerShown: "one",
-    gameModeBasicSetting: { slotNum: 4, targetNum: 24 },
-    reenterUsername: false,
+    //below are the local states (not received from the server)
+    pageController: "singlePlayerGamePage", //default should be homePage
+    username: "", //the username during the game
+    gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
+    gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
+    reenterUsername: false, //controls the display of the reenter username text input in page 5th
     rangeOfAvailableNumberLowBound: 1,
     rangeOfAvailableNumberHighBound: 13,
-    maxRepeatNum: 4,
-    timeBetweenRound: 30000,
-    numOfRound: 10,
-    availableOperator: operators,
+    maxRepeatNum: 4, //the maximum number of repeated number possible
+    timeBetweenRound: 30000, //the time of each round in ms, in client the display is s
+    numOfRound: 10, //number of rounds in multi-player mode
+    availableOperator: operators, //the operators available for players to use in their expressions
+    expressionInput: [], //array of string, the inputed expression from the user
+    answer: null, //int, the calculated answer of the input expression 
+
+    //Below are the signals received from the server
+    roomNumber: null,
+    multiplayerGameNumbers: [4, 6, 8, 10], //if online mode, get this from the server. if offline, autogenerate this
+
   };
 
   //helper functions (start)
+  /**
+   * Return false if the name is invalid, the name must be between 1 to 20 letters
+   */
   hasValidUsername = () => {
     let name = this.state.username;
     return !(name === undefined || name === "");
   };
+
 
   arrayRemove = (arr, value) => {
     return arr.filter((ele) => {
@@ -49,24 +64,36 @@ class App extends Component {
   //helper functions (end)
 
   //functions to switch between pages & send message to server (start)
+  /**
+   * In home page, choose the game mode (instead of single-player mode or solve mode) 
+   */
   gameModeButtonPress = () => {
     this.setState({
       pageController: "gamePage", //to page 3
     });
   };
 
+  /**
+   * In home page, choose the solve mode
+   */
   solveModeButtonPress = () => {
     this.setState({
       pageController: "solvePage", //to page 2
     });
   };
 
+  /**
+   * return back to the home page
+   */
   returnHomePageButtonPress = () => {
     this.setState({
       pageController: "homePage", //to page 1
     });
   };
 
+  /**
+   * to exit the room and tell the server
+   */
   cancelRoomCreateButtonPress = () => {
     this.setState({
       pageController: "gamePage", //to page 3
@@ -74,8 +101,10 @@ class App extends Component {
     socket.emit("exitRoom");
   };
 
+  /**
+   * The creator of the room uses this to request the server for a room in page 3
+   */
   createRoomButtonPress = () => {
-    //to page 4
     if (this.hasValidUsername()) {
       socket.emit("createRoom", this.state.username);
       socket.once("createRoomSuccess", (roomNum) => {
@@ -86,78 +115,124 @@ class App extends Component {
         });
       });
       socket.once("createRoomFailure", (msg) => {
-        alert(msg);
+        alert(msg); //1. noRoomsAvailable - all room numbers are used
       });
     } else {
       alert("please enter a valid nickname");
     }
   };
 
+  /**
+   * In page 3
+   * The player (not the game host) goes to the 5th page where the room number he/she wants
+   * to join is to be entered
+   */
   joinRoomButtonPress = () => {
-    // to page 5
     if (this.hasValidUsername()) {
       this.setState({
-        pageController: "joinRoomNumPage",
+        pageController: "joinRoomNumPage", //to 5th page
       });
     } else {
       alert("please enter a valid nickname");
     }
   };
 
+  /**
+   * In page 4th (the game setting page)
+   * the creator of the game room uses this function to start the multi-player game
+   */
   startGameButtonPress = () => {
-    // to page 7
     this.setState({
-      pageController: "multiPlayerGamePage",
+      pageController: "multiPlayerGamePage", //to 7th page
     });
+    socket.emit("startGame");
   };
 
+
+  /**
+   * in page 5
+   * the player press this button to enter the game room with the specified room number
+   * 
+   */
   joinRoomKeyButtonPress = () => {
+    if (this.state.reenterUsername === true) {
+      this.setState({ reenterUsername: false });
+    }
     socket.emit("joinRoom", {
       username: this.state.username,
       room: this.state.roomNumber,
     });
     socket.once("joinRoomSuccess", () => {
+      console.log("joinRoomSuccess");
       this.setState({
         pageController: "waitForHostPage",
         roomNumber: this.state.roomNumber,
       });
     });
     socket.once("joinRoomFailure", (msg) => {
-      alert(msg);
-    });
-    socket.once("usernameDuplicate", (msg) => {
-      alert(msg);
-      this.setState({ reenterUsername: true });
+      switch (msg) {
+        case "roomDoesNotExist":
+          alert("This room does not exist, please try another room number");
+          break;
+        case "invalidRoomNumber":
+          alert("The room number entered is not valid. It is a 4-digit number");
+          break;
+        case "usernameTaken":
+          alert("The username has already been taken, please try another username");
+          this.setState({ reenterUsername: true });
+          break;
+        case "gameInProgress":
+          alert("The game has already started in this room. You can either wait until the game finishes or enter another room instead");
+          break;
+      }
     });
   };
 
+  /**
+   * In page 6th
+   * exit the waiting room (wait for the host to start the game)
+   */
   exitRoomKeyButtonPress = () => {
     this.setState({
-      pageController: "joinRoomNumPage",
+      pageController: "joinRoomNumPage", //to page 5th
     });
   };
 
+  /**
+   * In page 1st
+   * enter the single mode
+   */
   enterSinglePlayerButtonPress = () => {
     this.setState({
-      pageController: "singlePlayerGamePage",
+      pageController: "singlePlayerGamePage", //to page 8th
     });
   };
 
   //functions to switch between pages & send message to server (end)
 
   //function handlers (start)
+  /**
+   * change the value of the number of slots for multi-player game
+   */
   slotNumChangeHandler = (event) => {
     let copy_gameModeSetting = { ...this.state.gameModeBasicSetting };
     copy_gameModeSetting.slotNum = parseInt(event.target.value, 10);
     this.setState({ gameModeBasicSetting: copy_gameModeSetting });
   };
 
+  /**
+   * 
+   * change the value of the target number for multi-player game
+   */
   targetNumChangeHandler = (event) => {
     let copy_gameModeSetting = { ...this.state.gameModeBasicSetting };
     copy_gameModeSetting.targetNum = parseInt(event.target.value, 10);
     this.setState({ gameModeBasicSetting: copy_gameModeSetting });
   };
 
+  /**
+   * save the menu setting, close the display, and send the data to the server side
+   */
   menuCloseHandler = () => {
     this.setState({
       gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
@@ -166,7 +241,6 @@ class App extends Component {
       numOfSlots: this.state.gameModeBasicSetting.slotNum, //int
       targetNumber: this.state.gameModeBasicSetting.targetNum, //int
       availableOperators: this.state.availableOperator, //array of string
-      showAllAnswers: this.state.oneOrAllAnswerShown === "one" ? false : true, //bool
       rangeLo: this.state.rangeOfAvailableNumberLowBound, //int
       rangeHi: this.state.rangeOfAvailableNumberHighBound, //int
       maxNumOfRepeats: this.state.maxRepeatNum, //int
@@ -177,30 +251,44 @@ class App extends Component {
     console.log(settingPackageObject);
   };
 
+  /**
+   * set the username from the user input
+   */
   setStateName = (event) => {
     this.setState({ username: event.target.value });
   };
 
-  oneOrAllAnswerRadioButtonHandler = (event) => {
-    this.setState({ oneOrAllAnswerShown: event.target.value });
-  };
-
+  /**
+   * set the value for rangeOfAvailableNumberLowBound
+   */
   rangeOfAvailableNumberLowBoundInputHandler = (event) => {
     this.setState({ rangeOfAvailableNumberLowBound: parseInt(event.target.value, 10) });
   };
 
+  /**
+   * set the value for rangeOfAvailableNumberHighBound
+   */
   rangeOfAvailableNumberHighBoundInputHandler = (event) => {
     this.setState({ rangeOfAvailableNumberHighBound: parseInt(event.target.value, 10) });
   };
 
+  /**
+   * set the value for maxRepeatNumInput
+   */
   maxRepeatNumInputHandler = (event) => {
     this.setState({ maxRepeatNum: parseInt(event.target.value, 10) });
   };
 
+  /**
+   * set the value for the time of each round 
+   */
   timeBetweenRoundInputHandler = (event) => {
     this.setState({ timeBetweenRound: parseInt(event.target.value, 10) });
   };
 
+  /**
+   * used by the slider that accepts only 10, 15, or 20 for the number of round per game
+   */
   numOfRoundInputHandler = (event) => {
     let num = event.target.value;
     if (num < 13) {
@@ -213,6 +301,10 @@ class App extends Component {
     this.setState({ numOfRound: num });
   };
 
+  /**
+   * the checkbox that controls the available operators during the game
+   * @param {checkbox} event 
+   */
   availableOperatorCheckboxHandler = (event) => {
     let selectValue = event.target.value;
     switch (selectValue) {
@@ -283,6 +375,49 @@ class App extends Component {
     }
   };
 
+  /**
+   * When press the button, add the corresponding number or operator to the input expression
+   * @param {string} eachNum the number or operator string associated with the button 
+   */
+  addToInputHandler = (eachNum) => {
+    let copy_expressionInput = [...this.state.expressionInput];
+    copy_expressionInput.push(eachNum.toString());
+    this.setState({ expressionInput: copy_expressionInput });
+  }
+
+  /**
+   * When click the "DEL" button, delete a number or operator string from the input expression
+   */
+  deleteInputHandler = () => {
+    let copy_expressionInput = [...this.state.expressionInput];
+    if (copy_expressionInput.length >= 0) {
+      copy_expressionInput.pop();
+      this.setState({ expressionInput: copy_expressionInput });
+    }
+  }
+
+  //checkPostfixValid
+
+
+
+  /**
+   * calculate the value of the inputed expression and send the expression to the server if it's valid
+   */
+  calculateExpressionHandler = () => {
+    if (checkValid(this.state.expressionInput)) { //check the basic validity
+      let result = calculate(this.state.expressionInput);
+      //checkPostfixValid(result);
+      if (result === "Invalid") {
+        this.setState({ answer: "Invalid" });
+      } else {
+        this.setState({ answer: result });
+        socket.emit("sendSolution", this.state.expressionInput);
+      }
+    }
+    else {
+      this.setState({ answer: "Invalid" });
+    }
+  }
   //function handlers (end)
 
   //page display switch function
@@ -290,155 +425,195 @@ class App extends Component {
     switch (pageName) {
       case "homePage": //1
         return (
-          <div className="centerBlock">
-            <h1 className="cover-heading">1st Page (homePage)</h1>
-            <button
-              className="btn btn-primary m-3"
-              onClick={this.solveModeButtonPress}
-            >
-              Solve
-            </button>
-            <button
-              className="btn btn-primary m-3"
-              onClick={this.gameModeButtonPress}
-            >
-              Multiplayer
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={this.enterSinglePlayerButtonPress}
-            >
-              Singleplayer
-            </button>
+          <div className="container h-100">
+            <div className="row h-25"></div>
+            <div className="row h-25">
+              <div className="col text-center my-auto">
+                <h1>1st Page (homePage)</h1>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col text-center my-auto">
+                <button
+                  className="btn btn-primary m-3"
+                  onClick={this.solveModeButtonPress}
+                >
+                  Solve
+                </button>
+                <button
+                  className="btn btn-primary m-3"
+                  onClick={this.gameModeButtonPress}
+                >
+                  Multiplayer
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={this.enterSinglePlayerButtonPress}
+                >
+                  Singleplayer
+                </button>
+              </div>
+            </div>
+            <div className="row h-25"></div>
           </div>
         );
       case "solvePage": //2
         return (
-          <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
-            <GameSolver />
+          <div className="container-fluid h-100">
+            <div className="row">
+              <div className="col my-auto">
+                <ReturnHomePageButton
+                  onReturn={this.returnHomePageButtonPress}
+                ></ReturnHomePageButton>
+              </div>
+            </div>
+            <div className="row h-50">
+              <div className="col text-center my-auto">
+                <GameSolver />
+              </div>
+            </div>
+            <div className="row">
+            </div>
           </div>
         );
       case "gamePage": //3
         return (
-          <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
-            <h1 className="cover-heading">
-              3rd Page (Create Room or Enter Room)
-            </h1>
-            <p>Multiplayer</p>
-            <p>Enter your nickname</p>
-            <input
-              className="form-control mb-2"
-              type="text"
-              onChange={this.setStateName}
-            ></input>
-            <button
-              className="btn btn-primary mr-1"
-              onClick={this.createRoomButtonPress}
-            >
-              New Room
-            </button>
-            <button
-              className="btn btn-primary ml-1"
-              onClick={this.joinRoomButtonPress}
-            >
-              Join Room
-            </button>
+          <div className="container-fluid h-100">
+            <div className="row h-25">
+              <div className="col my-auto">
+                <ReturnHomePageButton
+                  onReturn={this.returnHomePageButtonPress}
+                ></ReturnHomePageButton>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col text-center my-auto">
+                <h1>
+                  3rd Page (Create Room or Enter Room)
+                </h1>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col text-center my-auto">
+                <p>Enter your nickname</p>
+                <input
+                  className="form-control mb-2"
+                  type="text"
+                  maxlength="15"
+                  onChange={this.setStateName}
+                ></input>
+                <button
+                  className="btn btn-primary mr-1"
+                  onClick={this.createRoomButtonPress}
+                >
+                  New Room
+                </button>
+                <button
+                  className="btn btn-primary ml-1"
+                  onClick={this.joinRoomButtonPress}
+                >
+                  Join Room
+                </button>
+              </div>
+
+            </div>
+            <div className="row h-25">
+            </div>
           </div>
+
         );
       case "createRoomPage": //4
         return (
-          <div>
-            <MenuSetting
-              slotNumChangeHandler={this.slotNumChangeHandler}
-              targetNumChangeHandler={this.targetNumChangeHandler}
-              menuCloseHandler={this.menuCloseHandler}
-              onOneOrAllAnswerRadioButton={
-                this.oneOrAllAnswerRadioButtonHandler
-              }
-              onRangeOfAvailableNumberLowBoundInput={
-                this.rangeOfAvailableNumberLowBoundInputHandler
-              }
-              onRangeOfAvailableNumberHighBoundInput={
-                this.rangeOfAvailableNumberHighBoundInputHandler
-              }
-              onMaxRepeatNumInput={this.maxRepeatNumInputHandler}
-              onTimeBetweenRoundInput={this.timeBetweenRoundInputHandler}
-              onNumOfRoundInput={this.numOfRoundInputHandler}
-              onAvailableOperatorCheckbox={
-                this.availableOperatorCheckboxHandler
-              }
-              slotNum={this.state.gameModeBasicSetting.slotNum}
-              targetNum={this.state.gameModeBasicSetting.targetNum}
-              showMenuBoolean={this.state.gameModeSettingMenuOpen}
-              oneOrAllAnswerShown={this.state.oneOrAllAnswerShown}
-              rangeOfAvailableNumberLowBound={
-                this.state.rangeOfAvailableNumberLowBound
-              }
-              rangeOfAvailableNumberHighBound={
-                this.state.rangeOfAvailableNumberHighBound
-              }
-              maxRepeatNum={this.state.maxRepeatNum}
-              timeBetweenRound={this.state.timeBetweenRound}
-              numOfRound={this.state.numOfRound}
-              availableOperator={this.state.availableOperator}
-            ></MenuSetting>
-            <button
-              className="btn btn-info m-3 topRightCorner"
-              style={{
-                display:
-                  this.state.gameModeSettingMenuOpen === false
-                    ? "block"
-                    : "none",
-              }}
-              onClick={() => {
-                this.setState({
-                  gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
-                });
-              }}
-            >
-              Setting
-            </button>
-            <CancelRoomCreateButton
-              onCancel={this.cancelRoomCreateButtonPress}
-            ></CancelRoomCreateButton>
-            <div
-              style={{
-                display:
-                  this.state.gameModeSettingMenuOpen === false
-                    ? "block"
-                    : "none",
-              }}
-            >
-              <h1 className="cover-heading">
-                4th Page
-                <br />
-                Nickname: {this.state.username}
-                <br />
-                Room Number: {this.state.roomNumber}
-                <br />
-                Please wait for other players to join
-              </h1>
-              <button
-                className="btn btn-primary m-3"
-                onClick={this.startGameButtonPress}
-              >
-                Start
-              </button>
-            </div>
+          <div className="container-fluid h-100">
+            {this.state.gameModeSettingMenuOpen === true ?
+              <div className="row h-100">
+                <div className="col">
+                  <MenuSetting
+                    slotNumChangeHandler={this.slotNumChangeHandler}
+                    targetNumChangeHandler={this.targetNumChangeHandler}
+                    menuCloseHandler={this.menuCloseHandler}
+                    onRangeOfAvailableNumberLowBoundInput={
+                      this.rangeOfAvailableNumberLowBoundInputHandler
+                    }
+                    onRangeOfAvailableNumberHighBoundInput={
+                      this.rangeOfAvailableNumberHighBoundInputHandler
+                    }
+                    onMaxRepeatNumInput={this.maxRepeatNumInputHandler}
+                    onTimeBetweenRoundInput={this.timeBetweenRoundInputHandler}
+                    onNumOfRoundInput={this.numOfRoundInputHandler}
+                    onAvailableOperatorCheckbox={
+                      this.availableOperatorCheckboxHandler
+                    }
+                    slotNum={this.state.gameModeBasicSetting.slotNum}
+                    targetNum={this.state.gameModeBasicSetting.targetNum}
+                    showMenuBoolean={this.state.gameModeSettingMenuOpen}
+                    rangeOfAvailableNumberLowBound={
+                      this.state.rangeOfAvailableNumberLowBound
+                    }
+                    rangeOfAvailableNumberHighBound={
+                      this.state.rangeOfAvailableNumberHighBound
+                    }
+                    maxRepeatNum={this.state.maxRepeatNum}
+                    timeBetweenRound={this.state.timeBetweenRound}
+                    numOfRound={this.state.numOfRound}
+                    availableOperator={this.state.availableOperator}
+                  ></MenuSetting>
+                </div>
+              </div>
+              :
+              <div className="h-100 w-100">
+                <div className="row h-25">
+                  <div className="col my-auto">
+                    <CancelRoomCreateButton
+                      onCancel={this.cancelRoomCreateButtonPress}
+                    ></CancelRoomCreateButton>
+                    <button
+                      className="btn btn-info m-3 topRightCorner"
+                      onClick={() => {
+                        this.setState({
+                          gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
+                        });
+                      }}
+                    >
+                      Setting
+                    </button>
+                  </div>
+                </div>
+                <div className="row h-25">
+                  <div className="col text-center my-auto">
+                    <h1 className="cover-heading">
+                      4th Page
+                      <br />
+                      Nickname: {this.state.username}
+                      <br />
+                      Room Number: {this.state.roomNumber}
+                      <br />
+                      Please wait for other players to join
+                    </h1>
+                  </div>
+                </div>
+                <div className="row h-25">
+                  <div className="col text-center my-auto">
+                    <button
+                      className="btn btn-primary m-3"
+                      onClick={this.startGameButtonPress}
+                    >
+                      Start
+                    </button>
+                  </div>
+                </div>
+                <div className="row h-25">
+                </div>
+              </div>}
           </div>
+
         );
       case "joinRoomNumPage": //5
         return (
           <div>
-            <CancelRoomCreateButton
-              onCancel={this.cancelRoomCreateButtonPress}
-            ></CancelRoomCreateButton>
+            <ReturnHomePageButton
+              onReturn={this.returnHomePageButtonPress}
+            ></ReturnHomePageButton>
             <h1 className="cover-heading">
               5th Page
               <br />
@@ -448,14 +623,15 @@ class App extends Component {
               Your nickname: <strong>{this.state.username}</strong>
             </p>
             <div className="container">
-              <div className="row">
+
+              {this.state.reenterUsername === true ? <div className="row">
                 <div className="col">
                   <NameInputUI
-                    onEnterName={this.joinRoomKeyButtonPress}
                     onChange={this.setStateName}
                   ></NameInputUI>
                 </div>
-              </div>
+              </div> : null}
+
               <div className="row">
                 <div className="col">
                   <form className="form-inline justify-content-center">
@@ -507,11 +683,172 @@ class App extends Component {
         );
       case "multiPlayerGamePage": //7
         return (
-          <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
-            <h1 className="cover-heading">Game In Progress...(multiplayer)</h1>
+          <div class="container-fluid h-100">
+            <div class="row h-100">
+              <div class="col col-2 h-100">
+                <div class="row h-25">
+                  <div class="col text-center my-auto h-50">
+                    <ReturnHomePageButton
+                      onReturn={this.returnHomePageButtonPress}
+                    ></ReturnHomePageButton>
+                  </div>
+                </div>
+                <div class="row h-25">
+                  <div class="col text-center my-auto">
+                    <h1>My Current Score: 100</h1>
+                  </div>
+                </div>
+                <div class="row h-25">
+                  <div class="col text-center my-auto">
+                    <h1>My Name: Xin</h1>
+                  </div>
+                </div>
+                <div class="row h-25">
+                  <div class="col text-center my-auto">
+                    <h1>Round: 6 / 10</h1>
+                  </div>
+                </div>
+              </div>
+              <div class="col col-8 h-100">
+                <GameBoard
+                  gameNumbers={this.state.multiplayerGameNumbers}
+                  on_addToInput={this.addToInputHandler}
+                  expressionInput={this.state.expressionInput}
+                  targetNum={this.state.gameModeBasicSetting.targetNum}
+                  operators={this.state.availableOperator}
+                  on_deleteInput={this.deleteInputHandler}
+                  on_calculateExpression={this.calculateExpressionHandler}
+                  answer={this.state.answer}></GameBoard>
+              </div>
+              <div class="col col-2 h-100">
+                <div class="row h-100">
+                  <div class="col pt-2 overflow-auto h-100">
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        <div>Xin</div>
+                        <div>Yes</div>
+                      </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                    <div class="card bg-info mb-1">
+                      <div class="card-body">
+                        Yes
+                </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
           </div>
         );
       case "singlePlayerGamePage": //8
@@ -530,7 +867,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="background">
+      <div className="h-100">
         <Helmet>
           <meta charSet="UTF-8" />
           <title>

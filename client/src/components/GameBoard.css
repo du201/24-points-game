@@ -1,0 +1,26 @@
+.container {
+  border: 5px solid yellow;
+}
+
+.row {
+  border: 5px solid red;
+  height: 100px;
+}
+
+.col {
+  border: 5px dotted blue;
+}
+
+.container {
+  border: 1px solid green;
+}
+
+.my-row{
+  border: 3px solid red;
+}
+
+.my-col {
+  border: 3px dotted blue;
+}
+
+

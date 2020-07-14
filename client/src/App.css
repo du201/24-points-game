@@ -1,8 +1,31 @@
-.background {
-  padding: 200px;
-}
+
 .topRightCorner {
   position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.alert-position {
+  position: fixed;
   top: 10px;
-  right: 10px;
+  left: 10px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.container {
+  border: 5px solid yellow;
+}
+
+.row {
+  border: 5px solid red;
+  height: 100px;
+}
+
+.col {
+  border: 5px dotted blue;
 }

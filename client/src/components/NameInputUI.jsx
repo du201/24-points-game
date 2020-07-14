@@ -12,12 +12,10 @@ const NameInputUI = (props) => {
           type="text"
           className="form-control"
           placeholder="Nickname"
+          maxlength="15"
           onChange={(event) => props.onChange(event)}
         />
       </div>
-      <button className="btn btn-primary mb-2" onClick={props.onEnterName}>
-        Enter
-      </button>
     </form>
   );
 };

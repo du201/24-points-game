@@ -5,7 +5,7 @@ const ReturnHomePageButton = (props) => {
   return (
     //<React.Fragment>
     <button
-      className="btn btn-warning m-3 topLeftCorner"
+      className="btn btn-warning m-1"
       onClick={() => {
         props.onReturn();
       }}

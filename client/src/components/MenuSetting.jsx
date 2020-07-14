@@ -146,44 +146,6 @@ const MenuSetting = (props) => {
 
               {/*The container for the advanced setting  */}
               <div className="container my-container lead">
-
-                {/*This row has radio button determines one or more answers to be shown */}
-                <div className="row my-row">
-                  <label className="col-form-label-sm">Answer Shown</label>
-                  <div className="col-auto my-col">
-                    <div className="form-check form-check-inline">
-                      <input
-                        type="radio"
-                        name="oneOrAllAnswers"
-                        value="one"
-                        id="one"
-                        onChange={props.onOneOrAllAnswerRadioButton}
-                        defaultChecked={props.oneOrAllAnswerShown === "one"}
-                        className="form-check-input"
-                      />
-                      <label htmlFor="one" className="form-check-label col-form-label-sm">
-                        One
-                        </label>
-                    </div>
-                  </div>
-                  <div className="col-auto my-col">
-                    <div className="form-check form-check-inline">
-                      <input
-                        type="radio"
-                        name="oneOrAllAnswers"
-                        value="all"
-                        id="all"
-                        onChange={props.onOneOrAllAnswerRadioButton}
-                        defaultChecked={props.oneOrAllAnswerShown === "all"}
-                        className="form-check-input"
-                      />
-                      <label htmlFor="all" className="form-check-label col-form-label-sm">
-                        All
-                        </label>
-                    </div>
-                  </div>
-                </div>
-
                 {/*This row is the range of available number */}
                 <div className="row my-row align-items-center">
                   <label className="col-form-label-sm">Range of Available Number</label>
