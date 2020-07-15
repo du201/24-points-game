@@ -21,6 +21,7 @@ function checkValid(infix) {
     } else {
       operandNum++;
     }
+    return char;
   });
 
   //check for the parenthesis

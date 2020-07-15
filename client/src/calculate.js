@@ -21,6 +21,7 @@ function precedenceCheck(operator) {
     case DIVIDES: return 2;
     case LEFT_PAREN:
     case RIGHT_PAREN: return 0;
+    default: return 0; //haven't handle this default yet
   }
 }
 
@@ -109,15 +110,6 @@ function isParenthesis(toCheck) {
   }
 }
 
-
-
-
-//calculate the postfix
-
-function stringToArray(string) {
-  return string.split('');
-}
-
 /**
  * 
  * @param {array of string} postfix an array of string which is the postfix expression
@@ -127,7 +119,6 @@ function computePostfix(postfix) {
   operatorStack = [];
   operandStack = [];
   postfixStack = [];
-  let wrongPostfix = false;
   for (let current of postfix) {
     console.log(postfixStack);
     if (isOperator(current)) {
@@ -182,6 +173,7 @@ function charToOperator(char) {
     case MINUS: return minus;
     case TIMES: return multiply;
     case DIVIDES: return divide;
+    default: return divide; //haven't handled this yet
   }
 }
 

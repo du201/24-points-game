@@ -7,6 +7,7 @@ class GameBoard extends Component {
     let displayExpression = "";
     this.props.expressionInput.map((num) => {
       displayExpression += num + " ";
+      return num;
     });
 
     let final_operators = [...this.props.operators];
@@ -30,7 +31,7 @@ class GameBoard extends Component {
         </div>
         <div className="row h-25">
           <div className="col-8 my-col my-auto">
-            <p><h1>{displayExpression}</h1></p>
+            <h1>{displayExpression}</h1>
           </div>
           <div className="col my-col my-auto text-center">
             <button
@@ -41,7 +42,7 @@ class GameBoard extends Component {
             ><h1>DEL</h1></button>
           </div>
           <div className="col my-col my-auto text-center">
-            <p><h1>{"=" + this.props.targetNum}</h1></p>
+            <h1>{"=" + this.props.targetNum}</h1>
           </div>
         </div>
         <div className="row h-25">
@@ -66,7 +67,7 @@ class GameBoard extends Component {
             ><h1>=</h1></button>
           </div>
           <div className="col col-8 text-center my-auto">
-            <p><h1>Answer: {this.props.answer}</h1></p>
+            <h1>Answer: {this.props.answer}</h1>
           </div>
         </div>
       </React.Fragment>

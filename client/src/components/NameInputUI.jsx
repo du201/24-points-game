@@ -12,7 +12,7 @@ const NameInputUI = (props) => {
           type="text"
           className="form-control"
           placeholder="Nickname"
-          maxlength="15"
+          maxLength="15"
           onChange={(event) => props.onChange(event)}
         />
       </div>

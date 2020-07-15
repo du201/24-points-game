@@ -18,15 +18,23 @@ const DIVIDES = "÷";
 const PLUS = "+";
 const MINUS = "-";
 let operators = [TIMES, DIVIDES, PLUS, MINUS];
-let timeoutStatus = null;
 
 const server = "http://localhost:2000";
 const socket = io.connect(server);
 
+/*
+socket.on("joinRoomSuccess", () => {
+  alert("joinRoomSuccess");
+  this.setState({
+    pageController: "multiPlayerGamePage",//"waitForHostPage",
+  });
+});
+*/
+
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: "singlePlayerGamePage", //default should be homePage
+    pageController: "homePage", //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
@@ -45,6 +53,7 @@ class App extends Component {
     multiplayerGameNumbers: [4, 6, 8, 10], //if online mode, get this from the server. if offline, autogenerate this
 
   };
+
 
   //helper functions (start)
   /**
@@ -65,6 +74,7 @@ class App extends Component {
 
   //functions to switch between pages & send message to server (start)
   /**
+   * In 1st page
    * In home page, choose the game mode (instead of single-player mode or solve mode) 
    */
   gameModeButtonPress = () => {
@@ -74,6 +84,7 @@ class App extends Component {
   };
 
   /**
+   * In 1st page
    * In home page, choose the solve mode
    */
   solveModeButtonPress = () => {
@@ -83,6 +94,7 @@ class App extends Component {
   };
 
   /**
+   * Appears in multiple pages
    * return back to the home page
    */
   returnHomePageButtonPress = () => {
@@ -92,9 +104,10 @@ class App extends Component {
   };
 
   /**
+   * In 4th page (the host) or the 6th page (the other players)
    * to exit the room and tell the server
    */
-  cancelRoomCreateButtonPress = () => {
+  exitRoomButtonPress = () => {
     this.setState({
       pageController: "gamePage", //to page 3
     });
@@ -102,7 +115,8 @@ class App extends Component {
   };
 
   /**
-   * The creator of the room uses this to request the server for a room in page 3
+   * In page 3
+   * The creator of the room uses this to request the server for a room
    */
   createRoomButtonPress = () => {
     if (this.hasValidUsername()) {
@@ -151,9 +165,10 @@ class App extends Component {
 
   /**
    * in page 5
-   * the player press this button to enter the game room with the specified room number
+   * the player presses this button to enter the game room with the specified room number
    * 
    */
+
   joinRoomKeyButtonPress = () => {
     if (this.state.reenterUsername === true) {
       this.setState({ reenterUsername: false });
@@ -163,10 +178,9 @@ class App extends Component {
       room: this.state.roomNumber,
     });
     socket.once("joinRoomSuccess", () => {
-      console.log("joinRoomSuccess");
+      alert("success!");
       this.setState({
         pageController: "waitForHostPage",
-        roomNumber: this.state.roomNumber,
       });
     });
     socket.once("joinRoomFailure", (msg) => {
@@ -184,18 +198,11 @@ class App extends Component {
         case "gameInProgress":
           alert("The game has already started in this room. You can either wait until the game finishes or enter another room instead");
           break;
+        default:
+          break;
       }
     });
-  };
 
-  /**
-   * In page 6th
-   * exit the waiting room (wait for the host to start the game)
-   */
-  exitRoomKeyButtonPress = () => {
-    this.setState({
-      pageController: "joinRoomNumPage", //to page 5th
-    });
   };
 
   /**
@@ -372,6 +379,8 @@ class App extends Component {
           });
         }
         break;
+      default:
+        break;
     }
   };
 
@@ -499,7 +508,7 @@ class App extends Component {
                 <input
                   className="form-control mb-2"
                   type="text"
-                  maxlength="15"
+                  maxLength="15"
                   onChange={this.setStateName}
                 ></input>
                 <button
@@ -565,7 +574,7 @@ class App extends Component {
                 <div className="row h-25">
                   <div className="col my-auto">
                     <CancelRoomCreateButton
-                      onCancel={this.cancelRoomCreateButtonPress}
+                      onCancel={this.exitRoomButtonPress}
                     ></CancelRoomCreateButton>
                     <button
                       className="btn btn-info m-3 topRightCorner"
@@ -665,9 +674,6 @@ class App extends Component {
       case "waitForHostPage": //6
         return (
           <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
             <h1 className="cover-heading">
               6th Page
               <br />
@@ -675,7 +681,7 @@ class App extends Component {
             </h1>
             <button
               className="btn btn-primary m-3"
-              onClick={this.exitRoomKeyButtonPress}
+              onClick={this.exitRoomButtonPress}
             >
               Exit the Room
             </button>
@@ -683,33 +689,33 @@ class App extends Component {
         );
       case "multiPlayerGamePage": //7
         return (
-          <div class="container-fluid h-100">
-            <div class="row h-100">
-              <div class="col col-2 h-100">
-                <div class="row h-25">
-                  <div class="col text-center my-auto h-50">
+          <div className="container-fluid h-100">
+            <div className="row h-100">
+              <div className="col col-2 h-100">
+                <div className="row h-25">
+                  <div className="col text-center my-auto h-50">
                     <ReturnHomePageButton
                       onReturn={this.returnHomePageButtonPress}
                     ></ReturnHomePageButton>
                   </div>
                 </div>
-                <div class="row h-25">
-                  <div class="col text-center my-auto">
+                <div className="row h-25">
+                  <div className="col text-center my-auto">
                     <h1>My Current Score: 100</h1>
                   </div>
                 </div>
-                <div class="row h-25">
-                  <div class="col text-center my-auto">
+                <div className="row h-25">
+                  <div className="col text-center my-auto">
                     <h1>My Name: Xin</h1>
                   </div>
                 </div>
-                <div class="row h-25">
-                  <div class="col text-center my-auto">
+                <div className="row h-25">
+                  <div className="col text-center my-auto">
                     <h1>Round: 6 / 10</h1>
                   </div>
                 </div>
               </div>
-              <div class="col col-8 h-100">
+              <div className="col col-8 h-100">
                 <GameBoard
                   gameNumbers={this.state.multiplayerGameNumbers}
                   on_addToInput={this.addToInputHandler}
@@ -720,132 +726,16 @@ class App extends Component {
                   on_calculateExpression={this.calculateExpressionHandler}
                   answer={this.state.answer}></GameBoard>
               </div>
-              <div class="col col-2 h-100">
-                <div class="row h-100">
-                  <div class="col pt-2 overflow-auto h-100">
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
+              <div className="col col-2 h-100">
+                <div className="row h-100">
+                  <div className="col pt-2 overflow-auto h-100">
+                    <div className="card bg-info mb-1">
+                      <div className="card-body">
                         <div>Xin</div>
                         <div>Yes</div>
                       </div>
                     </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
-                    <div class="card bg-info mb-1">
-                      <div class="card-body">
-                        Yes
-                </div>
-                    </div>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -868,6 +758,7 @@ class App extends Component {
   render() {
     return (
       <div className="h-100">
+        {/*
         <Helmet>
           <meta charSet="UTF-8" />
           <title>
@@ -885,6 +776,7 @@ class App extends Component {
           `}</style>
           <link rel="shortcut icon" href={tabImage} />
         </Helmet>
+          */}
         {this.renderSwitch(this.state.pageController)}
       </div>
     );

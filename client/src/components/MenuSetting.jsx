@@ -103,7 +103,7 @@ const MenuSetting = (props) => {
                     defaultChecked={props.availableOperator.includes(TIMES)}
                   />
                   <label htmlFor="checkMultiply">
-                    <img src="multiplySign.png" />
+                    <img src="multiplySign.png" alt="multiply" />
                   </label>
                 </li>
                 <li>
@@ -115,7 +115,7 @@ const MenuSetting = (props) => {
                     defaultChecked={props.availableOperator.includes(DIVIDES)}
                   />
                   <label htmlFor="checkDivide">
-                    <img src="divideSign.png" />
+                    <img src="divideSign.png" alt="divide" />
                   </label>
                 </li>
                 <li>
@@ -127,7 +127,7 @@ const MenuSetting = (props) => {
                     defaultChecked={props.availableOperator.includes(PLUS)}
                   />
                   <label htmlFor="checkAdd">
-                    <img src="addSign.png" />
+                    <img src="addSign.png" alt="add" />
                   </label>
                 </li>
                 <li>
@@ -139,7 +139,7 @@ const MenuSetting = (props) => {
                     defaultChecked={props.availableOperator.includes(MINUS)}
                   />
                   <label htmlFor="checkSubtract">
-                    <img src="subtractSign.png" />
+                    <img src="subtractSign.png" alt="subtract" />
                   </label>
                 </li>
               </ul>
@@ -213,14 +213,12 @@ const MenuSetting = (props) => {
           </div>
         </div >
       </div >
-      <a
+      <button
         className="btn btn-primary btn-lg mt-2"
-        href="#"
-        role="button"
         onClick={props.menuCloseHandler}
       >
         Apply
-      </a>
+      </button>
     </div >
   );
 };
