@@ -70,6 +70,6 @@ IO.on("connection", (socket) => {
    * that room.
    */
   socket.on("startGame", () => {
-    requestHandler.startGameHandler(settings);
+    requestHandler.startGameHandler();
   });
 });

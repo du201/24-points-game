@@ -13,24 +13,26 @@ let combinations = [];
  * Recursively sets up a new round (including round breaks) until the last
  * round. Treats the preparation before the first round as a round break.
  */
-function newRound(skt, prepTime, roundTime, rounds) {
+function newRound(skt, prepTime, settings, rounds) {
   skt.time = prepTime;
 
   // Starts a new round break.
   skt.prepTimer = setInterval(() => {
     skt.emit("timer", skt.time);
-    console.log(skt.username + skt.time);
     skt.time--;
 
     if (skt.time === 0) { // Current round break ends.
-      skt.time = roundTime;
+      skt.time = settings.roundInterval / 1000;
       clearInterval(skt.prepTimer);
 
       // Starts a new round.
-      skt.emit("newRound", skt.time);
+      // TODO: Complete newRound emit
+      skt.emit("newRound", {
+        numbers: [1, 1, 1, 1],
+        settings: settings
+      });
       skt.roundTimer = setInterval(() => {
         skt.emit("timer", skt.time);
-        console.log(skt.username + skt.time);
         skt.time--;
 
         if (skt.time === 0) { // Current round ends.
@@ -39,7 +41,7 @@ function newRound(skt, prepTime, roundTime, rounds) {
           if (rounds === 0) { // Last round.
             return;
           } else {
-            newRound(skt, ROUND_BREAK, roundTime, rounds - 1);
+            newRound(skt, ROUND_BREAK, settings, rounds - 1);
           }
         }
       }, 1000);
@@ -256,11 +258,8 @@ class Room {
       skt.emit("gameStarted", this.settings);
       newRound(
         skt,
-        () => {
-          return 0;
-        },
         PREP_TIME,
-        this.settings.roundInterval / 1000,
+        this.settings,
         this.settings.numOfRounds - 1
       );
     });
