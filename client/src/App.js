@@ -10,7 +10,10 @@ import GameBoard from "./components/GameBoard";
 import io from "socket.io-client";
 import tabImage from "./tabImage.png";
 import calculate from "./calculate.js";
-import checkValid from "./checkValid.js"
+import checkValid from "./checkValid.js";
+import Roster from "./components/Roster";
+import $ from "jquery";
+import RoomNumInput from "./components/RoomNumInput";
 
 
 const TIMES = "×";
@@ -29,7 +32,6 @@ class App extends Component {
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
-    reenterUsername: false, //controls the display of the reenter username text input in page 5th
     rangeOfAvailableNumberLowBound: 1,
     rangeOfAvailableNumberHighBound: 13,
     maxRepeatNum: 4, //the maximum number of repeated number possible
@@ -42,9 +44,19 @@ class App extends Component {
     //Below are the signals received from the server
     roomNumber: null,
     multiplayerGameNumbers: [4, 6, 8, 10], //if online mode, get this from the server. if offline, autogenerate this
-
+    playerRoster: [], //array of string, the name of all the players in the room
+    playerSolved: [], //array of string, the name of the players who solve the game in the current round
+    roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
   };
-
+  /*
+    componentDidMount = () => {
+      $(".inputs").keyup(function () {
+        if (this.value.length === this.maxLength) {
+          $(this).closest("div").next("div").children('.inputs').focus();
+        }
+      });
+    };
+  */
 
   //helper functions (start)
   /**
@@ -118,6 +130,11 @@ class App extends Component {
           roomNumber: roomNum, //string
           gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
         });
+        //be able to see who is currently in the room
+        //also be able to see who is in the room and who solved the problem during the game
+        socket.on("roster", (roster) => {
+          this.setState({ playerRoster: roster });
+        });
       });
       socket.once("createRoomFailure", (msg) => {
         alert(msg); //1. noRoomsAvailable - all room numbers are used
@@ -161,9 +178,6 @@ class App extends Component {
    */
 
   joinRoomKeyButtonPress = () => {
-    if (this.state.reenterUsername === true) {
-      this.setState({ reenterUsername: false });
-    }
     socket.emit("joinRoom", {
       username: this.state.username,
       room: this.state.roomNumber,
@@ -172,6 +186,27 @@ class App extends Component {
     socket.once("joinRoomSuccess", () => {
       this.setState({
         pageController: "waitForHostPage",
+      });
+      //be able to see the current players waiting in the room while in the wait room
+      //also be able to see the player list and who has solved the problem in the game room
+      socket.on("roster", (roster) => {
+        this.setState({ playerRoster: roster });
+      });
+      //start to wait for the host to start the game and then go to the "multiPlayerGamePage"
+      socket.on("gameStarted", ({ numOfSlots, targetNumber, availableOperators, rangeLo,
+        rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
+        //go to the game page
+        this.setState({ pageController: "multiPlayerGamePage", });
+        //adopt the settings set by the game host
+        this.setState({
+          gameModeBasicSetting: { slotNum: numOfSlots, targetNum: targetNumber },
+          availableOperator: availableOperators,
+          rangeOfAvailableNumberLowBound: rangeLo,
+          rangeOfAvailableNumberHighBound: rangeHi,
+          maxRepeatNum: maxNumOfRepeats,
+          timeBetweenRound: roundInterval,
+          numOfRound: numOfRounds
+        });
       });
     });
 
@@ -185,7 +220,6 @@ class App extends Component {
           break;
         case "usernameTaken":
           alert("The username has already been taken, please try another username");
-          this.setState({ reenterUsername: true });
           break;
         case "gameInProgress":
           alert("The game has already started in this room. You can either wait until the game finishes or enter another room instead");
@@ -396,7 +430,77 @@ class App extends Component {
     }
   }
 
-  //checkPostfixValid
+  /**
+   * This is able to handle digits other than 4
+   * @param {int} num the number whose digits are going to be separated 
+   * @returns {array of int} the digits of the number from left to right
+   */
+  getDigits = (num) => {
+    //create an int array with this.state.roomNumMaxDigitNum as the number of entries
+    let digits = [];
+    for (let i = this.state.roomNumMaxDigitNum - 1; i >= 0; i--) {
+      digits.push(0);
+    }
+
+    //build the int array with the digit from the num. Padding array with 0 if num doesn't have that many digits
+    let digits_lastIndex = digits.length - 1;
+    while (num >= 10) {
+      digits[digits_lastIndex] = num % 10;
+      digits_lastIndex -= 1;
+      num = Math.floor(num / 10);
+    }
+    digits[digits_lastIndex] = num;
+    return digits;
+  }
+
+  /**
+   * This is able to handle digits other than 4
+   * @param {array of int} digits the digits of the number from left to right
+   * @returns {int} the number represented by the input digits array
+   */
+  numberReform = (digits) => {
+    let timeFactor = 1;
+    let number = 0;
+    for (let i = this.state.roomNumMaxDigitNum - 1; i >= 0; i--) {
+      number += timeFactor * digits[i];
+      timeFactor *= 10;
+    }
+    return number;
+  }
+  /**
+   * This has not yet been able to handle digits other than 4 (due to the switch case part)
+   * Set the value of the room number with four separate input boxes
+   * @param {onChange} e 
+   */
+  setRoomNum(e) {
+    if (e.target.value.length === 0) {
+      return;
+    }
+    let roomNumber = this.state.roomNumber;
+    let digits = this.getDigits(roomNumber);
+    if (e.target.value.length > e.target.maxLength) {
+      e.target.value = e.target.value.slice(0, 1);
+    }
+    let digit = e.target.value;
+    switch (e.target.id) {
+      case "first":
+        digits[0] = digit;
+        this.setState({ roomNumber: this.numberReform(digits) });
+        break;
+      case "second":
+        digits[1] = digit;
+        this.setState({ roomNumber: this.numberReform(digits) });
+        break;
+      case "third":
+        digits[2] = digit;
+        this.setState({ roomNumber: this.numberReform(digits) });
+        break;
+      case "last":
+        digits[3] = digit;
+        this.setState({ roomNumber: this.numberReform(digits) });
+        break;
+    }
+  };
 
 
 
@@ -603,7 +707,14 @@ class App extends Component {
                     </button>
                   </div>
                 </div>
-                <div className="row h-25">
+                <div className="row h-25 justify-content-center">
+                  <div className="col-6 pt-2 overflow-auto h-100">
+                    <Roster
+                      playerRoster={this.state.playerRoster}
+                      playerSolved={this.state.playerSolved}
+                      pageController={this.state.pageController}
+                    ></Roster>
+                  </div>
                 </div>
               </div>}
           </div>
@@ -614,49 +725,43 @@ class App extends Component {
           <div className="container-fluid h-100">
             <div className="row h-25">
               <div className="col my-auto">
-                <ReturnHomePageButton
-                  onReturn={this.returnHomePageButtonPress}
-                ></ReturnHomePageButton>
+                <CancelRoomCreateButton
+                  onCancel={this.exitRoomButtonPress}
+                ></CancelRoomCreateButton>
               </div>
             </div>
             <div className="row h-25">
               <div className="col text-center my-auto">
                 <h1 className="cover-heading">
                   5th Page
-              <br />
-              Please Enter the Room #
-            </h1>
+                <br />
+                Please Enter the Room #
+                </h1>
                 <p>
                   Your nickname: <strong>{this.state.username}</strong>
                 </p>
               </div>
             </div>
             <div className="row h-25">
-              <div className="col text-center my-auto">
-                {this.state.reenterUsername === true ? <div className="row">
+              <div className="col text-center h-100">
+                <div className="row h-50">
                   <div className="col">
                     <NameInputUI
                       onChange={this.setStateName}
                     ></NameInputUI>
                   </div>
-                </div> : null}
-                <form>
-                  <div className="form-group">
-                    <label htmlFor="roomNumber" className="sr-only">
-                      Password
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      className="form-control"
-                      id="roomNumber"
-                      placeholder="Room Number"
-                      onChange={(event) =>
-                        this.setState({ roomNumber: event.target.value })
-                      }
-                    />
-                  </div>
-                </form>
+                </div>
+
+                <div className="row h-50 justify-content-center">
+                  <RoomNumInput
+                    setRoomNum={(e) => this.setRoomNum(e)}
+                    roomNumber={this.state.roomNumber}
+                  ></RoomNumInput>
+                </div>
+              </div>
+            </div>
+            <div className="row h-25 justify-content-center">
+              <div className="col col-auto align-self-center">
                 <button
                   className="btn btn-primary mb-2"
                   onClick={this.joinRoomKeyButtonPress}
@@ -665,25 +770,43 @@ class App extends Component {
                 </button>
               </div>
             </div>
-            <div className="row h-25">
-            </div>
           </div>
         );
       case "waitForHostPage": //6
         return (
-          <div>
-            <h1 className="cover-heading">
-              6th Page
-              <br />
-              Waiting For the Host to Start the Game
-            </h1>
-            <button
-              className="btn btn-primary m-3"
-              onClick={this.exitRoomButtonPress}
-            >
-              Exit the Room
+          <div className="container-fluid h-100">
+            <div className="row h-25">
+              <div className="col my-auto">
+                <button
+                  className="btn btn-primary m-3"
+                  onClick={this.exitRoomButtonPress}
+                >
+                  Exit the Room
             </button>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col text-center my-auto">
+                <h1 className="cover-heading">
+                  6th Page
+                <br />
+                Waiting For the Host to Start the Game
+            </h1>
+              </div>
+            </div>
+            <div className="row h-25 justify-content-center">
+              <div className="col-6 pt-2 overflow-auto h-100">
+                <Roster
+                  playerRoster={this.state.playerRoster}
+                  playerSolved={this.state.playerSolved}
+                  pageController={this.state.pageController}
+                ></Roster>
+              </div>
+            </div>
+            <div className="row h-25">
+            </div>
           </div>
+
         );
       case "multiPlayerGamePage": //7
         return (
@@ -725,7 +848,21 @@ class App extends Component {
                   answer={this.state.answer}></GameBoard>
               </div>
               <div className="col col-2 h-100">
-                <div className="row h-100">
+                <div className="row h-25">
+                  <div className="col h-100 text-center">
+                    Total Player#/ Player Solved#
+                    <br />
+                    {this.state.playerRoster.length}/{this.state.playerSolved.length}
+                  </div>
+                </div>
+                <div className="row h-75">
+                  <div className="col h-100 overflow-auto">
+                    <Roster
+                      playerRoster={this.state.playerRoster}
+                      playerSolved={this.state.playerSolved}
+                    ></Roster>
+                  </div>
+                  {/*
                   <div className="col pt-2 overflow-auto h-100">
                     <div className="card bg-info mb-1">
                       <div className="card-body">
@@ -734,6 +871,7 @@ class App extends Component {
                       </div>
                     </div>
                   </div>
+                  */}
                 </div>
               </div>
             </div>
@@ -756,7 +894,6 @@ class App extends Component {
   render() {
     return (
       <div className="h-100">
-        {/*
         <Helmet>
           <meta charSet="UTF-8" />
           <title>
@@ -770,11 +907,20 @@ class App extends Component {
           <style>{`
             body {
               background-color:pink
-            }          
+            }
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+
+            /* Firefox */
+            input[type=number] {
+              -moz-appearance: textfield;
+            }         
           `}</style>
           <link rel="shortcut icon" href={tabImage} />
         </Helmet>
-          */}
         {this.renderSwitch(this.state.pageController)}
       </div>
     );
