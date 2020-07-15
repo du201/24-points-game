@@ -131,14 +131,14 @@ class Room {
    */
   changeSettings(settings) {
     if (settings.hasOwnProperty("numOfSlots")) {
-      if (Number.isInterger(settings.numOfSlots) &&
+      if (Number.isInteger(settings.numOfSlots) &&
           settings.numOfSlots >= 2 &&
           settings.numOfSlots <= 6) {
         this.settings.numOfSlots = settings.numOfSlots;
       }
     }
     if (settings.hasOwnProperty("targetNumber")) {
-      if (Number.isInterger(settings.targetNumber)) {
+      if (Number.isInteger(settings.targetNumber)) {
         this.settings.targetNumber = settings.targetNumber;
       }
     }
@@ -151,12 +151,12 @@ class Room {
       }
     }
     if (settings.hasOwnProperty("rangeLo")) {
-      if (Number.isInterger(settings.rangeLo)) {
+      if (Number.isInteger(settings.rangeLo)) {
         this.settings.rangeLo = settings.rangeLo;
       }
     }
     if (settings.hasOwnProperty("rangeHi")) {
-      if (Number.isInterger(settings.rangeHi)) {
+      if (Number.isInteger(settings.rangeHi)) {
         if (settings.rangeHi >= settings.rangeLo) {
           this.settings.rangeHi = settings.rangeHi;
         } else {
@@ -166,24 +166,22 @@ class Room {
       }
     }
     if (settings.hasOwnProperty("maxNumOfRepeats")) {
-      if (Number.isInterger(settings.maxNumOfRepeats) &&
+      if (Number.isInteger(settings.maxNumOfRepeats) &&
           settings.maxNumOfRepeats >= 1 &&
           settings.maxNumOfRepeats <= settings.numOfSlots) {
         this.settings.maxNumOfRepeats = settings.maxNumOfRepeats;
       }
     }
     if (settings.hasOwnProperty("roundInterval")) {
-      if (Number.isInterger(settings.roundInterval) &&
+      if (Number.isInteger(settings.roundInterval) &&
           settings.roundInterval >= 10000 &&
           settings.roundInterval <= 60000) {
         this.settings.roundInterval = settings.roundInterval;
       }
     }
     if (settings.hasOwnProperty("numOfRounds")) {
-      if (Number.isInterger(settings.numOfRounds) &&
-          settings.numOfRounds.every(num => {
-            [10, 15, 20].includes(num);
-          })) {
+      if (Number.isInteger(settings.numOfRounds) &&
+          [10, 15, 20].includes(settings.numOfRounds)) {
         this.settings.numOfRounds = settings.numOfRounds;
       }
     }

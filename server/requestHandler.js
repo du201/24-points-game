@@ -170,11 +170,11 @@ class RequestHandler {
 
         if (this.socket.isHost && !roomList[room].isRunning()) {
           // Host leaves before the game starts
-          roomList[room] = null;
           socketList.forEach(skt => {
             roomList[room].removePlayer(skt);
             skt.emit("roomClosed")
           });
+          roomList[room] = null;
         } else {
           socketList.forEach((skt) => {
             skt.emit(
