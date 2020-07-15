@@ -79,7 +79,7 @@ class RequestHandler {
   }
 
   /**
-   * Handles createRoom requests. if a player sends this request, assign
+   * Handles createRoom requests. If a player sends this request, assign
    * a room for this player if possible and create a player list for this room
    * number.
    */
@@ -102,7 +102,7 @@ class RequestHandler {
   }
 
   /**
-   * Handles joinRoom requests. if a player sends this request, add this
+   * Handles joinRoom requests. If a player sends this request, add this
    * player to the player list of this room if it exists.
    */
   joinRoomHandler({ username, room }) {
@@ -153,7 +153,7 @@ class RequestHandler {
   }
 
   /**
-   * Handles leaveRoom requests. if a player sends this request, remove this
+   * Handles leaveRoom requests. If a player sends this request, remove this
    * player from this player's room and broadcast the updated player list to
    * the remaining players (if there are any).
    */
@@ -172,7 +172,7 @@ class RequestHandler {
           // Host leaves before the game starts
           socketList.forEach(skt => {
             roomList[room].removePlayer(skt);
-            skt.emit("roomClosed")
+            skt.emit("roomClosed");
           });
           roomList[room] = null;
         } else {
@@ -197,9 +197,22 @@ class RequestHandler {
     }
   }
 
+  /**
+   * Handles changeSettings requests. If the host sends this request, validate
+   * this request and then send the successfully updated settings back to the
+   * host.
+   */
   changeSettingsHandler(settings) {
     roomList[this.socket.roomNum].changeSettings(settings);
     this.socket.emit("settings", settings);
+  }
+
+  /**
+   * Handles startGame requests. If the host sends this request, start the game
+   * in the room.
+   */
+  startGameHandler() {
+    roomList[this.socket.roomNum].startGame();
   }
 }
 

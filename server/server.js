@@ -3,12 +3,16 @@ const APP = EXPRESS();
 const RequestHandler = require("./requestHandler.js");
 // Port number of the backend.
 const PORT = 2000;
+// Timeout after 10 minutes.
+const TIMEOUT_VALUE = 600000;
 
 // Establishes the server.
 const SERVER = APP.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
-const IO = require("socket.io")(SERVER);
+const IO = require("socket.io")(SERVER, {
+  pingTimeout: TIMEOUT_VALUE,
+});
 
 // Opens the server to any connections.
 IO.on("connection", (socket) => {
@@ -58,5 +62,14 @@ IO.on("connection", (socket) => {
    */
   socket.on("changeSettings", (settings) => {
     requestHandler.changeSettingsHandler(settings);
+  });
+
+  /*
+   * Listens for startGame request, if the host sends this request, update
+   * the settings in the room and broadcast the change to all other clients in
+   * that room.
+   */
+  socket.on("startGame", () => {
+    requestHandler.startGameHandler(settings);
   });
 });

@@ -2,6 +2,53 @@ const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
 const MINUS = "-";
+// Preparation time (in s) before the first round.
+const PREP_TIME = 5;
+// Time (in s) between rounds.
+const ROUND_BREAK = 10;
+let combinations = [];
+
+
+/**
+ * Recursively sets up a new round (including round breaks) until the last
+ * round. Treats the preparation before the first round as a round break.
+ */
+function newRound(skt, prepTime, roundTime, rounds) {
+  skt.time = prepTime;
+
+  // Starts a new round break.
+  skt.prepTimer = setInterval(() => {
+    skt.emit("timer", skt.time);
+    console.log(skt.username + skt.time);
+    skt.time--;
+
+    if (skt.time === 0) { // Current round break ends.
+      skt.time = roundTime;
+      clearInterval(skt.prepTimer);
+
+      // Starts a new round.
+      skt.emit("newRound", skt.time);
+      skt.roundTimer = setInterval(() => {
+        skt.emit("timer", skt.time);
+        console.log(skt.username + skt.time);
+        skt.time--;
+
+        if (skt.time === 0) { // Current round ends.
+          clearInterval(skt.roundTimer);
+
+          if (rounds === 0) { // Last round.
+            return;
+          } else {
+            newRound(skt, ROUND_BREAK, roundTime, rounds - 1);
+          }
+        }
+      }, 1000);
+      skt.intervals.push(skt.roundTimer);
+    }
+  }, 1000);
+  skt.intervals.push(skt.prepTimer);
+}
+
 
 /** @class Room represents game rooms. */
 class Room {
@@ -53,7 +100,9 @@ class Room {
    */
   removePlayer(socket) {
     socket.roomNum = null;
+    socket.isHost = socket.isHost && false;
     this.socketList.delete(socket);
+    socket.intervals.forEach(clearInterval);
   }
 
   /**
@@ -196,8 +245,26 @@ class Room {
     return this.settings;
   }
 
-  // TODO: implement this
+  /**
+   * Starts the game in this room instance.
+   */
   startGame() {
+    this.inProgress = true;
+
+    this.socketList.forEach(skt => {
+      skt.intervals = [];
+      skt.emit("gameStarted", this.settings);
+      newRound(
+        skt,
+        () => {
+          return 0;
+        },
+        PREP_TIME,
+        this.settings.roundInterval / 1000,
+        this.settings.numOfRounds - 1
+      );
+    });
+
     return;
   }
 }
