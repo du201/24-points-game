@@ -22,15 +22,6 @@ let operators = [TIMES, DIVIDES, PLUS, MINUS];
 const server = "http://localhost:2000";
 const socket = io.connect(server);
 
-/*
-socket.on("joinRoomSuccess", () => {
-  alert("joinRoomSuccess");
-  this.setState({
-    pageController: "multiPlayerGamePage",//"waitForHostPage",
-  });
-});
-*/
-
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
@@ -123,7 +114,7 @@ class App extends Component {
       socket.emit("createRoom", this.state.username);
       socket.once("createRoomSuccess", (roomNum) => {
         this.setState({
-          pageController: "createRoomPage",
+          pageController: "createRoomPage", //to page 4
           roomNumber: roomNum, //string
           gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
         });
@@ -177,12 +168,13 @@ class App extends Component {
       username: this.state.username,
       room: this.state.roomNumber,
     });
+
     socket.once("joinRoomSuccess", () => {
-      alert("success!");
       this.setState({
         pageController: "waitForHostPage",
       });
     });
+
     socket.once("joinRoomFailure", (msg) => {
       switch (msg) {
         case "roomDoesNotExist":
@@ -202,7 +194,6 @@ class App extends Component {
           break;
       }
     });
-
   };
 
   /**
@@ -461,6 +452,7 @@ class App extends Component {
                 >
                   Singleplayer
                 </button>
+
               </div>
             </div>
             <div className="row h-25"></div>
@@ -619,55 +611,61 @@ class App extends Component {
         );
       case "joinRoomNumPage": //5
         return (
-          <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
-            <h1 className="cover-heading">
-              5th Page
+          <div className="container-fluid h-100">
+            <div className="row h-25">
+              <div className="col my-auto">
+                <ReturnHomePageButton
+                  onReturn={this.returnHomePageButtonPress}
+                ></ReturnHomePageButton>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col text-center my-auto">
+                <h1 className="cover-heading">
+                  5th Page
               <br />
               Please Enter the Room #
             </h1>
-            <p>
-              Your nickname: <strong>{this.state.username}</strong>
-            </p>
-            <div className="container">
-
-              {this.state.reenterUsername === true ? <div className="row">
-                <div className="col">
-                  <NameInputUI
-                    onChange={this.setStateName}
-                  ></NameInputUI>
-                </div>
-              </div> : null}
-
-              <div className="row">
-                <div className="col">
-                  <form className="form-inline justify-content-center">
-                    <div className="form-group mx-sm-3 mb-2">
-                      <label htmlFor="inputPassword2" className="sr-only">
-                        Password
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        className="form-control"
-                        id="inputPassword2"
-                        placeholder="Room Number"
-                        onChange={(event) =>
-                          this.setState({ roomNumber: event.target.value })
-                        }
-                      />
-                    </div>
-                    <button
-                      className="btn btn-primary mb-2"
-                      onClick={this.joinRoomKeyButtonPress}
-                    >
-                      Join
-                    </button>
-                  </form>
-                </div>
+                <p>
+                  Your nickname: <strong>{this.state.username}</strong>
+                </p>
               </div>
+            </div>
+            <div className="row h-25">
+              <div className="col text-center my-auto">
+                {this.state.reenterUsername === true ? <div className="row">
+                  <div className="col">
+                    <NameInputUI
+                      onChange={this.setStateName}
+                    ></NameInputUI>
+                  </div>
+                </div> : null}
+                <form>
+                  <div className="form-group">
+                    <label htmlFor="roomNumber" className="sr-only">
+                      Password
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      id="roomNumber"
+                      placeholder="Room Number"
+                      onChange={(event) =>
+                        this.setState({ roomNumber: event.target.value })
+                      }
+                    />
+                  </div>
+                </form>
+                <button
+                  className="btn btn-primary mb-2"
+                  onClick={this.joinRoomKeyButtonPress}
+                >
+                  Join
+                </button>
+              </div>
+            </div>
+            <div className="row h-25">
             </div>
           </div>
         );
