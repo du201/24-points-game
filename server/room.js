@@ -6,50 +6,7 @@ const MINUS = "-";
 const PREP_TIME = 5;
 // Time (in s) between rounds.
 const ROUND_BREAK = 10;
-let combinations = [];
-
-
-/**
- * Recursively sets up a new round (including round breaks) until the last
- * round. Treats the preparation before the first round as a round break.
- */
-function newRound(skt, prepTime, settings, rounds) {
-  skt.time = prepTime;
-
-  // Starts a new round break.
-  skt.prepTimer = setInterval(() => {
-    skt.emit("timer", skt.time);
-    skt.time--;
-
-    if (skt.time === 0) { // Current round break ends.
-      skt.time = settings.roundInterval / 1000;
-      clearInterval(skt.prepTimer);
-
-      // Starts a new round.
-      // TODO: Complete newRound emit
-      skt.emit("newRound", {
-        numbers: [1, 1, 1, 1],
-        settings: settings
-      });
-      skt.roundTimer = setInterval(() => {
-        skt.emit("timer", skt.time);
-        skt.time--;
-
-        if (skt.time === 0) { // Current round ends.
-          clearInterval(skt.roundTimer);
-
-          if (rounds === 0) { // Last round.
-            return;
-          } else {
-            newRound(skt, ROUND_BREAK, settings, rounds - 1);
-          }
-        }
-      }, 1000);
-      skt.intervals.push(skt.roundTimer);
-    }
-  }, 1000);
-  skt.intervals.push(skt.prepTimer);
-}
+const Solver = require("./solver.js")
 
 
 /** @class Room represents game rooms. */
@@ -82,6 +39,33 @@ class Room {
     this.host = host;
     host.isHost = true;
     this.addPlayer(host);
+    this.combinations = [];
+    this.solver = new Solver(this.settings);
+  }
+
+  /**
+   * Broadcasts message to all players in this room instance.
+   * 
+   * @param {string} event The event to be emitted to the clients
+   * @param {object} msg The message that accompanies the event
+   */
+  broadcast(event, msg) {
+    this.socketList.forEach(skt => {
+      skt.emit(
+        event,
+        msg
+      );
+    });
+  }
+
+  /**
+   * Closes the room and removes all players in this room instance.
+   */
+  closeRoom() {
+    this.socketList.forEach(skt => {
+      this.removePlayer(skt);
+      skt.emit("roomClosed");
+    });
   }
 
   /**
@@ -104,7 +88,9 @@ class Room {
     socket.roomNum = null;
     socket.isHost = socket.isHost && false;
     this.socketList.delete(socket);
-    socket.intervals.forEach(clearInterval);
+    if (socket.intervals !== null && socket.intervals !== undefined) {
+      socket.intervals.forEach(clearInterval);
+    }
   }
 
   /**
@@ -236,6 +222,9 @@ class Room {
         this.settings.numOfRounds = settings.numOfRounds;
       }
     }
+
+    // Updates the solver instance.
+    this.solver = new Solver(this.settings);
   }
 
   /**
@@ -248,18 +237,103 @@ class Room {
   }
 
   /**
+   * Generates a number combination for each round and calculates their results.
+   */
+  generateCombinations() {
+    for (let i = 0; i < this.settings.numOfRounds; i++) {
+      let combination = [];
+      for (let j = 0; j < this.settings.numOfSlots; j++) {
+        let max = this.settings.rangeHi;
+        let min = this.settings.rangeLo;
+
+        let num = Math.floor(Math.random() * (max - min + 1) + min);
+
+        let count = 0;
+        combination.forEach(elem => {
+          if (elem === num) {
+            count++;
+          }
+        });
+
+        // Regenerate if exceeds the max num of repeats defined by the settings.
+        while (count === this.settings.maxNumOfRepeats) {
+          num = Math.floor(Math.random() * (max - min + 1) + min);
+          count = 0;
+          combination.forEach(elem => {
+            if (elem === num) {
+              count++;
+            }
+          });
+        }
+        combination.push(num);
+      }
+
+      let results = this.solver.solve(combination);
+      let result = null;
+      if (results.length > 0) {
+        // Only send one result.
+        result = results[0];
+      }
+      this.combinations.push({combination, result});
+    }
+  }
+
+  /**
+   * Recursively sets up a new round (including round breaks) until the last
+   * round. Treats the preparation before the first round as a round break.
+   */
+  newRound(skt, prepTime, rounds) {
+    skt.time = prepTime;
+
+    // Starts a new round break.
+    skt.prepTimer = setInterval(() => {
+      skt.emit("timer", skt.time);
+      skt.time--;
+
+      if (skt.time === 0) { // Current round break ends.
+        skt.time = this.settings.roundInterval / 1000;
+        clearInterval(skt.prepTimer);
+
+        let roundNum = this.settings.numOfRounds - rounds - 1;
+        // Starts a new round.
+        skt.emit("newRound", {
+          numbers: this.combinations[roundNum].combination,
+          settings: this.settings
+        });
+        skt.roundTimer = setInterval(() => {
+          skt.emit("timer", skt.time);
+          skt.time--;
+
+          if (skt.time === 0) { // Current round ends.
+            clearInterval(skt.roundTimer);
+
+            if (rounds === 0) { // Last round.
+              return;
+            } else {
+              this.newRound(skt, ROUND_BREAK, rounds - 1);
+            }
+          }
+        }, 1000);
+        skt.intervals.push(skt.roundTimer);
+      }
+    }, 1000);
+    skt.intervals.push(skt.prepTimer);
+  }
+
+  /**
    * Starts the game in this room instance.
    */
   startGame() {
     this.inProgress = true;
 
+    this.generateCombinations();
+
     this.socketList.forEach(skt => {
       skt.intervals = [];
       skt.emit("gameStarted", this.settings);
-      newRound(
+      this.newRound(
         skt,
         PREP_TIME,
-        this.settings,
         this.settings.numOfRounds - 1
       );
     });

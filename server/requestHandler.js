@@ -136,18 +136,13 @@ class RequestHandler {
         "joinRoomFailure",
         "gameInProgress"
       );
+      return;
     }
 
     this.socket.emit("joinRoomSuccess");
     roomList[roomNum].addPlayer(this.socket);
 
-    let socketList = roomList[roomNum].getConnectionList();
-    socketList.forEach((skt) => {
-      skt.emit(
-        "roster",
-        roomList[roomNum].getUsernameList()
-      );
-    });
+    roomList[roomNum].broadcast("roster", roomList[roomNum].getUsernameList());
 
     console.log(`Player ${this.socket.username} joined room ${room}`);
   }
@@ -159,6 +154,7 @@ class RequestHandler {
    */
   leaveRoomHandler() {
     let room = this.socket.roomNum;
+    let isHost = this.socket.isHost;
     if (room !== null) {
       roomList[room].removePlayer(this.socket);
 
@@ -168,20 +164,15 @@ class RequestHandler {
       } else {
         let socketList = roomList[room].getConnectionList();
 
-        if (this.socket.isHost && !roomList[room].isRunning()) {
+        if (isHost && !roomList[room].isRunning()) {
           // Host leaves before the game starts
-          socketList.forEach(skt => {
-            roomList[room].removePlayer(skt);
-            skt.emit("roomClosed");
-          });
+          roomList[room].closeRoom();
           roomList[room] = null;
         } else {
-          socketList.forEach((skt) => {
-            skt.emit(
-              "roster",
-              roomList[room].getUsernameList()
-            );
-          });
+          roomList[room].broadcast(
+            "roster",
+            roomList[room].getUsernameList()
+          );
         }
       }
       /*
