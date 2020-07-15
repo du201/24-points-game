@@ -12,7 +12,7 @@ import tabImage from "./tabImage.png";
 import calculate from "./calculate.js";
 import checkValid from "./checkValid.js";
 import Roster from "./components/Roster";
-import $ from "jquery";
+//import $ from "jquery";
 import RoomNumInput from "./components/RoomNumInput";
 
 
@@ -48,15 +48,6 @@ class App extends Component {
     playerSolved: [], //array of string, the name of the players who solve the game in the current round
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
   };
-  /*
-    componentDidMount = () => {
-      $(".inputs").keyup(function () {
-        if (this.value.length === this.maxLength) {
-          $(this).closest("div").next("div").children('.inputs').focus();
-        }
-      });
-    };
-  */
 
   //helper functions (start)
   /**
@@ -208,6 +199,12 @@ class App extends Component {
           numOfRound: numOfRounds
         });
       });
+
+      //if the host of the room exits, all the players go back to the third page
+      socket.once("roomClosed", () => {
+        alert("The host has closed the room. You are kicked out of the room");
+        this.setState({ pageController: "gamePage" });
+      })
     });
 
     socket.once("joinRoomFailure", (msg) => {
