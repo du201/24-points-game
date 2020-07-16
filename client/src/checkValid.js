@@ -26,6 +26,13 @@ function checkValid(infix) {
 
 }
 
+/**
+ * 
+ * @param {array of string} infix the inputed expression from the user
+ * @param {array of int} paramPairIndex contains the index for each left and right parenthesis pair
+ * i.e. [1, 3, 5, 7] the first pair is at index 1 and 3, the second pair is at index 5 and 7
+ * @returns whether or not the expression is valid
+ */
 function paramPairFinder(infix, paramPairIndex) {
   let leftParamStack = [];
   let paramBalanceCount = 0;

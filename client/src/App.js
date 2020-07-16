@@ -528,7 +528,6 @@ class App extends Component {
       } else {
         this.setState({ answer: result });
         socket.emit("sendSolution", this.state.expressionInput);
-        console.log(this.state.expressionInput);
       }
     }
     else {
