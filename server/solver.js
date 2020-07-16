@@ -271,6 +271,7 @@ class Solver {
       expList.push(new Expression(n));
     }
     let result = [];
+    this.answers.clear();
     this.solveHelper(expList);
     this.answers.forEach(elem => {
       result.push(elem);

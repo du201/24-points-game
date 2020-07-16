@@ -45,7 +45,7 @@ class Room {
 
   /**
    * Broadcasts message to all players in this room instance.
-   * 
+   *
    * @param {string} event The event to be emitted to the clients
    * @param {object} msg The message that accompanies the event
    */
