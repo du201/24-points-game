@@ -14,6 +14,8 @@ import checkValid from "./checkValid.js";
 import Roster from "./components/Roster";
 import $ from "jquery";
 import RoomNumInput from "./components/RoomNumInput";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import Loader from 'react-loader-spinner'
 
 
 const TIMES = "×";
@@ -28,7 +30,7 @@ const socket = io.connect(server);
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: "multiPlayerGamePage", //default should be homePage
+    pageController: "homePage", //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
@@ -155,10 +157,26 @@ class App extends Component {
    * the creator of the game room uses this function to start the multi-player game
    */
   startGameButtonPress = () => {
-    this.setState({
-      pageController: "multiPlayerGamePage", //to 7th page
-    });
     socket.emit("startGame");
+    //first go to the loading page while waiting for the server to finish calculating
+    this.setState({
+      pageController: "gameLoadingPage", //to 9th page
+    });
+    socket.once("gameStarted", ({ numOfSlots, targetNumber, availableOperators, rangeLo,
+      rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
+      //go to the game page
+      this.setState({ pageController: "multiPlayerGamePage", });
+      //adopt the settings set by the game host
+      this.setState({
+        gameModeBasicSetting: { slotNum: numOfSlots, targetNum: targetNumber },
+        availableOperator: availableOperators,
+        rangeOfAvailableNumberLowBound: rangeLo,
+        rangeOfAvailableNumberHighBound: rangeHi,
+        maxRepeatNum: maxNumOfRepeats,
+        timeBetweenRound: roundInterval,
+        numOfRound: numOfRounds
+      });
+    });
   };
 
 
@@ -184,7 +202,7 @@ class App extends Component {
         this.setState({ playerRoster: roster });
       });
       //start to wait for the host to start the game and then go to the "multiPlayerGamePage"
-      socket.on("gameStarted", ({ numOfSlots, targetNumber, availableOperators, rangeLo,
+      socket.once("gameStarted", ({ numOfSlots, targetNumber, availableOperators, rangeLo,
         rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
         //go to the game page
         this.setState({ pageController: "multiPlayerGamePage", });
@@ -895,6 +913,22 @@ class App extends Component {
               onReturn={this.returnHomePageButtonPress}
             ></ReturnHomePageButton>
             <h1 className="cover-heading">Game In Progress...(singleplayer)</h1>
+          </div>
+        );
+      case "gameLoadingPage": //9: currently just for the host
+        return (
+          <div className="container h-100">
+            <div className="row h-100">
+              <div className="col my-auto text-center">
+                <h2>The Game is Preparing...</h2>
+                <Loader
+                  type="Oval"
+                  color="#00BFFF"
+                  height={300}
+                  width={300}
+                />
+              </div>
+            </div>
           </div>
         );
       default:
