@@ -12,7 +12,7 @@ import tabImage from "./tabImage.png";
 import calculate from "./calculate.js";
 import checkValid from "./checkValid.js";
 import Roster from "./components/Roster";
-//import $ from "jquery";
+import $ from "jquery";
 import RoomNumInput from "./components/RoomNumInput";
 
 
@@ -28,7 +28,7 @@ const socket = io.connect(server);
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: "homePage", //default should be homePage
+    pageController: "multiPlayerGamePage", //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
@@ -281,6 +281,21 @@ class App extends Component {
   };
 
   /**
+   * Change the multi-player game settings back to default value
+   */
+  backToDefaultSettings = () => {
+    this.setState({
+      gameModeBasicSetting: { slotNum: 4, targetNum: 24 },
+      availableOperator: [TIMES, DIVIDES, PLUS, MINUS],
+      rangeOfAvailableNumberLowBound: 1,
+      rangeOfAvailableNumberHighBound: 13,
+      maxRepeatNum: 4,
+      timeBetweenRound: 30000,
+      numOfRound: 10,
+    });
+  }
+
+  /**
    * set the username from the user input
    */
   setStateName = (event) => {
@@ -513,6 +528,7 @@ class App extends Component {
       } else {
         this.setState({ answer: result });
         socket.emit("sendSolution", this.state.expressionInput);
+        console.log(this.state.expressionInput);
       }
     }
     else {
@@ -598,12 +614,9 @@ class App extends Component {
             <div className="row h-25">
               <div className="col text-center my-auto">
                 <p>Enter your nickname</p>
-                <input
-                  className="form-control mb-2"
-                  type="text"
-                  maxLength="15"
+                <NameInputUI
                   onChange={this.setStateName}
-                ></input>
+                ></NameInputUI>
                 <button
                   className="btn btn-primary mr-1"
                   onClick={this.createRoomButtonPress}
@@ -646,6 +659,7 @@ class App extends Component {
                     onAvailableOperatorCheckbox={
                       this.availableOperatorCheckboxHandler
                     }
+                    backToDefaultSettings={this.backToDefaultSettings}
                     slotNum={this.state.gameModeBasicSetting.slotNum}
                     targetNum={this.state.gameModeBasicSetting.targetNum}
                     showMenuBoolean={this.state.gameModeSettingMenuOpen}
@@ -698,6 +712,7 @@ class App extends Component {
                   <div className="col text-center my-auto">
                     <button
                       className="btn btn-primary m-3"
+                      id="startGame"
                       onClick={this.startGameButtonPress}
                     >
                       Start

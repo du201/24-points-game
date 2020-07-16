@@ -58,6 +58,8 @@ const MenuSetting = (props) => {
                       className="form-control"
                       type="number"
                       id="targetNum"
+                      min="12"
+                      max="36"
                       onChange={props.targetNumChangeHandler}
                       value={props.targetNum}
                     ></input>
@@ -100,7 +102,7 @@ const MenuSetting = (props) => {
                     value={TIMES}
                     className="small-checkbox"
                     onChange={props.onAvailableOperatorCheckbox}
-                    defaultChecked={props.availableOperator.includes(TIMES)}
+                    checked={props.availableOperator.includes(TIMES)}
                   />
                   <label htmlFor="checkMultiply">
                     <img src="multiplySign.png" alt="multiply" />
@@ -112,7 +114,7 @@ const MenuSetting = (props) => {
                     id="checkDivide"
                     value={DIVIDES}
                     onChange={props.onAvailableOperatorCheckbox}
-                    defaultChecked={props.availableOperator.includes(DIVIDES)}
+                    checked={props.availableOperator.includes(DIVIDES)}
                   />
                   <label htmlFor="checkDivide">
                     <img src="divideSign.png" alt="divide" />
@@ -124,7 +126,7 @@ const MenuSetting = (props) => {
                     id="checkAdd"
                     value={PLUS}
                     onChange={props.onAvailableOperatorCheckbox}
-                    defaultChecked={props.availableOperator.includes(PLUS)}
+                    checked={props.availableOperator.includes(PLUS)}
                   />
                   <label htmlFor="checkAdd">
                     <img src="addSign.png" alt="add" />
@@ -136,7 +138,7 @@ const MenuSetting = (props) => {
                     id="checkSubtract"
                     value={MINUS}
                     onChange={props.onAvailableOperatorCheckbox}
-                    defaultChecked={props.availableOperator.includes(MINUS)}
+                    checked={props.availableOperator.includes(MINUS)}
                   />
                   <label htmlFor="checkSubtract">
                     <img src="subtractSign.png" alt="subtract" />
@@ -218,6 +220,12 @@ const MenuSetting = (props) => {
         onClick={props.menuCloseHandler}
       >
         Apply
+      </button>
+      <button
+        className="btn btn-info btn-lg mt-2 ml-2"
+        onClick={props.backToDefaultSettings}
+      >
+        Back to Default Settings
       </button>
     </div >
   );

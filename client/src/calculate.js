@@ -33,7 +33,6 @@ function precedenceCheck(operator) {
  */
 function calculate(infix) {
   let postfix = infixToPostfix(infix);
-  console.log(postfix);
   let result = computePostfix(postfix);
   return result;
 }
@@ -49,7 +48,6 @@ function infixToPostfix(infix) {
   postfixStack = [];
   infix.forEach((current) => {
     if (isOperator(current)) {
-      console.log("found");
       operatorStack.push(current);
       //check the previous operators in the operatorStack
       //if no previous operator, push the current onto the stack
@@ -120,7 +118,6 @@ function computePostfix(postfix) {
   operandStack = [];
   postfixStack = [];
   for (let current of postfix) {
-    console.log(postfixStack);
     if (isOperator(current)) {
       let operandRight = postfixStack.pop();
       let operandLeft = postfixStack.pop();

@@ -11,7 +11,7 @@ const NameInputUI = (props) => {
         <input
           type="text"
           className="form-control"
-          placeholder="Nickname"
+          placeholder="Nickname (Max 15 Chars)"
           maxLength="15"
           onChange={(event) => props.onChange(event)}
         />

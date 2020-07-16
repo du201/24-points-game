@@ -1,15 +1,20 @@
 import React, { Component } from "react";
 import "./GameBoard.css";
 
+/**
+ * The place where the game UI exists
+ */
 class GameBoard extends Component {
 
   render() {
     let displayExpression = "";
+    //Add space between each char
     this.props.expressionInput.map((num) => {
       displayExpression += num + " ";
       return num;
     });
 
+    //add two parentheses to the available operator list
     let final_operators = [...this.props.operators];
     final_operators.push('(');
     final_operators.push(')');

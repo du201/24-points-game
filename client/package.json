@@ -12,6 +12,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
+    "react-keyboard-event-handler": "^1.5.4",
     "react-scripts": "3.4.1",
     "socket.io-client": "^2.3.0",
     "typescript": "^3.9.6"
