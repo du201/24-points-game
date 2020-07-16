@@ -22,10 +22,9 @@ class GameBoard extends Component {
       <React.Fragment>
         <div className="row h-25">
           {this.props.gameNumbers.map((eachNum, index) => {
-            return (<div className="col text-center my-auto">
+            return (<div key={index} className="col text-center my-auto">
               <button
                 className="btn btn-primary btn-lg w-75"
-                key={index}
                 value={eachNum}
                 onClick={() => {
                   this.props.on_addToInput(eachNum);
@@ -52,10 +51,9 @@ class GameBoard extends Component {
         </div>
         <div className="row h-25">
           {final_operators.map((eachOpe, index) => {
-            return (<div className="col text-center my-auto">
+            return (<div key={index} className="col text-center my-auto">
               <button
                 className="btn btn-info btn-lg w-75"
-                key={index}
                 value={eachOpe}
                 onClick={() => {
                   this.props.on_addToInput(eachOpe);

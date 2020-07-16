@@ -24,13 +24,48 @@ const PLUS = "+";
 const MINUS = "-";
 let operators = [TIMES, DIVIDES, PLUS, MINUS];
 
+//the page const
+const HOMEPAGE = "homePage"; //1
+const SOLVEPAGE = "solvePage"; //2
+const SELECTPAGE = "gamePage"; //3
+const HOSTPAGE = "createRoomPage"; //4
+const JOINROOMPAGE = "joinRoomNumPage"; //5
+const WAITFORHOSTPAGE = "waitForHostPage"; //6
+const MULTIGAMEPAGE = "multiPlayerGamePage"; //7
+const SINGLEGAMEPAGE = "singlePlayerGamePage"; //8
+const LOADINGPAGE = "gameLoadingPage"; //9
+const COUNTDOWNPAGE = "preGameCountDownPage"; //10
+
+//the message between client and server
+const CREATE_ROOM = "createRoom";
+const JOIN_ROOM = "joinRoom";
+const EXIT_ROOM = "exitRoom";
+const CHANGE_SETTINGS = "changeSettings";
+const START_GAME = "startGame";
+const SEND_SOLUTION = "sendSolution";
+const CREATE_ROOM_SUCCESS = "createRoomSuccess";
+const CREATE_ROOM_FAILURE = "createRoomFailure";
+const JOIN_ROOM_SUCCESS = "joinRoomSuccess";
+const JOIN_ROOM_FAILURE = "joinRoomFailure";
+const ROSTER = "roster";
+const SETTINGS = "settings";
+const TIMER = "timer";
+const GAME_STARTED = "gameStarted";
+const NEW_ROUND = "newRound";
+const END_ROUND = "endRound";
+const SOLUTION_CORRECT = "solutionCorrect";
+const SOLUTION_INCORRECT = "solutionIncorrect";
+const PLAYER_SOLVED = "playerSolved";
+const CONNECT_TIMEOUT = "connectionTimeOut";
+const ROOM_CLOSED = "roomClosed";
+
 const server = "http://localhost:2000";
 const socket = io.connect(server);
 
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: "homePage", //default should be homePage
+    pageController: HOMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
@@ -49,6 +84,7 @@ class App extends Component {
     playerRoster: [], //array of string, the name of all the players in the room
     playerSolved: [], //array of string, the name of the players who solve the game in the current round
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
+    timeInGame: 60, //in s, the time sent by the server and displayed in the browser
   };
 
   //helper functions (start)
@@ -75,7 +111,7 @@ class App extends Component {
    */
   gameModeButtonPress = () => {
     this.setState({
-      pageController: "gamePage", //to page 3
+      pageController: SELECTPAGE, //to page 3
     });
   };
 
@@ -85,7 +121,7 @@ class App extends Component {
    */
   solveModeButtonPress = () => {
     this.setState({
-      pageController: "solvePage", //to page 2
+      pageController: SOLVEPAGE, //to page 2
     });
   };
 
@@ -95,7 +131,7 @@ class App extends Component {
    */
   returnHomePageButtonPress = () => {
     this.setState({
-      pageController: "homePage", //to page 1
+      pageController: HOMEPAGE, //to page 1
     });
   };
 
@@ -105,31 +141,44 @@ class App extends Component {
    */
   exitRoomButtonPress = () => {
     this.setState({
-      pageController: "gamePage", //to page 3
+      pageController: SELECTPAGE, //to page 3
     });
-    socket.emit("exitRoom");
+    socket.emit(EXIT_ROOM);
   };
 
+
+  /**
+   * Use this function after starting connnecting to the server
+   */
+  serverDisconnectListen = () => {
+    socket.on("disconnect", () => {
+      alert("Disconnected from the Server, go back to the home page");
+      this.setState({
+        pageController: HOMEPAGE, //to page 1
+      });
+    });
+  }
   /**
    * In page 3
    * The creator of the room uses this to request the server for a room
    */
   createRoomButtonPress = () => {
     if (this.hasValidUsername()) {
-      socket.emit("createRoom", this.state.username);
-      socket.once("createRoomSuccess", (roomNum) => {
+      socket.emit(CREATE_ROOM, this.state.username);
+      socket.once(CREATE_ROOM_SUCCESS, (roomNum) => {
+        this.serverDisconnectListen();
         this.setState({
-          pageController: "createRoomPage", //to page 4
+          pageController: HOSTPAGE, //to page 4
           roomNumber: roomNum, //string
           gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
         });
         //be able to see who is currently in the room
         //also be able to see who is in the room and who solved the problem during the game
-        socket.on("roster", (roster) => {
+        socket.on(ROSTER, (roster) => {
           this.setState({ playerRoster: roster });
         });
       });
-      socket.once("createRoomFailure", (msg) => {
+      socket.once(CREATE_ROOM_FAILURE, (msg) => {
         alert(msg); //1. noRoomsAvailable - all room numbers are used
       });
     } else {
@@ -145,7 +194,7 @@ class App extends Component {
   joinRoomButtonPress = () => {
     if (this.hasValidUsername()) {
       this.setState({
-        pageController: "joinRoomNumPage", //to 5th page
+        pageController: JOINROOMPAGE, //to 5th page
       });
     } else {
       alert("please enter a valid nickname");
@@ -157,27 +206,44 @@ class App extends Component {
    * the creator of the game room uses this function to start the multi-player game
    */
   startGameButtonPress = () => {
-    socket.emit("startGame");
+    socket.emit(START_GAME);
     //first go to the loading page while waiting for the server to finish calculating
     this.setState({
-      pageController: "gameLoadingPage", //to 9th page
+      pageController: LOADINGPAGE, //to 9th page
     });
-    socket.once("gameStarted", ({ numOfSlots, targetNumber, availableOperators, rangeLo,
-      rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
+    socket.once(GAME_STARTED, (settings) => {
       //go to the game page
-      this.setState({ pageController: "multiPlayerGamePage", });
+      this.setState({ pageController: COUNTDOWNPAGE, });
       //adopt the settings set by the game host
-      this.setState({
-        gameModeBasicSetting: { slotNum: numOfSlots, targetNum: targetNumber },
-        availableOperator: availableOperators,
-        rangeOfAvailableNumberLowBound: rangeLo,
-        rangeOfAvailableNumberHighBound: rangeHi,
-        maxRepeatNum: maxNumOfRepeats,
-        timeBetweenRound: roundInterval,
-        numOfRound: numOfRounds
+      this.settingsReassign(settings);
+      socket.on(TIMER, (time) => {
+        this.setState({ timeInGame: time });
+      });
+      socket.on(NEW_ROUND, ({ numbers, settings }) => {
+        this.settingsReassign(settings);
+        this.setState({ pageController: MULTIGAMEPAGE, });
+        this.setState({ multiplayerGameNumbers: numbers });
       });
     });
   };
+
+
+  /**
+   * This function is used when the server sends settings data to the client
+   * @param settings all of the settings parameters
+   */
+  settingsReassign = ({ numOfSlots, targetNumber, availableOperators, rangeLo,
+    rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
+    this.setState({
+      gameModeBasicSetting: { slotNum: numOfSlots, targetNum: targetNumber },
+      availableOperator: availableOperators,
+      rangeOfAvailableNumberLowBound: rangeLo,
+      rangeOfAvailableNumberHighBound: rangeHi,
+      maxRepeatNum: maxNumOfRepeats,
+      timeBetweenRound: roundInterval,
+      numOfRound: numOfRounds
+    });
+  }
 
 
   /**
@@ -187,25 +253,26 @@ class App extends Component {
    */
 
   joinRoomKeyButtonPress = () => {
-    socket.emit("joinRoom", {
+    socket.emit(JOIN_ROOM, {
       username: this.state.username,
       room: this.state.roomNumber,
     });
 
-    socket.once("joinRoomSuccess", () => {
+    socket.once(JOIN_ROOM_SUCCESS, () => {
+      this.serverDisconnectListen();
       this.setState({
-        pageController: "waitForHostPage",
+        pageController: WAITFORHOSTPAGE,
       });
       //be able to see the current players waiting in the room while in the wait room
       //also be able to see the player list and who has solved the problem in the game room
-      socket.on("roster", (roster) => {
+      socket.on(ROSTER, (roster) => {
         this.setState({ playerRoster: roster });
       });
       //start to wait for the host to start the game and then go to the "multiPlayerGamePage"
-      socket.once("gameStarted", ({ numOfSlots, targetNumber, availableOperators, rangeLo,
+      socket.once(GAME_STARTED, ({ numOfSlots, targetNumber, availableOperators, rangeLo,
         rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
         //go to the game page
-        this.setState({ pageController: "multiPlayerGamePage", });
+        this.setState({ pageController: COUNTDOWNPAGE, });
         //adopt the settings set by the game host
         this.setState({
           gameModeBasicSetting: { slotNum: numOfSlots, targetNum: targetNumber },
@@ -216,16 +283,22 @@ class App extends Component {
           timeBetweenRound: roundInterval,
           numOfRound: numOfRounds
         });
+        socket.on(TIMER, (time) => {
+          this.setState({ timeInGame: time });
+        });
+        socket.on(NEW_ROUND, () => {
+          this.setState({ pageController: MULTIGAMEPAGE, });
+        });
       });
 
       //if the host of the room exits, all the players go back to the third page
-      socket.once("roomClosed", () => {
-        alert("The host has closed the room. You are kicked out of the room");
-        this.setState({ pageController: "gamePage" });
+      socket.once(ROOM_CLOSED, () => {
+        alert("The host has closed the room. You are removed from the room");
+        this.setState({ pageController: SELECTPAGE });
       })
     });
 
-    socket.once("joinRoomFailure", (msg) => {
+    socket.once(JOIN_ROOM_FAILURE, (msg) => {
       switch (msg) {
         case "roomDoesNotExist":
           alert("This room does not exist, please try another room number");
@@ -251,7 +324,7 @@ class App extends Component {
    */
   enterSinglePlayerButtonPress = () => {
     this.setState({
-      pageController: "singlePlayerGamePage", //to page 8th
+      pageController: SINGLEGAMEPAGE, //to page 8th
     });
   };
 
@@ -294,7 +367,7 @@ class App extends Component {
       roundInterval: this.state.timeBetweenRound, //int (ms)
       numOfRounds: this.state.numOfRound, //int
     };
-    socket.emit("changeSettings", settingPackageObject);
+    socket.emit(CHANGE_SETTINGS, settingPackageObject);
     console.log(settingPackageObject);
   };
 
@@ -545,7 +618,7 @@ class App extends Component {
         this.setState({ answer: "Invalid" });
       } else {
         this.setState({ answer: result });
-        socket.emit("sendSolution", this.state.expressionInput);
+        socket.emit(SEND_SOLUTION, this.state.expressionInput);
       }
     }
     else {
@@ -557,7 +630,7 @@ class App extends Component {
   //page display switch function
   renderSwitch(pageName) {
     switch (pageName) {
-      case "homePage": //1
+      case HOMEPAGE: //1
         return (
           <div className="container h-100">
             <div className="row h-25"></div>
@@ -592,7 +665,7 @@ class App extends Component {
             <div className="row h-25"></div>
           </div>
         );
-      case "solvePage": //2
+      case SOLVEPAGE: //2
         return (
           <div className="container-fluid h-100">
             <div className="row">
@@ -611,7 +684,7 @@ class App extends Component {
             </div>
           </div>
         );
-      case "gamePage": //3
+      case SELECTPAGE: //3
         return (
           <div className="container-fluid h-100">
             <div className="row h-25">
@@ -633,6 +706,7 @@ class App extends Component {
                 <p>Enter your nickname</p>
                 <NameInputUI
                   onChange={this.setStateName}
+                  placeHolder="Char Length <= 15"
                 ></NameInputUI>
                 <button
                   className="btn btn-primary mr-1"
@@ -654,7 +728,7 @@ class App extends Component {
           </div>
 
         );
-      case "createRoomPage": //4
+      case HOSTPAGE: //4
         return (
           <div className="container-fluid h-100">
             {this.state.gameModeSettingMenuOpen === true ?
@@ -749,7 +823,7 @@ class App extends Component {
           </div>
 
         );
-      case "joinRoomNumPage": //5
+      case JOINROOMPAGE: //5
         return (
           <div className="container-fluid h-100">
             <div className="row h-25">
@@ -766,17 +840,16 @@ class App extends Component {
                 <br />
                 Please Enter the Room #
                 </h1>
-                <p>
-                  Your nickname: <strong>{this.state.username}</strong>
-                </p>
               </div>
             </div>
             <div className="row h-25">
               <div className="col text-center h-100">
                 <div className="row h-50">
                   <div className="col">
+                    Your nickname: <strong>{this.state.username}</strong>
                     <NameInputUI
                       onChange={this.setStateName}
+                      placeHolder={this.state.username}
                     ></NameInputUI>
                   </div>
                 </div>
@@ -801,7 +874,7 @@ class App extends Component {
             </div>
           </div>
         );
-      case "waitForHostPage": //6
+      case WAITFORHOSTPAGE: //6
         return (
           <div className="container-fluid h-100">
             <div className="row h-25">
@@ -837,7 +910,7 @@ class App extends Component {
           </div>
 
         );
-      case "multiPlayerGamePage": //7
+      case MULTIGAMEPAGE: //7
         return (
           <div className="container-fluid h-100">
             <div className="row h-100">
@@ -878,7 +951,13 @@ class App extends Component {
               </div>
               <div className="col col-2 h-100">
                 <div className="row h-25">
-                  <div className="col h-100 text-center">
+                  <div className="col text-center my-auto">
+                    <h3>Time (s) Left:</h3>
+                    <h2>{this.state.timeInGame}s</h2>
+                  </div>
+                </div>
+                <div className="row h-25">
+                  <div className="col my-auto text-center">
                     Total Player#/ Player Solved#
                     <br />
                     {this.state.playerRoster.length}/{this.state.playerSolved.length}
@@ -906,7 +985,7 @@ class App extends Component {
             </div>
           </div>
         );
-      case "singlePlayerGamePage": //8
+      case SINGLEGAMEPAGE: //8
         return (
           <div>
             <ReturnHomePageButton
@@ -915,7 +994,7 @@ class App extends Component {
             <h1 className="cover-heading">Game In Progress...(singleplayer)</h1>
           </div>
         );
-      case "gameLoadingPage": //9: currently just for the host
+      case LOADINGPAGE: //9: currently just for the host
         return (
           <div className="container h-100">
             <div className="row h-100">
@@ -927,6 +1006,17 @@ class App extends Component {
                   height={300}
                   width={300}
                 />
+              </div>
+            </div>
+          </div>
+        );
+      case COUNTDOWNPAGE: //10: for both the host and the player
+        return (
+          <div className="container h-100">
+            <div className="row h-100">
+              <div className="col my-auto text-center">
+                <h1>Final Countdown!</h1>
+                <h1>{this.state.timeInGame}</h1>
               </div>
             </div>
           </div>
