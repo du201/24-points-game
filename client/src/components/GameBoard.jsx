@@ -63,14 +63,20 @@ class GameBoard extends Component {
           })}
         </div>
         <div className="row h-25">
-          <div className="col col-4 text-center my-auto">
+          <div className="col col-4 text-center h-100">
             <button
               className="btn btn-success btn-lg w-75"
               onClick={this.props.on_calculateExpression}
-            ><h1>=</h1></button>
+            ><h1>Submit</h1></button>
+            <button
+              className="btn btn-warning btn-lg w-75 mt-2"
+              onClick={this.props.on_noSolution}
+            ><h4>No Solution</h4></button>
           </div>
-          <div className="col col-8 text-center my-auto">
-            <h1>Answer: {this.props.answer}</h1>
+          <div className="col col-8 text-center h-100">
+            <h4>Answer: {this.props.answer}</h4>
+            <h4>(Testing) Server Response Would Appear Below...</h4>
+            <h4>{this.props.correctOrNotText}</h4>
           </div>
         </div>
       </React.Fragment>

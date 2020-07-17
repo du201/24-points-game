@@ -4,14 +4,14 @@ import React from "react";
  * 
  * Display the player solution ranks (three) between rounds
  */
-const SolutionsRank = (props) => {
+const ScoresRank = (props) => {
   return (
     <React.Fragment>
-      {props.playerSolutions.map((pair, index) => {
+      {props.playerScores.map((pair, index) => {
         return <div className="card bg-info mb-1" key={index}>
           <div className="card-body">
             <div>{pair.name}</div>
-            <div>{pair.solution}</div>
+            <div>{pair.score}</div>
           </div>
         </div>
       })}
@@ -20,4 +20,4 @@ const SolutionsRank = (props) => {
   );
 };
 
-export default SolutionsRank;
+export default ScoresRank;

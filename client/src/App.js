@@ -17,6 +17,7 @@ import RoomNumInput from "./components/RoomNumInput";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from 'react-loader-spinner';
 import SolutionsRank from "./components/SolutionsRank";
+import ScoresRank from "./components/ScoresRank";
 
 
 const TIMES = "×";
@@ -70,6 +71,8 @@ class App extends Component {
     pageController: HOMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
+
+    //below are the settings for the multi-player game
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
     rangeOfAvailableNumberLowBound: 1,
     rangeOfAvailableNumberHighBound: 13,
@@ -77,8 +80,10 @@ class App extends Component {
     timeBetweenRound: 30000, //the time of each round in ms, in client the display is s
     numOfRound: 10, //number of rounds in multi-player mode
     availableOperator: operators, //the operators available for players to use in their expressions
+
     expressionInput: [], //array of string, the inputed expression from the user
-    answer: null, //int, the calculated answer of the input expression 
+    answer: null, //int, the calculated answer of the input expression
+
 
     //Below are the signals received from the server
     roomNumber: null,
@@ -87,11 +92,15 @@ class App extends Component {
     playerRoster: [], //array of string, the name of all the players in the room
     playerSolved: [], //array of string, the name of the players who solve the game in the current round
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
-    timeInGame: 60, //in s, the time sent by the server and displayed in the browser
-    whichRound: 1, //which round do we currently in
+    timeInGame: 5, //in s, the time sent by the server and displayed in the browser
+    whichRound: 0, //which round do we currently in
     solution: "3+5*2", //the solution solved by the computer for the problem in the current round
-    playerSolutions: [{ name: "Joseph", solution: "3+7*5" }, { name: "Xin", solution: "3+7*5" }, { name: "Du", solution: "3+7*5" }], //the top three solutions (if there are three) done by the players for the problem in the current round
-
+    //the top three solutions (if there are three) done by the players for the problem in the current round
+    playerSolutions: [{ name: "Joseph", solution: "3+7*5" }, { name: "Xin", solution: "3+7*5" }, { name: "Du", solution: "3+7*5" }],
+    multiplayerScore: 0, //the score received from the server
+    correctOrNotText: "", //the text indicated the judgement from the server
+    //the top three scores of the players
+    playerScores: [{ name: "Joseph", score: 100 }, { name: "Williams", score: 50 }, { name: "Gang", score: 30 }],
   };
 
   /**
@@ -151,9 +160,24 @@ class App extends Component {
       pageController: SELECTPAGE, //to page 3
     });
     socket.emit(EXIT_ROOM);
+    //set all of the game-related states back to default
+    this.backToDefaultAllStates();
+
   };
 
+  /**
+   * Set all the states back to their default value
+   * Needs further editing during the developing process
+   */
+  backToDefaultAllStates = () => {
+    this.backToDefaultSettings();
+    this.setState({
+      username: "",
+      gameModeSettingMenuOpen: false,
+      expressionInput: [],
 
+    });
+  };
   /**
    * Use this function after starting connnecting to the server
    */
@@ -236,11 +260,39 @@ class App extends Component {
         this.setState({ timeInGame: time });
       });
       socket.on(NEW_ROUND, ({ numbers, settings }) => {
+        //increase the round number by 1
+        this.setState({ whichRound: this.state.whichRound + 1 });
         this.settingsReassign(settings);
-        this.setState({ pageController: MULTIGAMEPAGE, });
         this.setState({ multiplayerGameNumbers: numbers });
         //create a multiplayerButtonDisable array that has the same length as multiplayerGameNumbers
         this.createButtonDisableStatus(numbers);
+        //always put the page changing mechanism at the end to insure proper rendering
+        this.setState({ pageController: MULTIGAMEPAGE, });
+        //listen to the response from the server about the correctness of the submitted answer
+        socket.on(SOLUTION_CORRECT, (score) => {
+          this.setState({ multiplayerScore: score });
+          this.setState({ correctOrNotText: "Your Answer is Correct!" });
+          console.log("correct");
+        });
+        socket.on(SOLUTION_INCORRECT, () => {
+          this.setState({ correctOrNotText: "Sorry, your answer is not correct!" });
+          console.log("incorrect");
+        });
+        //updating the roster on the side of the gameboard
+        socket.on(PLAYER_SOLVED, (playerSolved) => {
+          this.setState({ playerSolved: playerSolved });
+        });
+      });
+
+      socket.on(END_ROUND, ({ solution, playerSolutions }) => {
+        this.setState({ solution: solution });
+        this.setState({ playerSolutions: playerSolutions });
+        //empty some states to prepare for the next round
+        this.setState({ correctOrNotText: "" });
+        this.setState({ multiplayerScore: 0 });
+        this.setState({ playerSolved: [] });
+        //always put the page changing mechanism at the end to insure proper rendering
+        this.setState({ pageController: BTWROUNDPAGE });
       });
     });
   }
@@ -348,6 +400,14 @@ class App extends Component {
   };
 
   /**
+   * When no solution exists for the current problem
+   * sends null to the server in the SEND_SOLUTION event
+   */
+  noSolutionHandler = () => {
+    socket.emit(SEND_SOLUTION, null);
+  };
+
+  /**
    * 
    * change the value of the target number for multi-player game
    */
@@ -375,7 +435,10 @@ class App extends Component {
       numOfRounds: this.state.numOfRound, //int
     };
     socket.emit(CHANGE_SETTINGS, settingPackageObject);
-    console.log(settingPackageObject);
+    //receive the final version of the settings from the server and apply that to the client
+    socket.once(SETTINGS, (settings) => {
+      this.settingsReassign(settings);
+    });
   };
 
   /**
@@ -643,6 +706,7 @@ class App extends Component {
         socket.emit(SEND_SOLUTION, this.state.expressionInput);
       }
     }
+
     else {
       this.setState({ answer: "Invalid" });
     }
@@ -938,24 +1002,24 @@ class App extends Component {
               <div className="col col-2 h-100">
                 <div className="row h-25">
                   <div className="col text-center my-auto h-50">
-                    <ReturnHomePageButton
-                      onReturn={this.returnHomePageButtonPress}
-                    ></ReturnHomePageButton>
+                    <CancelRoomCreateButton
+                      onCancel={this.exitRoomButtonPress}
+                    ></CancelRoomCreateButton>
                   </div>
                 </div>
                 <div className="row h-25">
                   <div className="col text-center my-auto">
-                    <h1>My Current Score: 100</h1>
+                    <h1>My Current Score: {this.state.multiplayerScore}</h1>
                   </div>
                 </div>
                 <div className="row h-25">
                   <div className="col text-center my-auto">
-                    <h1>My Name: Xin</h1>
+                    <h1>My Name: {this.state.username}</h1>
                   </div>
                 </div>
                 <div className="row h-25">
                   <div className="col text-center my-auto">
-                    <h1>Round: 6 / 10</h1>
+                    <h1>Round: {this.state.whichRound} / {this.state.numOfRound}</h1>
                   </div>
                 </div>
               </div>
@@ -969,7 +1033,9 @@ class App extends Component {
                   on_deleteInput={this.deleteInputHandler}
                   on_calculateExpression={this.calculateExpressionHandler}
                   answer={this.state.answer}
-                  multiplayerButtonDisable={this.state.multiplayerButtonDisable}></GameBoard>
+                  multiplayerButtonDisable={this.state.multiplayerButtonDisable}
+                  correctOrNotText={this.state.correctOrNotText}
+                  on_noSolution={this.noSolutionHandler}></GameBoard>
               </div>
               <div className="col col-2 h-100">
                 <div className="row h-25">
@@ -985,7 +1051,7 @@ class App extends Component {
                     {this.state.playerRoster.length}/{this.state.playerSolved.length}
                   </div>
                 </div>
-                <div className="row h-75">
+                <div className="row h-50">
                   <div className="col h-100 overflow-auto">
                     <Roster
                       playerRoster={this.state.playerRoster}
@@ -1045,10 +1111,10 @@ class App extends Component {
         );
       case BTWROUNDPAGE: //11: the page being displayed between each round of the game
         return (
-          <div className="container h-100">
+          <div className="container-fluid h-100">
             <div className="row h-25">
               <div className="col my-auto text-center">
-                <h1>Round 1</h1>
+                <h1>Round {this.state.whichRound}</h1>
                 <h1>Result</h1>
               </div>
             </div>
@@ -1066,9 +1132,14 @@ class App extends Component {
               </div>
             </div>
             <div className="row h-25">
-              <div className="col my-auto text-center">
+              <div className="col-6 my-auto text-center">
                 <h1>The Next Round Will Start In</h1>
                 <h1>{this.state.timeInGame}s</h1>
+              </div>
+              <div className="col-6 h-100 overflow-auto text-center">
+                <h3>Player Scores (the top three)</h3>
+                <ScoresRank
+                  playerScores={this.state.playerScores}></ScoresRank>
               </div>
             </div>
           </div>
