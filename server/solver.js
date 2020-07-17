@@ -1,3 +1,6 @@
+/** @author Zhengze Gong (harry8698). */
+// TODO: Write a summary for this file.
+
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";

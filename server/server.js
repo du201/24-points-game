@@ -1,3 +1,6 @@
+/** @author Zhengze Gong (harry8698). */
+// TODO: Write a summary for this file.
+
 const EXPRESS = require("EXPRESS");
 const APP = EXPRESS();
 const RequestHandler = require("./requestHandler.js");
@@ -71,5 +74,13 @@ IO.on("connection", (socket) => {
    */
   socket.on("startGame", () => {
     requestHandler.startGameHandler();
+  });
+
+  /*
+   * Listens for sendSolution request, if a client sends this request, verify
+   * the solution according to the settings in the room the client is in.
+   */
+  socket.on("sendSolution", (solution) => {
+    requestHandler.sendSolutionHandler(solution);
   });
 });

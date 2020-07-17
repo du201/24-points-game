@@ -1,3 +1,6 @@
+/** @author Zhengze Gong (harry8698). */
+// TODO: Write a summary for this file.
+
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
@@ -6,7 +9,32 @@ const MINUS = "-";
 const PREP_TIME = 5;
 // Time (in s) between rounds.
 const ROUND_BREAK = 10;
-const Solver = require("./solver.js")
+const Solver = require("./solver.js");
+const calculate = require("./calculate.js");
+
+
+/** @class Room represents a round in a game. */
+class Round {
+  /**
+   * Creates an instance of Round.
+   *
+   * @constructor
+   * @author: Zhengze Gong (harry8698)
+   * @param {number} num The round number
+   */
+  constructor(num) {
+    // Round number.
+    this.roundNum = num;
+    // The number combination in this round.
+    this.combination = null;
+    // The result of the number combination.
+    this.result = null;
+    // A list of players who have solved the combination in this round.
+    this.solvedPlayers = [];
+    // Current timer in this round.
+    this.timer = null;
+  }
+}
 
 
 /** @class Room represents game rooms. */
@@ -36,11 +64,18 @@ class Room {
       roundInterval: 30000,
       numOfRounds: 10
     };
+    // The host of the game in this room.
     this.host = host;
     host.isHost = true;
     this.addPlayer(host);
-    this.combinations = [];
+    // A list of Round instances to represent all the rounds in this game.
+    this.rounds = [];
+    // A Solver instance calibrated to this room's settings.
     this.solver = new Solver(this.settings);
+    // Round counter.
+    this.roundNum = 0;
+    // Keeps track of the scoreboard.
+    this.scoreboard = [];
   }
 
   /**
@@ -274,7 +309,8 @@ class Room {
         // Only send one result.
         result = results[0];
       }
-      this.combinations.push({combination, result});
+      this.rounds[i].combination = combination;
+      this.rounds[i].result = result;
     }
   }
 
@@ -294,14 +330,16 @@ class Room {
         skt.time = this.settings.roundInterval / 1000;
         clearInterval(skt.prepTimer);
 
-        let roundNum = this.settings.numOfRounds - rounds - 1;
+        this.roundNum = this.settings.numOfRounds - rounds - 1;
         // Starts a new round.
         skt.emit("newRound", {
-          numbers: this.combinations[roundNum].combination,
+          numbers: this.rounds[this.roundNum].combination,
           settings: this.settings
         });
         skt.roundTimer = setInterval(() => {
           skt.emit("timer", skt.time);
+          // Update the timer in the current Round instance.
+          this.rounds[this.roundNum].timer = skt.time;
           skt.time--;
 
           if (skt.time === 0) { // Current round ends.
@@ -326,6 +364,17 @@ class Room {
   startGame() {
     this.inProgress = true;
 
+    for (let i = 0; i < this.settings.numOfRounds; i++) {
+      this.rounds[i] = new Round(i);
+      this.scoreboard[i] = [];
+      this.socketList.forEach(skt => {
+        this.scoreboard[i][skt.username] = {
+          socket: skt,
+          score: 0,
+          solution: null
+        };
+      });
+    }
     this.generateCombinations();
 
     this.socketList.forEach(skt => {
@@ -340,6 +389,79 @@ class Room {
 
     return;
   }
+
+  /**
+   * Interprets and checks if a mathematical expression is valid in the context
+   * of the settings in this room.
+   *
+   * An expression is valid if:
+   * 1. Follows strictly the infix notation rules.
+   * 2. Contains only the operators from the "availableOperators" property of
+   *    the settings.
+   * 3. Contains only the numbers from the generated number combination in this
+   *    round. Each number in the generated combination can only appear once in
+   *    the expression.
+   *
+   * @param {string Array} exp The expression to be examined
+   * @return Whether or not the expression is valid
+   */
+  isValidExpression(exp) {
+    let leftParenCount = exp.filter(str => str === "(").length;
+    let rightParenCount = exp.filter(str => str === ")").length;
+    // No adjacent number elements in the array.
+    let noAdjacentNums = exp.every((elem, idx) =>
+      (idx > 0 ? isNaN(exp[idx-1]) || isNaN(elem) : true)
+    );
+
+    let sortedAvailableNums = this.rounds[this.roundNum].combination.sort();
+    // No numbers out of range specified in the settings.
+    let noNewNums = exp.filter(str => !isNaN(str))
+                       .sort()
+                       .every((elem, idx) => {
+                         return parseInt(elem) === sortedAvailableNums[idx];
+                       });
+
+    // String representation of all available operators.
+    let opStr = this.settings.availableOperators.join("");
+    // Infix notation patterns.
+    let regex = new RegExp("^\\(*[0-9]+([" + opStr + "]\\(*[0-9]+\\)*)*\\)*$");
+
+    return regex.test(exp.join("")) &&
+           leftParenCount === rightParenCount &&
+           noAdjacentNums &&
+           noNewNums;
+  }
+
+  // TODO: Implement this.
+  calcScore(time) {
+    return 0;
+  }
+
+  /**
+   * Takes in and validates a solution according to the settings in this room
+   * instance.
+   *
+   * @param {object} skt The client socket that submitted the solution
+   * @param {string Array} solution The solution submitted
+   */
+  submitSolution(skt, solution) {
+    if (!this.isValidExpression(solution) ||
+        calculate(solution) !== this.settings.targetNumber) {
+      skt.emit("solutionIncorrect");
+
+    } else {
+      let score = this.calcScore(this.rounds[this.roundNum].timer);
+      this.scoreboard[this.roundNum][skt.username].score = score;
+      this.scoreboard[this.roundNum][skt.username].solution = solution.join("");
+      skt.emit("solutionCorrect", score);
+
+      this.rounds[this.roundNum].solvedPlayers.push(skt);
+      this.broadcast("playerSolved",
+                     this.rounds[this.roundNum].solvedPlayers
+                         .map(elem => elem.username));
+    }
+  }
+  return;
 }
 
 module.exports = Room;

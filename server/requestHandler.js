@@ -1,3 +1,6 @@
+/** @author Zhengze Gong (harry8698). */
+// TODO: Write a summary for this file.
+
 // Maximum number of available rooms.
 const MAX_ROOM_COUNT = 10000;
 // Maximum players in a room.
@@ -162,8 +165,6 @@ class RequestHandler {
         roomList[room] = null;
         // No need to broadcast here because there are no remaining players.
       } else {
-        let socketList = roomList[room].getConnectionList();
-
         if (isHost && !roomList[room].isRunning()) {
           // Host leaves before the game starts
           roomList[room].closeRoom();
@@ -179,8 +180,7 @@ class RequestHandler {
        * socket.username is not null because it is always defined before the
        * definition of socket.roomNum.
        */
-      console.log(`Player ${this.socket.username} has left room ` +
-                  `${room}`);
+      console.log(`Player ${this.socket.username} has left room ` + `${room}`);
 
       if (roomList[room] === null) {
         console.log(`Room ${room} is closed`);
@@ -203,7 +203,19 @@ class RequestHandler {
    * in the room.
    */
   startGameHandler() {
-    roomList[this.socket.roomNum].startGame();
+    if (!roomList[this.socket.roomNum].isRunning()) {
+      roomList[this.socket.roomNum].startGame();
+    }
+  }
+
+  /**
+   * Handles sendSolution requests. If a client sends this request, verify the
+   * solution according to the settings in the room the client is in.
+   */
+  sendSolutionHandler(solution) {
+    if (roomList[this.socket.roomNum].isRunning()) {
+      roomList[this.socket.roomNum].submitSolution(this.socket, solution);
+    }
   }
 }
 
