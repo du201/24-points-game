@@ -407,6 +407,10 @@ class Room {
    * @return Whether or not the expression is valid
    */
   isValidExpression(exp) {
+    if (exp === null) {
+      return false;
+    }
+    
     let leftParenCount = exp.filter(str => str === "(").length;
     let rightParenCount = exp.filter(str => str === ")").length;
     // No adjacent number elements in the array.
@@ -446,23 +450,25 @@ class Room {
    * @param {string Array} solution The solution submitted
    */
   submitSolution(skt, solution) {
-    if (!this.isValidExpression(solution) ||
-        calculate(solution) !== this.settings.targetNumber) {
-      skt.emit("solutionIncorrect");
-
-    } else {
+    if ((solution === null && this.rounds[this.roundNum].result === null) ||
+        (this.isValidExpression(solution) &&
+        calculate(solution) === this.settings.targetNumber)) {
       let score = this.calcScore(this.rounds[this.roundNum].timer);
       this.scoreboard[this.roundNum][skt.username].score = score;
-      this.scoreboard[this.roundNum][skt.username].solution = solution.join("");
+      this.scoreboard[this.roundNum][skt.username].solution =
+        solution === null ? "No solutions." : solution.join("");
+
       skt.emit("solutionCorrect", score);
 
       this.rounds[this.roundNum].solvedPlayers.push(skt);
       this.broadcast("playerSolved",
                      this.rounds[this.roundNum].solvedPlayers
                          .map(elem => elem.username));
+    } else {
+      skt.emit("solutionIncorrect");
     }
+    return;
   }
-  return;
 }
 
 module.exports = Room;
