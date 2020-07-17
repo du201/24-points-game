@@ -27,9 +27,9 @@ class GameBoard extends Component {
                 className="btn btn-primary btn-lg w-75"
                 value={eachNum}
                 onClick={() => {
-                  this.props.on_addToInput(eachNum);
+                  this.props.on_addToInput(eachNum, index);
                 }}
-              ><h1>{eachNum}</h1></button>
+                disabled={this.props.multiplayerButtonDisable[index]}><h1>{eachNum}</h1></button>
             </div>);
           })}
         </div>

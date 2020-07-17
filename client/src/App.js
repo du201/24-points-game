@@ -14,8 +14,9 @@ import checkValid from "./checkValid.js";
 import Roster from "./components/Roster";
 import $ from "jquery";
 import RoomNumInput from "./components/RoomNumInput";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
-import Loader from 'react-loader-spinner'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import Loader from 'react-loader-spinner';
+import SolutionsRank from "./components/SolutionsRank";
 
 
 const TIMES = "×";
@@ -24,7 +25,7 @@ const PLUS = "+";
 const MINUS = "-";
 let operators = [TIMES, DIVIDES, PLUS, MINUS];
 
-//the page const
+//the page const + page#
 const HOMEPAGE = "homePage"; //1
 const SOLVEPAGE = "solvePage"; //2
 const SELECTPAGE = "gamePage"; //3
@@ -35,8 +36,9 @@ const MULTIGAMEPAGE = "multiPlayerGamePage"; //7
 const SINGLEGAMEPAGE = "singlePlayerGamePage"; //8
 const LOADINGPAGE = "gameLoadingPage"; //9
 const COUNTDOWNPAGE = "preGameCountDownPage"; //10
+const BTWROUNDPAGE = "betweenRoundPage"; //11
 
-//the message between client and server
+//the messages between client and server
 const CREATE_ROOM = "createRoom";
 const JOIN_ROOM = "joinRoom";
 const EXIT_ROOM = "exitRoom";
@@ -81,10 +83,15 @@ class App extends Component {
     //Below are the signals received from the server
     roomNumber: null,
     multiplayerGameNumbers: [4, 6, 8, 10], //if online mode, get this from the server. if offline, autogenerate this
+    multiplayerButtonDisable: [false, false, false, false], //whether or not a button is disabled
     playerRoster: [], //array of string, the name of all the players in the room
     playerSolved: [], //array of string, the name of the players who solve the game in the current round
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
     timeInGame: 60, //in s, the time sent by the server and displayed in the browser
+    whichRound: 1, //which round do we currently in
+    compSolution: "3+5*2", //the solution solved by the computer for the problem in the current round
+    playerSolutions: [{ name: "Joseph", solution: "3+7*5" }, { name: "Xin", solution: "3+7*5" }, { name: "Du", solution: "3+7*5" }], //the top three solutions (if there are three) done by the players for the problem in the current round
+
   };
 
   //helper functions (start)
@@ -223,6 +230,12 @@ class App extends Component {
         this.settingsReassign(settings);
         this.setState({ pageController: MULTIGAMEPAGE, });
         this.setState({ multiplayerGameNumbers: numbers });
+        //create a multiplayerButtonDisable array that has the same length as multiplayerGameNumbers
+        let buttonDisableStatus = [];
+        for (let i = 0; i < numbers.length; i++) {
+          buttonDisableStatus.push(false);
+        }
+        this.setState({ multiplayerButtonDisable: buttonDisableStatus });
       });
     });
   };
@@ -514,10 +527,16 @@ class App extends Component {
 
   /**
    * When press the button, add the corresponding number or operator to the input expression
-   * @param {string} eachNum the number or operator string associated with the button 
+   * @param {int} eachNum the number or operator string associated with the button 
    */
-  addToInputHandler = (eachNum) => {
+  addToInputHandler = (eachNum, index) => {
+    let copy_disableStatus = [...this.state.multiplayerButtonDisable];
     let copy_expressionInput = [...this.state.expressionInput];
+    //disable the button being clicked
+    if (copy_disableStatus[index] === false) {
+      copy_disableStatus[index] = true;
+    }
+    this.setState({ multiplayerButtonDisable: copy_disableStatus });
     copy_expressionInput.push(eachNum.toString());
     this.setState({ expressionInput: copy_expressionInput });
   }
@@ -528,7 +547,16 @@ class App extends Component {
   deleteInputHandler = () => {
     let copy_expressionInput = [...this.state.expressionInput];
     if (copy_expressionInput.length >= 0) {
-      copy_expressionInput.pop();
+      let deletedNum = parseInt(copy_expressionInput.pop(), 10);
+      //find the first button that has the deleted number can recover its clickability
+      for (let i = 0; i < this.state.multiplayerGameNumbers.length; i++) {
+        if (deletedNum === this.state.multiplayerGameNumbers[i] && this.state.multiplayerButtonDisable[i] === true) {
+          let copy_disableStatus = [...this.state.multiplayerButtonDisable];
+          copy_disableStatus[i] = false;
+          this.setState({ multiplayerButtonDisable: copy_disableStatus });
+          break;
+        }
+      }
       this.setState({ expressionInput: copy_expressionInput });
     }
   }
@@ -947,7 +975,8 @@ class App extends Component {
                   operators={this.state.availableOperator}
                   on_deleteInput={this.deleteInputHandler}
                   on_calculateExpression={this.calculateExpressionHandler}
-                  answer={this.state.answer}></GameBoard>
+                  answer={this.state.answer}
+                  multiplayerButtonDisable={this.state.multiplayerButtonDisable}></GameBoard>
               </div>
               <div className="col col-2 h-100">
                 <div className="row h-25">
@@ -1017,6 +1046,36 @@ class App extends Component {
               <div className="col my-auto text-center">
                 <h1>Final Countdown!</h1>
                 <h1>{this.state.timeInGame}</h1>
+              </div>
+            </div>
+          </div>
+        );
+      case BTWROUNDPAGE: //11: the page being displayed between each round of the game
+        return (
+          <div className="container h-100">
+            <div className="row h-25">
+              <div className="col my-auto text-center">
+                <h1>Round 1</h1>
+                <h1>Result</h1>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col my-auto text-center">
+                <h1>System Solution (random one)</h1>
+                <h1>{this.state.compSolution}</h1>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col h-100 text-center overflow-auto">
+                <h1>Player Solutions (the top three)</h1>
+                <SolutionsRank
+                  playerSolutions={this.state.playerSolutions}></SolutionsRank>
+              </div>
+            </div>
+            <div className="row h-25">
+              <div className="col my-auto text-center">
+                <h1>The Next Round Will Start In</h1>
+                <h1>{this.state.timeInGame}s</h1>
               </div>
             </div>
           </div>
