@@ -89,14 +89,13 @@ class App extends Component {
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
     timeInGame: 60, //in s, the time sent by the server and displayed in the browser
     whichRound: 1, //which round do we currently in
-    compSolution: "3+5*2", //the solution solved by the computer for the problem in the current round
+    solution: "3+5*2", //the solution solved by the computer for the problem in the current round
     playerSolutions: [{ name: "Joseph", solution: "3+7*5" }, { name: "Xin", solution: "3+7*5" }, { name: "Du", solution: "3+7*5" }], //the top three solutions (if there are three) done by the players for the problem in the current round
 
   };
 
-  //helper functions (start)
   /**
-   * Return false if the name is invalid, the name must be between 1 to 20 letters
+   * Return false if the name is invalid, the name must be between 1 to 15 letters
    */
   hasValidUsername = () => {
     let name = this.state.username;
@@ -104,14 +103,15 @@ class App extends Component {
   };
 
 
+  /**
+   * Remove all the entries that has the value value from the array
+   */
   arrayRemove = (arr, value) => {
     return arr.filter((ele) => {
       return ele !== value;
     });
   };
-  //helper functions (end)
 
-  //functions to switch between pages & send message to server (start)
   /**
    * In 1st page
    * In home page, choose the game mode (instead of single-player mode or solve mode) 
@@ -165,6 +165,7 @@ class App extends Component {
       });
     });
   }
+
   /**
    * In page 3
    * The creator of the room uses this to request the server for a room
@@ -218,6 +219,14 @@ class App extends Component {
     this.setState({
       pageController: LOADINGPAGE, //to 9th page
     });
+    this.startGame();
+  };
+
+
+  /**
+   * Start the game after receive the GAME_STARTED
+   */
+  startGame = () => {
     socket.once(GAME_STARTED, (settings) => {
       //go to the game page
       this.setState({ pageController: COUNTDOWNPAGE, });
@@ -231,14 +240,22 @@ class App extends Component {
         this.setState({ pageController: MULTIGAMEPAGE, });
         this.setState({ multiplayerGameNumbers: numbers });
         //create a multiplayerButtonDisable array that has the same length as multiplayerGameNumbers
-        let buttonDisableStatus = [];
-        for (let i = 0; i < numbers.length; i++) {
-          buttonDisableStatus.push(false);
-        }
-        this.setState({ multiplayerButtonDisable: buttonDisableStatus });
+        this.createButtonDisableStatus(numbers);
       });
     });
-  };
+  }
+
+  /**
+   * create the multiplayerButtonDisable default state
+   * @param {array of int} numbers the game numbers passed by the server 
+   */
+  createButtonDisableStatus = (numbers) => {
+    let buttonDisableStatus = [];
+    for (let i = 0; i < numbers.length; i++) {
+      buttonDisableStatus.push(false);
+    }
+    this.setState({ multiplayerButtonDisable: buttonDisableStatus });
+  }
 
 
   /**
@@ -262,7 +279,7 @@ class App extends Component {
   /**
    * in page 5
    * the player presses this button to enter the game room with the specified room number
-   * 
+   * The non-host way to enter the gameroom
    */
 
   joinRoomKeyButtonPress = () => {
@@ -282,27 +299,7 @@ class App extends Component {
         this.setState({ playerRoster: roster });
       });
       //start to wait for the host to start the game and then go to the "multiPlayerGamePage"
-      socket.once(GAME_STARTED, ({ numOfSlots, targetNumber, availableOperators, rangeLo,
-        rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
-        //go to the game page
-        this.setState({ pageController: COUNTDOWNPAGE, });
-        //adopt the settings set by the game host
-        this.setState({
-          gameModeBasicSetting: { slotNum: numOfSlots, targetNum: targetNumber },
-          availableOperator: availableOperators,
-          rangeOfAvailableNumberLowBound: rangeLo,
-          rangeOfAvailableNumberHighBound: rangeHi,
-          maxRepeatNum: maxNumOfRepeats,
-          timeBetweenRound: roundInterval,
-          numOfRound: numOfRounds
-        });
-        socket.on(TIMER, (time) => {
-          this.setState({ timeInGame: time });
-        });
-        socket.on(NEW_ROUND, () => {
-          this.setState({ pageController: MULTIGAMEPAGE, });
-        });
-      });
+      this.startGame();
 
       //if the host of the room exits, all the players go back to the third page
       socket.once(ROOM_CLOSED, () => {
@@ -341,9 +338,6 @@ class App extends Component {
     });
   };
 
-  //functions to switch between pages & send message to server (end)
-
-  //function handlers (start)
   /**
    * change the value of the number of slots for multi-player game
    */
@@ -653,7 +647,6 @@ class App extends Component {
       this.setState({ answer: "Invalid" });
     }
   }
-  //function handlers (end)
 
   //page display switch function
   renderSwitch(pageName) {
@@ -1062,7 +1055,7 @@ class App extends Component {
             <div className="row h-25">
               <div className="col my-auto text-center">
                 <h1>System Solution (random one)</h1>
-                <h1>{this.state.compSolution}</h1>
+                <h1>{this.state.solution}</h1>
               </div>
             </div>
             <div className="row h-25">
