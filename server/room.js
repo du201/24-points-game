@@ -323,9 +323,6 @@ class Room {
 
     // Starts a new round break.
     skt.prepTimer = setInterval(() => {
-      skt.emit("timer", skt.time);
-      skt.time--;
-
       if (skt.time === 0) { // Current round break ends.
         skt.time = this.settings.roundInterval / 1000;
         clearInterval(skt.prepTimer);
@@ -337,10 +334,8 @@ class Room {
           settings: this.settings
         });
         skt.roundTimer = setInterval(() => {
-          skt.emit("timer", skt.time);
           // Update the timer in the current Round instance.
           this.rounds[this.roundNum].timer = skt.time;
-          skt.time--;
 
           if (skt.time === 0) { // Current round ends.
             clearInterval(skt.roundTimer);
@@ -351,9 +346,15 @@ class Room {
               this.newRound(skt, ROUND_BREAK, rounds - 1);
             }
           }
+
+          skt.emit("timer", skt.time);
+          skt.time--;
         }, 1000);
         skt.intervals.push(skt.roundTimer);
       }
+
+      skt.emit("timer", skt.time);
+      skt.time--;
     }, 1000);
     skt.intervals.push(skt.prepTimer);
   }
