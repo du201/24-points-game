@@ -9,6 +9,10 @@ const MINUS = "-";
 const PREP_TIME = 5;
 // Time (in s) between rounds.
 const ROUND_BREAK = 10;
+// The number of people that will be shown in the ranking list.
+const RANK_COUNT = 3;
+// Deduct points if the solution is incorrect.
+const WRONG_ANSWER_DEDUCT_POINT = 10;
 const Solver = require("./solver.js");
 const calculate = require("./calculate.js");
 
@@ -27,9 +31,9 @@ class Round {
     this.roundNum = num;
     // The number combination in this round.
     this.combination = null;
-    // The result of the number combination.
-    this.result = null;
-    // A list of players who have solved the combination in this round.
+    // The solution of the number combination.
+    this.solution = null;
+    // List of sockets of players who have solved the combination in this round.
     this.solvedPlayers = [];
     // Current timer in this round.
     this.timer = null;
@@ -52,7 +56,7 @@ class Room {
     // Represents if the game in this room is in progress.
     this.inProgress = false;
     // Represents all the connections to this room instance.
-    this.socketList = new Set();
+    this.socketSet = new Set();
     // Represents the (default) game settings in this room instance.
     this.settings = {
       numOfSlots: 4,
@@ -76,6 +80,8 @@ class Room {
     this.roundNum = 0;
     // Keeps track of the scoreboard.
     this.scoreboard = [];
+    // Keeps track of the ranking in the game.
+    this.rank = [];
   }
 
   /**
@@ -85,19 +91,14 @@ class Room {
    * @param {object} msg The message that accompanies the event
    */
   broadcast(event, msg) {
-    this.socketList.forEach(skt => {
-      skt.emit(
-        event,
-        msg
-      );
-    });
+    this.socketSet.forEach(skt => skt.emit(event, msg));
   }
 
   /**
    * Closes the room and removes all players in this room instance.
    */
   closeRoom() {
-    this.socketList.forEach(skt => {
+    this.socketSet.forEach(skt => {
       this.removePlayer(skt);
       skt.emit("roomClosed");
     });
@@ -111,7 +112,7 @@ class Room {
    */
   addPlayer(socket) {
     socket.roomNum = this.number;
-    this.socketList.add(socket);
+    this.socketSet.add(socket);
   }
 
   /**
@@ -122,7 +123,7 @@ class Room {
   removePlayer(socket) {
     socket.roomNum = null;
     socket.isHost = socket.isHost && false;
-    this.socketList.delete(socket);
+    this.socketSet.delete(socket);
     if (socket.intervals !== null && socket.intervals !== undefined) {
       socket.intervals.forEach(clearInterval);
     }
@@ -163,7 +164,7 @@ class Room {
    */
   getUsernameList() {
     let usernameList = [];
-    this.socketList.forEach((skt) => usernameList.push(skt.username));
+    this.socketSet.forEach((skt) => usernameList.push(skt.username));
     return usernameList;
   }
 
@@ -173,7 +174,7 @@ class Room {
    * @return {socket Array} An array that contains all the sockets in the room
    */
   getConnectionList() {
-    return Array.from(this.socketList);
+    return Array.from(this.socketSet);
   }
 
   /**
@@ -182,7 +183,7 @@ class Room {
    * @return {number} The number of players in this room
    */
   getNumOfPlayers() {
-    return this.socketList.size;
+    return this.socketSet.size;
   }
 
   /**
@@ -304,14 +305,57 @@ class Room {
       }
 
       let results = this.solver.solve(combination);
-      let result = null;
+      let solution = null;
       if (results.length > 0) {
-        // Only send one result.
-        result = results[0];
+        // Only send one solution.
+        solution = results[0];
       }
       this.rounds[i].combination = combination;
-      this.rounds[i].result = result;
+      this.rounds[i].solution = solution;
     }
+  }
+
+  /**
+   * Ends one round and generates rankings to send to the clients.
+   *
+   * @param skt The client to send the information to
+   */
+  endRound(skt) {
+    // Top solutions in this round.
+    let playerSolutions = [];
+    let solvedPlayers = this.rounds[this.roundNum].solvedPlayers.length;
+    for (let i = 0; i < solvedPlayers.length && i < RANK_COUNT; i++) {
+      let name = solvedPlayers[i].username;
+      let solution = this.scoreboard[this.roundNum][name].solution;
+      playerSolutions.push({
+        name: name,
+        solution: solution
+      });
+    }
+
+    // Overall ranking.
+    let scoreRanking = [];
+    for (let i = 0; i < this.rank.length && i < RANK_COUNT; i++) {
+      scoreRanking.push(this.rank[i]);
+    }
+
+    // The index of this player in the ranking list.
+    let index = this.rank.findIndex(elem => elem.name === skt.username);
+    /*
+     * Player solutions:
+     * 1. string: regular solution.
+     * 2. null: player submitted "no solution".
+     * 3. undefined: player never submitted a solution.
+     */
+     skt.emit(
+       "endRound",
+       {
+         solution: this.rounds[this.roundNum].solution,
+         playerSolutions: playerSolutions,
+         scoreRanking: scoreRanking,
+         playerRaning: index + 1
+       }
+     );
   }
 
   /**
@@ -340,6 +384,8 @@ class Room {
           if (skt.time === 0) { // Current round ends.
             clearInterval(skt.roundTimer);
 
+            this.endRound(skt);
+
             if (rounds === 0) { // Last round.
               return;
             } else {
@@ -365,20 +411,32 @@ class Room {
   startGame() {
     this.inProgress = true;
 
+    let socketArray = this.getConnectionList();
+    // Initialize the ranking list.
+    for (let i = 0; i < socketArray.length; i++) {
+      this.rank[i] = {
+        name: socketArray[i].username,
+        totalScore: 0
+      };
+    }
+
+    // Initialize the rounds.
     for (let i = 0; i < this.settings.numOfRounds; i++) {
       this.rounds[i] = new Round(i);
       this.scoreboard[i] = [];
-      this.socketList.forEach(skt => {
+      this.socketSet.forEach(skt => {
         this.scoreboard[i][skt.username] = {
           socket: skt,
           score: 0,
-          solution: null
+          solution: undefined
         };
       });
     }
     this.generateCombinations();
 
-    this.socketList.forEach(skt => {
+    console.log(`Game in room ${this.number} has started`);
+
+    this.socketSet.forEach(skt => {
       skt.intervals = [];
       skt.emit("gameStarted", this.settings);
       this.newRound(
@@ -410,7 +468,7 @@ class Room {
     if (exp === null) {
       return false;
     }
-    
+
     let leftParenCount = exp.filter(str => str === "(").length;
     let rightParenCount = exp.filter(str => str === ")").length;
     // No adjacent number elements in the array.
@@ -439,7 +497,7 @@ class Room {
 
   // TODO: Implement this.
   calcScore(time) {
-    return 0;
+    return time;
   }
 
   /**
@@ -450,22 +508,46 @@ class Room {
    * @param {string Array} solution The solution submitted
    */
   submitSolution(skt, solution) {
-    if ((solution === null && this.rounds[this.roundNum].result === null) ||
+    let index = this.rank.findIndex(elem => elem.name === skt.username);
+
+    if ((solution === null && this.rounds[this.roundNum].solution === null) ||
         (this.isValidExpression(solution) &&
         calculate(solution) === this.settings.targetNumber)) {
       let score = this.calcScore(this.rounds[this.roundNum].timer);
       this.scoreboard[this.roundNum][skt.username].score = score;
       this.scoreboard[this.roundNum][skt.username].solution =
-        solution === null ? "No solutions." : solution.join("");
+        solution === null ? null : solution.join("");
 
-      skt.emit("solutionCorrect", score);
+      // Add the new score to the total score of this player.
+      this.rank[index].totalScore += score;
+      // Sort the ranking list descendingly.
+      this.rank.sort((a, b) => b.totalScore - a.totalScore);
+
+      skt.emit(
+        "solutionCorrect",
+        {
+          score: score,
+          totalScore: this.rank[index].totalScore
+        }
+      );
 
       this.rounds[this.roundNum].solvedPlayers.push(skt);
-      this.broadcast("playerSolved",
-                     this.rounds[this.roundNum].solvedPlayers
-                         .map(elem => elem.username));
+      this.broadcast(
+        "playerSolved",
+        this.rounds[this.roundNum].solvedPlayers
+            .map(elem => elem.username)
+      );
     } else {
-      skt.emit("solutionIncorrect");
+      let deductedScore = WRONG_ANSWER_DEDUCT_POINT;
+      this.rank[index].totalScore -= deductedScore;
+      this.rank[index].totalScore = Math.max(this.rank[index].totalScore, 0);
+      skt.emit(
+        "solutionIncorrect",
+        {
+          deductedScore: deductedScore,
+          totalScore: this.rank[index].totalScore
+        }
+      );
     }
     return;
   }

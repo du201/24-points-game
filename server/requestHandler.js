@@ -101,6 +101,9 @@ class RequestHandler {
     let roomStr = roomIntToStr(roomNum);
     this.socket.emit("createRoomSuccess", roomStr);
     roomList[roomNum] = new Room(roomNum, this.socket);
+
+    roomList[roomNum].broadcast("roster", roomList[roomNum].getUsernameList());
+
     console.log(`Player ${this.socket.username} created room ${roomStr}`);
   }
 
