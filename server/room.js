@@ -353,7 +353,7 @@ class Room {
          solution: this.rounds[this.roundNum].solution,
          playerSolutions: playerSolutions,
          scoreRanking: scoreRanking,
-         playerRaning: index + 1
+         playerRanking: index + 1
        }
      );
   }
