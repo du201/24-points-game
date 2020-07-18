@@ -43,6 +43,7 @@ class GameBoard extends Component {
               onClick={() => {
                 this.props.on_deleteInput();
               }}
+              disabled={this.props.submitButtonDisable}
             ><h1>DEL</h1></button>
           </div>
           <div className="col my-col my-auto text-center">

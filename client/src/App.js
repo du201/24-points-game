@@ -211,10 +211,14 @@ class App extends Component {
   };
   /**
    * Use this function after starting connnecting to the server
+   * Reset everything to default just like exitRoomButton
    */
   serverDisconnectListen = () => {
     socket.on("disconnect", () => {
       alert("Disconnected from the Server, go back to the home page");
+      this.stopListenToGameEvent();
+      //set all of the game-related states back to default
+      this.backToDefaultAllStates();
       this.setState({
         pageController: HOMEPAGE, //to page 1
       });
@@ -1091,7 +1095,7 @@ class App extends Component {
                 </div>
                 <div className="row h-25">
                   <div className="col text-center my-auto">
-                    <h1>My Total Score: {this.state.multiplayerTotalScore}</h1>
+                    <h3>My Total Score (from prev rounds): {this.state.multiplayerTotalScore}</h3>
                   </div>
                 </div>
                 <div className="row h-25">
