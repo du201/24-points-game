@@ -520,9 +520,6 @@ class Room {
 
       // Add the new score to the total score of this player.
       this.rank[index].totalScore += score;
-      // Sort the ranking list descendingly.
-      this.rank.sort((a, b) => b.totalScore - a.totalScore);
-
       skt.emit(
         "solutionCorrect",
         {
@@ -530,6 +527,9 @@ class Room {
           totalScore: this.rank[index].totalScore
         }
       );
+
+      // Sort the ranking list descendingly.
+      this.rank.sort((a, b) => b.totalScore - a.totalScore);
 
       this.rounds[this.roundNum].solvedPlayers.push(skt);
       this.broadcast(
