@@ -61,6 +61,9 @@ const SOLUTION_INCORRECT = "solutionIncorrect";
 const PLAYER_SOLVED = "playerSolved";
 const CONNECT_TIMEOUT = "connectionTimeOut";
 const ROOM_CLOSED = "roomClosed";
+//start listening to disconnect after entering a room (either as a host or player)
+//stop listening to disconnect after quitting from a room (either through the exit button or the disconnect listener)
+const DISCONNECT = "disconnect";
 
 const server = "http://localhost:2000";
 const socket = io.connect(server);
@@ -170,7 +173,8 @@ class App extends Component {
     this.stopListenToGameEvent();
     //set all of the game-related states back to default
     this.backToDefaultAllStates();
-
+    //unlisten to this when exit the room
+    this.serverDisconnectUnlisten();
   };
 
   stopListenToGameEvent = () => {
@@ -214,7 +218,7 @@ class App extends Component {
    * Reset everything to default just like exitRoomButton
    */
   serverDisconnectListen = () => {
-    socket.on("disconnect", () => {
+    socket.on(DISCONNECT, () => {
       alert("Disconnected from the Server, go back to the home page");
       this.stopListenToGameEvent();
       //set all of the game-related states back to default
@@ -222,8 +226,17 @@ class App extends Component {
       this.setState({
         pageController: HOMEPAGE, //to page 1
       });
+      //unlisten to the disconnect when go back to the home page
+      this.serverDisconnectUnlisten();
     });
-  }
+  };
+
+  /**
+   * Stop listening to the disconnect event
+   */
+  serverDisconnectUnlisten = () => {
+    socket.removeAllListeners(DISCONNECT);
+  };
 
   /**
    * In page 3
