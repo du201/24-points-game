@@ -58,6 +58,7 @@ class GameBoard extends Component {
                 onClick={() => {
                   this.props.on_addToInput(eachOpe);
                 }}
+                disabled={this.props.submitButtonDisable}
               ><h1>{eachOpe}</h1></button>
             </div>);
           })}
@@ -67,15 +68,17 @@ class GameBoard extends Component {
             <button
               className="btn btn-success btn-lg w-75"
               onClick={this.props.on_calculateExpression}
+              disabled={this.props.submitButtonDisable}
             ><h1>Submit</h1></button>
             <button
               className="btn btn-warning btn-lg w-75 mt-2"
               onClick={this.props.on_noSolution}
+              disabled={this.props.submitButtonDisable}
             ><h4>No Solution</h4></button>
           </div>
           <div className="col col-8 text-center h-100">
-            <h4>Answer: {this.props.answer}</h4>
-            <h4>(Testing) Server Response Would Appear Below...</h4>
+            <h4>(Client side check and calcualte) Answer: <br></br>{this.props.answer}</h4>
+            <h4>(Server side check and calcualte) Server Response Would Appear Below...</h4>
             <h4>{this.props.correctOrNotText}</h4>
           </div>
         </div>

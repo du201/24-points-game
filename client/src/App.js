@@ -106,6 +106,7 @@ class App extends Component {
     correctOrNotText: "", //the text indicated the judgement from the server
     //the top three scores of the players, default can be [{ name: "Joseph", score: 100 }, { name: "Williams", score: 50 }, { name: "Gang", score: 30 }]
     scoreRanking: [],
+    submitButtonDisable: false, //once the answer is deemed to be correct by the server, disable all the buttons
   };
 
   /**
@@ -305,15 +306,16 @@ class App extends Component {
           this.setState({
             multiplayerScore: score,
             multiplayerTotalScore: totalScore,
+            correctOrNotText: "Your Answer is Correct!",
+            submitButtonDisable: true,
           });
-          this.setState({ correctOrNotText: "Your Answer is Correct!" });
           console.log("SOLUTION_CORRECT");
         });
         socket.on(SOLUTION_INCORRECT, ({ deductedScore, totalScore }) => {
           this.setState({
             multiplayerTotalScore: totalScore,
+            correctOrNotText: "Your Answer is Incorrect!",
           });
-          this.setState({ correctOrNotText: "Your Answer is Incorrect!" });
           console.log("SOLUTION_INCORRECT");
         });
         //updating the roster on the side of the gameboard
@@ -330,15 +332,18 @@ class App extends Component {
         } else {
           this.setState({ solution: solution });
         }
-        this.setState({ playerSolutions: playerSolutions });
-        this.setState({ playerRanking: playerRanking });
-        this.setState({ scoreRanking: scoreRanking });
+        this.setState({
+          playerSolutions: playerSolutions,
+          playerRanking: playerRanking,
+          scoreRanking: scoreRanking
+        });
         //empty some states to prepare for the next round
         this.setState({ correctOrNotText: "" });
         this.setState({ multiplayerScore: 0 });
         this.setState({ playerSolved: [] });
         this.setState({ expressionInput: [] });
         this.setState({ answer: null });
+        this.setState({ submitButtonDisable: false });
         //stop listen to some game events to prevent duplicate listeners on the same event
         socket.removeAllListeners(SOLUTION_INCORRECT);
         socket.removeAllListeners(SOLUTION_CORRECT);
@@ -752,7 +757,9 @@ class App extends Component {
       let result = calculate(this.state.expressionInput);
       //checkPostfixValid(result);
       if (result === "Invalid") {
-        this.setState({ answer: "Invalid" });
+        this.setState({ answer: "The expression is invalid" });
+      } else if (!this.allNumberUsed()) {
+        this.setState({ answer: "You must use all of the numbers" });
       } else {
         this.setState({ answer: result });
         socket.emit(SEND_SOLUTION, this.state.expressionInput);
@@ -760,8 +767,20 @@ class App extends Component {
     }
 
     else {
-      this.setState({ answer: "Invalid" });
+      this.setState({ answer: "The expression is invalid" });
     }
+  }
+
+  /**
+   * @returns whether or not all the numbers (slots) are used during the game
+   */
+  allNumberUsed = () => {
+    for (let i = 0; i < this.state.multiplayerButtonDisable.length; i++) {
+      if (this.state.multiplayerButtonDisable[i] === false) {
+        return false;
+      }
+    }
+    return true;
   }
 
   //page display switch function
@@ -1072,7 +1091,7 @@ class App extends Component {
                 </div>
                 <div className="row h-25">
                   <div className="col text-center my-auto">
-                    <h1>My Current Score: {this.state.multiplayerScore}</h1>
+                    <h1>My Total Score: {this.state.multiplayerTotalScore}</h1>
                   </div>
                 </div>
                 <div className="row h-25">
@@ -1098,7 +1117,8 @@ class App extends Component {
                   answer={this.state.answer}
                   multiplayerButtonDisable={this.state.multiplayerButtonDisable}
                   correctOrNotText={this.state.correctOrNotText}
-                  on_noSolution={this.noSolutionHandler}></GameBoard>
+                  on_noSolution={this.noSolutionHandler}
+                  submitButtonDisable={this.state.submitButtonDisable}></GameBoard>
               </div>
               <div className="col col-2 h-100">
                 <div className="row h-25">
