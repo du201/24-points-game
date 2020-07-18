@@ -14,9 +14,9 @@ const Roster = (props) => {
       {props.playerRoster.map((eachName, index) => {
         return <div className="card bg-info mb-1" key={index}>
           <div className="card-body">
-            <div>{eachName}</div>
+            <div>Name: {eachName}</div>
             {(props.pageController === "waitForHostPage" || props.pageController === "createRoomPage") ? null :
-              <div>{props.playerSolved.includes(eachName) ? "Yes" : "No"}</div>}
+              <div>Solved? {props.playerSolved.includes(eachName) ? "Yes" : "No"}</div>}
           </div>
         </div>
       })}

@@ -87,21 +87,25 @@ class App extends Component {
 
     //Below are the signals received from the server
     roomNumber: null,
-    multiplayerGameNumbers: [4, 6, 8, 10], //if online mode, get this from the server. if offline, autogenerate this
-    multiplayerButtonDisable: [false, false, false, false], //whether or not a button is disabled
+    //default can be [4, 6, 8, 10]
+    multiplayerGameNumbers: [], //if online mode, get this from the server. if offline, autogenerate this
+    //default can be [false, false, false, false]
+    multiplayerButtonDisable: [], //whether or not a button is disabled
     playerRoster: [], //array of string, the name of all the players in the room
     playerSolved: [], //array of string, the name of the players who solve the game in the current round
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
     timeInGame: 5, //in s, the time sent by the server and displayed in the browser
     whichRound: 0, //which round do we currently in
-    solution: "3+5*2", //the solution solved by the computer for the problem in the current round
+    //default can be"3+5*2"
+    solution: "", //the solution solved by the computer for the problem in the current round
     //the top three solutions (if there are three) done by the players for the problem in the current round
-    playerSolutions: [{ name: "Joseph", solution: "3+7*5" }, { name: "Xin", solution: "3+7*5" }, { name: "Du", solution: "3+7*5" }],
+    playerSolutions: [],
+    playerRanking: 1, //the score ranking of the player in the room
     multiplayerScore: 0, //the score received from the server for the current round
     multiplayerTotalScore: 0, //the score received from the server for the whole game
     correctOrNotText: "", //the text indicated the judgement from the server
-    //the top three scores of the players
-    playerScores: [{ name: "Joseph", score: 100 }, { name: "Williams", score: 50 }, { name: "Gang", score: 30 }],
+    //the top three scores of the players, default can be [{ name: "Joseph", score: 100 }, { name: "Williams", score: 50 }, { name: "Gang", score: 30 }]
+    scoreRanking: [],
   };
 
   /**
@@ -187,7 +191,21 @@ class App extends Component {
       username: "",
       gameModeSettingMenuOpen: false,
       expressionInput: [],
+      answer: null,
+      roomNumber: null,
+      multiplayerGameNumbers: [],
+      multiplayerButtonDisable: [],
+      playerRoster: [],
+      playerSolved: [],
       timeInGame: 5,
+      whichRound: 0,
+      solution: "",
+      playerSolutions: [],
+      playerRanking: 1,
+      multiplayerScore: 0,
+      multiplayerTotalScore: 0,
+      correctOrNotText: "",
+      scoreRanking: [],
     });
   };
   /**
@@ -305,10 +323,16 @@ class App extends Component {
         });
       });
 
-      socket.on(END_ROUND, ({ solution, playerSolutions }) => {
+      socket.on(END_ROUND, ({ solution, playerSolutions, scoreRanking, playerRanking }) => {
         console.log("END_ROUND");
-        this.setState({ solution: solution });
+        if (solution === null) {
+          this.setState({ solution: "no solution for this problem" });
+        } else {
+          this.setState({ solution: solution });
+        }
         this.setState({ playerSolutions: playerSolutions });
+        this.setState({ playerRanking: playerRanking });
+        this.setState({ scoreRanking: scoreRanking });
         //empty some states to prepare for the next round
         this.setState({ correctOrNotText: "" });
         this.setState({ multiplayerScore: 0 });
@@ -969,7 +993,7 @@ class App extends Component {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Char Length <= 15"
+                          placeholder={this.state.username}
                           maxLength="15"
                           onChange={this.setStateName}
                         />
@@ -1171,14 +1195,18 @@ class App extends Component {
               </div>
             </div>
             <div className="row h-25">
-              <div className="col-6 my-auto text-center">
+              <div className="col-4 my-auto text-center">
                 <h1>The Next Round Will Start In</h1>
                 <h1>{this.state.timeInGame}s</h1>
               </div>
-              <div className="col-6 h-100 overflow-auto text-center">
+              <div className="col-4 h-100 overflow-auto text-center">
+                <h3>Your Ranking in the Room is</h3>
+                <h3>number {this.state.playerRanking}</h3>
+              </div>
+              <div className="col-4 h-100 overflow-auto text-center">
                 <h3>Player Scores (the top three)</h3>
                 <ScoresRank
-                  playerScores={this.state.playerScores}></ScoresRank>
+                  scoreRanking={this.state.scoreRanking}></ScoresRank>
               </div>
             </div>
           </div>

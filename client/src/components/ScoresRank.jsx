@@ -7,11 +7,11 @@ import React from "react";
 const ScoresRank = (props) => {
   return (
     <React.Fragment>
-      {props.playerScores.map((pair, index) => {
+      {props.scoreRanking.map((pair, index) => {
         return <div className="card bg-info mb-1" key={index}>
           <div className="card-body">
-            <div>{pair.name}</div>
-            <div>{pair.score}</div>
+            <div>Name: {pair.name}</div>
+            <div>Total Score: {pair.totalScore}</div>
           </div>
         </div>
       })}
