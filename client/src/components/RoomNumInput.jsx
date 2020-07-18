@@ -15,7 +15,7 @@ class RoomNumInput extends Component {
     return (
       <React.Fragment>
         <div className="col col-2">
-          <input className="inputs form-control" type="Number" maxLength="1" id="first" onInput={this.props.setRoomNum} />
+          <input className="inputs form-control" type="Number" maxLength="1" id="first" onInput={this.props.setRoomNum} autoFocus />
         </div>
         <div className="col col-2">
           <input className="inputs form-control" type="Number" maxLength="1" id="second" onChange={this.props.setRoomNum} />
