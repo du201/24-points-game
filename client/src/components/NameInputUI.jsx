@@ -10,10 +10,11 @@ const NameInputUI = (props) => {
         </label>
         <input
           type="text"
-          className="form-control"
+          className={"form-control"}
           placeholder={props.placeHolder}
           maxLength="15"
           onChange={(event) => props.onChange(event)}
+          autoFocus
         />
       </div>
     </form>

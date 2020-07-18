@@ -97,7 +97,8 @@ class App extends Component {
     solution: "3+5*2", //the solution solved by the computer for the problem in the current round
     //the top three solutions (if there are three) done by the players for the problem in the current round
     playerSolutions: [{ name: "Joseph", solution: "3+7*5" }, { name: "Xin", solution: "3+7*5" }, { name: "Du", solution: "3+7*5" }],
-    multiplayerScore: 0, //the score received from the server
+    multiplayerScore: 0, //the score received from the server for the current round
+    multiplayerTotalScore: 0, //the score received from the server for the whole game
     correctOrNotText: "", //the text indicated the judgement from the server
     //the top three scores of the players
     playerScores: [{ name: "Joseph", score: 100 }, { name: "Williams", score: 50 }, { name: "Gang", score: 30 }],
@@ -160,11 +161,22 @@ class App extends Component {
       pageController: SELECTPAGE, //to page 3
     });
     socket.emit(EXIT_ROOM);
+
+    this.stopListenToGameEvent();
     //set all of the game-related states back to default
     this.backToDefaultAllStates();
 
   };
 
+  stopListenToGameEvent = () => {
+    socket.removeAllListeners(TIMER);
+    socket.removeAllListeners(ROSTER);
+    socket.removeAllListeners(NEW_ROUND);
+    socket.removeAllListeners(END_ROUND);
+    socket.removeAllListeners(SOLUTION_INCORRECT);
+    socket.removeAllListeners(SOLUTION_CORRECT);
+    socket.removeAllListeners(PLAYER_SOLVED);
+  };
   /**
    * Set all the states back to their default value
    * Needs further editing during the developing process
@@ -175,7 +187,7 @@ class App extends Component {
       username: "",
       gameModeSettingMenuOpen: false,
       expressionInput: [],
-
+      timeInGame: 5,
     });
   };
   /**
@@ -204,6 +216,7 @@ class App extends Component {
           roomNumber: roomNum, //string
           gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
         });
+
         //be able to see who is currently in the room
         //also be able to see who is in the room and who solved the problem during the game
         socket.on(ROSTER, (roster) => {
@@ -260,6 +273,7 @@ class App extends Component {
         this.setState({ timeInGame: time });
       });
       socket.on(NEW_ROUND, ({ numbers, settings }) => {
+        console.log("NEW_ROUND");
         //increase the round number by 1
         this.setState({ whichRound: this.state.whichRound + 1 });
         this.settingsReassign(settings);
@@ -269,28 +283,42 @@ class App extends Component {
         //always put the page changing mechanism at the end to insure proper rendering
         this.setState({ pageController: MULTIGAMEPAGE, });
         //listen to the response from the server about the correctness of the submitted answer
-        socket.on(SOLUTION_CORRECT, (score) => {
-          this.setState({ multiplayerScore: score });
+        socket.on(SOLUTION_CORRECT, ({ score, totalScore }) => {
+          this.setState({
+            multiplayerScore: score,
+            multiplayerTotalScore: totalScore,
+          });
           this.setState({ correctOrNotText: "Your Answer is Correct!" });
-          console.log("correct");
+          console.log("SOLUTION_CORRECT");
         });
-        socket.on(SOLUTION_INCORRECT, () => {
-          this.setState({ correctOrNotText: "Sorry, your answer is not correct!" });
-          console.log("incorrect");
+        socket.on(SOLUTION_INCORRECT, ({ deductedScore, totalScore }) => {
+          this.setState({
+            multiplayerTotalScore: totalScore,
+          });
+          this.setState({ correctOrNotText: "Your Answer is Incorrect!" });
+          console.log("SOLUTION_INCORRECT");
         });
         //updating the roster on the side of the gameboard
         socket.on(PLAYER_SOLVED, (playerSolved) => {
           this.setState({ playerSolved: playerSolved });
+          console.log("PLAYER_SOLVED");
         });
       });
 
       socket.on(END_ROUND, ({ solution, playerSolutions }) => {
+        console.log("END_ROUND");
         this.setState({ solution: solution });
         this.setState({ playerSolutions: playerSolutions });
         //empty some states to prepare for the next round
         this.setState({ correctOrNotText: "" });
         this.setState({ multiplayerScore: 0 });
         this.setState({ playerSolved: [] });
+        this.setState({ expressionInput: [] });
+        this.setState({ answer: null });
+        //stop listen to some game events to prevent duplicate listeners on the same event
+        socket.removeAllListeners(SOLUTION_INCORRECT);
+        socket.removeAllListeners(SOLUTION_CORRECT);
+        socket.removeAllListeners(PLAYER_SOLVED);
         //always put the page changing mechanism at the end to insure proper rendering
         this.setState({ pageController: BTWROUNDPAGE });
       });
@@ -792,6 +820,7 @@ class App extends Component {
                 <NameInputUI
                   onChange={this.setStateName}
                   placeHolder="Char Length <= 15"
+
                 ></NameInputUI>
                 <button
                   className="btn btn-primary mr-1"
@@ -932,10 +961,20 @@ class App extends Component {
                 <div className="row h-50">
                   <div className="col">
                     Your nickname: <strong>{this.state.username}</strong>
-                    <NameInputUI
-                      onChange={this.setStateName}
-                      placeHolder={this.state.username}
-                    ></NameInputUI>
+                    <form className="form-inline justify-content-center">
+                      <div className="form-group mx-sm-3 mb-2">
+                        <label htmlFor="inputPassword2" className="sr-only">
+                          Password
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Char Length <= 15"
+                          maxLength="15"
+                          onChange={this.setStateName}
+                        />
+                      </div>
+                    </form>
                   </div>
                 </div>
 
