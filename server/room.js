@@ -323,7 +323,7 @@ class Room {
   endRound(skt) {
     // Top solutions in this round.
     let playerSolutions = [];
-    let solvedPlayers = this.rounds[this.roundNum].solvedPlayers.length;
+    let solvedPlayers = this.rounds[this.roundNum].solvedPlayers;
     for (let i = 0; i < solvedPlayers.length && i < RANK_COUNT; i++) {
       let name = solvedPlayers[i].username;
       let solution = this.scoreboard[this.roundNum][name].solution;
