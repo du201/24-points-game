@@ -8,7 +8,7 @@ const MINUS = "-";
 // Preparation time (in s) before the first round.
 const PREP_TIME = 5;
 // Time (in s) between rounds.
-const ROUND_BREAK = 10;
+const ROUND_INTERVAL = 10;
 // The number of people that will be shown in the ranking list.
 const RANK_COUNT = 3;
 // Deduct points if the solution is incorrect.
@@ -65,7 +65,7 @@ class Room {
       rangeLo: 1,
       rangeHi: 13,
       maxNumOfRepeats: 4,
-      roundInterval: 30000,
+      roundDuration: 30000,
       numOfRounds: 10
     };
     // The host of the game in this room.
@@ -88,10 +88,10 @@ class Room {
    * Broadcasts message to all players in this room instance.
    *
    * @param {string} event The event to be emitted to the clients
-   * @param {object} msg The message that accompanies the event
+   * @param {object} data The data to be sent
    */
-  broadcast(event, msg) {
-    this.socketSet.forEach(skt => skt.emit(event, msg));
+  broadcast(event, data) {
+    this.socketSet.forEach(skt => skt.emit(event, data));
   }
 
   /**
@@ -245,11 +245,11 @@ class Room {
         this.settings.maxNumOfRepeats = settings.maxNumOfRepeats;
       }
     }
-    if (settings.hasOwnProperty("roundInterval")) {
-      if (Number.isInteger(settings.roundInterval) &&
-          settings.roundInterval >= 10000 &&
-          settings.roundInterval <= 60000) {
-        this.settings.roundInterval = settings.roundInterval;
+    if (settings.hasOwnProperty("roundDuration")) {
+      if (Number.isInteger(settings.roundDuration) &&
+          settings.roundDuration >= 10000 &&
+          settings.roundDuration <= 60000) {
+        this.settings.roundDuration = settings.roundDuration;
       }
     }
     if (settings.hasOwnProperty("numOfRounds")) {
@@ -368,7 +368,7 @@ class Room {
     // Starts a new round break.
     skt.prepTimer = setInterval(() => {
       if (skt.time === 0) { // Current round break ends.
-        skt.time = this.settings.roundInterval / 1000;
+        skt.time = this.settings.roundDuration / 1000;
         clearInterval(skt.prepTimer);
 
         this.roundNum = this.settings.numOfRounds - rounds - 1;
@@ -387,9 +387,25 @@ class Room {
             this.endRound(skt);
 
             if (rounds === 0) { // Last round.
+              skt.time = prepTime;
+
+              skt.lastBreakTimer = setInterval(() => {
+                if (skt.time === 0) { // Last round break ends.
+                  clearInterval(skt.lastBreakTimer);
+
+                  let playerRanking = this.rank;
+                  // Emit game summary.
+                  skt.emit("endGame", playerRanking);
+                }
+
+                skt.emit("timer", skt.time);
+                skt.time--;
+              }, 1000);
+
+              skt.intervals.push(skt.lastBreakTimer);
               return;
             } else {
-              this.newRound(skt, ROUND_BREAK, rounds - 1);
+              this.newRound(skt, ROUND_INTERVAL, rounds - 1);
             }
           }
 
