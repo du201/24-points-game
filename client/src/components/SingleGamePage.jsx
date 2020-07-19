@@ -5,7 +5,7 @@ const SingleGamePage = (props) => {
   return (
     <div>
       <ReturnHomePageButton
-        onReturn={props.returnHomePageButtonPress}
+        onReturn={props.pressReturnHomePageButton}
       ></ReturnHomePageButton>
       <h1 className="cover-heading">Game In Progress...(singleplayer)</h1>
     </div>

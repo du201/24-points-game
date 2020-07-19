@@ -47,7 +47,7 @@ const MenuSetting = (props) => {
                       max="6"
                       value={props.slotNum}
                       id="slots"
-                      onChange={props.slotNumChangeHandler}
+                      onChange={props.handleSlotNumChange}
                     ></input>
                   </div>
                 </div>
@@ -60,7 +60,7 @@ const MenuSetting = (props) => {
                       id="targetNum"
                       min="12"
                       max="36"
-                      onChange={props.targetNumChangeHandler}
+                      onChange={props.handleTargetNumChange}
                       value={props.targetNum}
                     ></input>
                   </div>
@@ -101,7 +101,7 @@ const MenuSetting = (props) => {
                     id="checkMultiply"
                     value={TIMES}
                     className="small-checkbox"
-                    onChange={props.onAvailableOperatorCheckbox}
+                    onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(TIMES)}
                   />
                   <label htmlFor="checkMultiply">
@@ -113,7 +113,7 @@ const MenuSetting = (props) => {
                     type="checkbox"
                     id="checkDivide"
                     value={DIVIDES}
-                    onChange={props.onAvailableOperatorCheckbox}
+                    onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(DIVIDES)}
                   />
                   <label htmlFor="checkDivide">
@@ -125,7 +125,7 @@ const MenuSetting = (props) => {
                     type="checkbox"
                     id="checkAdd"
                     value={PLUS}
-                    onChange={props.onAvailableOperatorCheckbox}
+                    onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(PLUS)}
                   />
                   <label htmlFor="checkAdd">
@@ -137,7 +137,7 @@ const MenuSetting = (props) => {
                     type="checkbox"
                     id="checkSubtract"
                     value={MINUS}
-                    onChange={props.onAvailableOperatorCheckbox}
+                    onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(MINUS)}
                   />
                   <label htmlFor="checkSubtract">
@@ -156,7 +156,7 @@ const MenuSetting = (props) => {
                       className="form-control form-control-sm"
                       type="number"
                       id="lower-bound"
-                      onChange={props.onRangeOfAvailableNumberLowBoundInput}
+                      onChange={props.handleRangeOfAvailableNumberLowBoundInput}
                       value={props.rangeOfAvailableNumberLowBound}
                       placeholder="Lower Bound"
                     ></input>
@@ -166,7 +166,7 @@ const MenuSetting = (props) => {
                       className="form-control form-control-sm"
                       type="number"
                       id="higher-bound"
-                      onChange={props.onRangeOfAvailableNumberHighBoundInput}
+                      onChange={props.handleRangeOfAvailableNumberHighBoundInput}
                       value={props.rangeOfAvailableNumberHighBound}
                       placeholder="Upper Bound"
                     ></input>
@@ -180,7 +180,7 @@ const MenuSetting = (props) => {
                         id="maxRepeatNum"
                         className="form-control form-control-sm ml-2"
                         type="number"
-                        onChange={props.onMaxRepeatNumInput}
+                        onChange={props.handleMaxRepeatNumInput}
                         value={props.maxRepeatNum}
                       ></input>
                     </div>
@@ -194,8 +194,8 @@ const MenuSetting = (props) => {
                         id="timeBetweenRound"
                         className="form-control form-control-sm ml-2"
                         type="number"
-                        onChange={props.onTimeBetweenRoundInput}
-                        value={props.timeBetweenRound}
+                        onChange={props.handleRoundDurationInput}
+                        value={props.roundDuration}
                       ></input>
                     </div>
                   </form>
@@ -207,7 +207,7 @@ const MenuSetting = (props) => {
                     min="10"
                     max="20"
                     value={props.numOfRound}
-                    onChange={props.onNumOfRoundInput}
+                    onChange={props.handleNumOfRoundInput}
                   ></input>
                 </div>
               </div>
@@ -217,7 +217,7 @@ const MenuSetting = (props) => {
       </div >
       <button
         className="btn btn-primary btn-lg mt-2"
-        onClick={props.menuCloseHandler}
+        onClick={props.pressMenuCloseButton}
       >
         Apply
       </button>

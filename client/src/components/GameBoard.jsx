@@ -27,7 +27,7 @@ class GameBoard extends Component {
                 className="btn btn-primary btn-lg w-75"
                 value={eachNum}
                 onClick={() => {
-                  this.props.on_addToInput(eachNum, index);
+                  this.props.addNumToInput(eachNum, index);
                 }}
                 disabled={this.props.multiplayerButtonDisable[index]}><h1>{eachNum}</h1></button>
             </div>);
@@ -41,7 +41,7 @@ class GameBoard extends Component {
             <button
               className="btn btn-primary btn-lg"
               onClick={() => {
-                this.props.on_deleteInput();
+                this.props.pressDeleteInputButton();
               }}
               disabled={this.props.submitButtonDisable}
             ><h1>DEL</h1></button>
@@ -57,7 +57,7 @@ class GameBoard extends Component {
                 className="btn btn-info btn-lg w-75"
                 value={eachOpe}
                 onClick={() => {
-                  this.props.on_addToInput(eachOpe);
+                  this.props.addNumToInput(eachOpe);
                 }}
                 disabled={this.props.submitButtonDisable}
               ><h1>{eachOpe}</h1></button>
@@ -68,12 +68,12 @@ class GameBoard extends Component {
           <div className="col col-4 text-center h-100">
             <button
               className="btn btn-success btn-lg w-75"
-              onClick={this.props.on_calculateExpression}
+              onClick={this.props.pressCalculateResultButton}
               disabled={this.props.submitButtonDisable}
             ><h1>Submit</h1></button>
             <button
               className="btn btn-warning btn-lg w-75 mt-2"
-              onClick={this.props.on_noSolution}
+              onClick={this.props.pressNoSolutionButton}
               disabled={this.props.submitButtonDisable}
             ><h4>No Solution</h4></button>
           </div>

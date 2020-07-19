@@ -10,20 +10,20 @@ const HostPage = (props) => {
         <div className="row h-100">
           <div className="col">
             <MenuSetting
-              slotNumChangeHandler={props.slotNumChangeHandler}
-              targetNumChangeHandler={props.targetNumChangeHandler}
-              menuCloseHandler={props.menuCloseHandler}
-              onRangeOfAvailableNumberLowBoundInput={
-                props.rangeOfAvailableNumberLowBoundInputHandler
+              handleSlotNumChange={props.handleSlotNumChange}
+              handleTargetNumChange={props.handleTargetNumChange}
+              pressMenuCloseButton={props.pressMenuCloseButton}
+              handleRangeOfAvailableNumberLowBoundInput={
+                props.handleRangeOfAvailableNumberLowBoundInput
               }
-              onRangeOfAvailableNumberHighBoundInput={
-                props.rangeOfAvailableNumberHighBoundInputHandler
+              handleRangeOfAvailableNumberHighBoundInput={
+                props.handleRangeOfAvailableNumberHighBoundInput
               }
-              onMaxRepeatNumInput={props.maxRepeatNumInputHandler}
-              onTimeBetweenRoundInput={props.timeBetweenRoundInputHandler}
-              onNumOfRoundInput={props.numOfRoundInputHandler}
-              onAvailableOperatorCheckbox={
-                props.availableOperatorCheckboxHandler
+              handleMaxRepeatNumInput={props.handleMaxRepeatNumInput}
+              handleRoundDurationInput={props.handleRoundDurationInput}
+              handleNumOfRoundInput={props.handleNumOfRoundInput}
+              handleAvailableOperatorCheckbox={
+                props.handleAvailableOperatorCheckbox
               }
               backToDefaultSettings={props.backToDefaultSettings}
               slotNum={props.slotNum}
@@ -36,7 +36,7 @@ const HostPage = (props) => {
                 props.rangeOfAvailableNumberHighBound
               }
               maxRepeatNum={props.maxRepeatNum}
-              timeBetweenRound={props.timeBetweenRound}
+              roundDuration={props.roundDuration}
               numOfRound={props.numOfRound}
               availableOperator={props.availableOperator}
             ></MenuSetting>
@@ -75,7 +75,7 @@ const HostPage = (props) => {
               <button
                 className="btn btn-primary m-3"
                 id="startGame"
-                onClick={props.startGameButtonPress}
+                onClick={props.pressStartGameButton}
               >
                 Start
                     </button>

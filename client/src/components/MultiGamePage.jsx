@@ -34,16 +34,16 @@ const MultiGamePage = (props) => {
         <div className="col col-8 h-100">
           <GameBoard
             gameNumbers={props.gameNumbers}
-            on_addToInput={props.on_addToInput}
+            addNumToInput={props.addNumToInput}
             expressionInput={props.expressionInput}
             targetNum={props.targetNum}
             operators={props.operators}
-            on_deleteInput={props.on_deleteInput}
-            on_calculateExpression={props.on_calculateExpression}
+            pressDeleteInputButton={props.pressDeleteInputButton}
+            pressCalculateResultButton={props.pressCalculateResultButton}
             answer={props.answer}
             multiplayerButtonDisable={props.multiplayerButtonDisable}
             correctOrNotText={props.correctOrNotText}
-            on_noSolution={props.on_noSolution}
+            pressNoSolutionButton={props.pressNoSolutionButton}
             submitButtonDisable={props.submitButtonDisable}></GameBoard>
         </div>
         <div className="col col-2 h-100">

@@ -8,7 +8,7 @@ const SolvePage = (props) => {
       <div className="row">
         <div className="col my-auto">
           <ReturnHomePageButton
-            onReturn={props.returnHomePageButtonPress}
+            onReturn={props.pressReturnHomePageButton}
           ></ReturnHomePageButton>
         </div>
       </div>

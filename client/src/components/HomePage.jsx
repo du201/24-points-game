@@ -18,19 +18,19 @@ const HomePage = (props) => {
         <div className="col text-center my-auto">
           <button
             className="btn btn-primary m-3"
-            onClick={() => props.solveModeButtonPress()}
+            onClick={props.pressSolveModeButton}
           >
             Solve
                 </button>
           <button
             className="btn btn-primary m-3"
-            onClick={props.gameModeButtonPress}
+            onClick={props.pressGameModeButton}
           >
             Multiplayer
                 </button>
           <button
             className="btn btn-primary"
-            onClick={props.enterSinglePlayerButtonPress}
+            onClick={props.pressSinglePlayModeButton}
           >
             Singleplayer
                 </button>

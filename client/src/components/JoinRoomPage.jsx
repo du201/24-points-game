@@ -55,7 +55,7 @@ const JoinRoomPage = (props) => {
         <div className="col col-auto align-self-center">
           <button
             className="btn btn-primary mb-2"
-            onClick={props.joinRoomKeyButtonPress}
+            onClick={props.pressJoinRoomKeyButton}
           >
             Join
                 </button>

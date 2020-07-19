@@ -87,7 +87,7 @@ class App extends Component {
     rangeOfAvailableNumberLowBound: 1,
     rangeOfAvailableNumberHighBound: 13,
     maxRepeatNum: 4, //the maximum number of repeated number possible
-    timeBetweenRound: 30000, //the time of each round in ms, in client the display is s
+    roundDuration: 30, //the time of each round in s, in client the display is s
     numOfRound: 10, //number of rounds in multi-player mode
     availableOperator: operators, //the operators available for players to use in their expressions
 
@@ -141,10 +141,11 @@ class App extends Component {
     draggable: true,
     progress: undefined,
   });
+
   /**
    * Remove all the entries that has the value value from the array
    */
-  arrayRemove = (arr, value) => {
+  filterArray = (arr, value) => {
     return arr.filter((ele) => {
       return ele !== value;
     });
@@ -154,7 +155,7 @@ class App extends Component {
    * In 1st page
    * In home page, choose the game mode (instead of single-player mode or solve mode) 
    */
-  gameModeButtonPress = () => {
+  pressGameModeButton = () => {
     this.setState({
       pageController: SELECTPAGE, //to page 3
     });
@@ -164,7 +165,7 @@ class App extends Component {
    * In 1st page
    * In home page, choose the solve mode
    */
-  solveModeButtonPress = () => {
+  pressSolveModeButton = () => {
     this.setState({
       pageController: SOLVEPAGE, //to page 2
     });
@@ -174,7 +175,7 @@ class App extends Component {
    * Appears in multiple pages
    * return back to the home page
    */
-  returnHomePageButtonPress = () => {
+  pressReturnHomePageButton = () => {
     this.setState({
       pageController: HOMEPAGE, //to page 1
     });
@@ -211,7 +212,7 @@ class App extends Component {
             //set all of the game-related states back to default
             this.backToDefaultAllStates();
             //unlisten to this when exit the room
-            this.serverDisconnectUnlisten();
+            this.unlistenToServerDisconnect();
           }
         },
         {
@@ -264,7 +265,7 @@ class App extends Component {
    * Use this function after starting connnecting to the server
    * Reset everything to default just like exitRoomButton
    */
-  serverDisconnectListen = () => {
+  listenToServerDisconnect = () => {
     socket.on(DISCONNECT, () => {
       this.notifyError("Disconnected from the Server, go back to the home page");
       this.stopListenToGameEvent();
@@ -274,14 +275,14 @@ class App extends Component {
         pageController: HOMEPAGE, //to page 1
       });
       //unlisten to the disconnect when go back to the home page
-      this.serverDisconnectUnlisten();
+      this.unlistenToServerDisconnect();
     });
   };
 
   /**
    * Stop listening to the disconnect event
    */
-  serverDisconnectUnlisten = () => {
+  unlistenToServerDisconnect = () => {
     socket.removeAllListeners(DISCONNECT);
   };
 
@@ -289,11 +290,11 @@ class App extends Component {
    * In page 3
    * The creator of the room uses this to request the server for a room
    */
-  createRoomButtonPress = () => {
+  pressCreateRoomButton = () => {
     if (this.hasValidUsername()) {
       socket.emit(CREATE_ROOM, this.state.username);
       socket.once(CREATE_ROOM_SUCCESS, (roomNum) => {
-        this.serverDisconnectListen();
+        this.listenToServerDisconnect();
         this.setState({
           pageController: HOSTPAGE, //to page 4
           roomNumber: roomNum, //string
@@ -319,7 +320,7 @@ class App extends Component {
    * The player (not the game host) goes to the 5th page where the room number he/she wants
    * to join is to be entered
    */
-  joinRoomButtonPress = () => {
+  pressJoinRoomButton = () => {
     if (this.hasValidUsername()) {
       this.setState({
         pageController: JOINROOMPAGE, //to 5th page
@@ -333,7 +334,7 @@ class App extends Component {
    * In page 4th (the game setting page)
    * the creator of the game room uses this function to start the multi-player game
    */
-  startGameButtonPress = () => {
+  pressStartGameButton = () => {
     socket.emit(START_GAME);
     //first go to the loading page while waiting for the server to finish calculating
     this.setState({
@@ -351,7 +352,7 @@ class App extends Component {
       //go to the game page
       this.setState({ pageController: COUNTDOWNPAGE, });
       //adopt the settings set by the game host
-      this.settingsReassign(settings);
+      this.reassignSettings(settings);
       socket.on(TIMER, (time) => {
         this.setState({ timeInGame: time });
       });
@@ -359,7 +360,7 @@ class App extends Component {
         console.log("NEW_ROUND");
         //increase the round number by 1
         this.setState({ whichRound: this.state.whichRound + 1 });
-        this.settingsReassign(settings);
+        this.reassignSettings(settings);
         this.setState({ multiplayerGameNumbers: numbers });
         //create a multiplayerButtonDisable array that has the same length as multiplayerGameNumbers
         this.createButtonDisableStatus(numbers);
@@ -435,15 +436,15 @@ class App extends Component {
    * This function is used when the server sends settings data to the client
    * @param settings all of the settings parameters
    */
-  settingsReassign = ({ numOfSlots, targetNumber, availableOperators, rangeLo,
-    rangeHi, maxNumOfRepeats, roundInterval, numOfRounds }) => {
+  reassignSettings = ({ numOfSlots, targetNumber, availableOperators, rangeLo,
+    rangeHi, maxNumOfRepeats, roundDuration, numOfRounds }) => {
     this.setState({
       gameModeBasicSetting: { slotNum: numOfSlots, targetNum: targetNumber },
       availableOperator: availableOperators,
       rangeOfAvailableNumberLowBound: rangeLo,
       rangeOfAvailableNumberHighBound: rangeHi,
       maxRepeatNum: maxNumOfRepeats,
-      timeBetweenRound: roundInterval,
+      roundDuration: roundDuration / 1000, //the unit for server is ms, for client it is s
       numOfRound: numOfRounds
     });
   }
@@ -455,14 +456,14 @@ class App extends Component {
    * The non-host way to enter the gameroom
    */
 
-  joinRoomKeyButtonPress = () => {
+  pressJoinRoomKeyButton = () => {
     socket.emit(JOIN_ROOM, {
       username: this.state.username,
       room: this.state.roomNumber,
     });
 
     socket.once(JOIN_ROOM_SUCCESS, () => {
-      this.serverDisconnectListen();
+      this.listenToServerDisconnect();
       this.setState({
         pageController: WAITFORHOSTPAGE,
       });
@@ -505,7 +506,7 @@ class App extends Component {
    * In page 1st
    * enter the single mode
    */
-  enterSinglePlayerButtonPress = () => {
+  pressSinglePlayModeButton = () => {
     this.setState({
       pageController: SINGLEGAMEPAGE, //to page 8th
     });
@@ -514,7 +515,7 @@ class App extends Component {
   /**
    * change the value of the number of slots for multi-player game
    */
-  slotNumChangeHandler = (event) => {
+  handleSlotNumChange = (event) => {
     let copy_gameModeSetting = { ...this.state.gameModeBasicSetting };
     copy_gameModeSetting.slotNum = parseInt(event.target.value, 10);
     this.setState({ gameModeBasicSetting: copy_gameModeSetting });
@@ -524,7 +525,7 @@ class App extends Component {
    * When no solution exists for the current problem
    * sends null to the server in the SEND_SOLUTION event
    */
-  noSolutionHandler = () => {
+  pressNoSolutionButton = () => {
     socket.emit(SEND_SOLUTION, null);
   };
 
@@ -532,7 +533,7 @@ class App extends Component {
    * 
    * change the value of the target number for multi-player game
    */
-  targetNumChangeHandler = (event) => {
+  handleTargetNumChange = (event) => {
     let copy_gameModeSetting = { ...this.state.gameModeBasicSetting };
     copy_gameModeSetting.targetNum = parseInt(event.target.value, 10);
     this.setState({ gameModeBasicSetting: copy_gameModeSetting });
@@ -541,7 +542,7 @@ class App extends Component {
   /**
    * save the menu setting, close the display, and send the data to the server side
    */
-  menuCloseHandler = () => {
+  pressMenuCloseButton = () => {
     this.setState({
       gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
     });
@@ -552,13 +553,13 @@ class App extends Component {
       rangeLo: this.state.rangeOfAvailableNumberLowBound, //int
       rangeHi: this.state.rangeOfAvailableNumberHighBound, //int
       maxNumOfRepeats: this.state.maxRepeatNum, //int
-      roundInterval: this.state.timeBetweenRound, //int (ms)
+      roundDuration: this.state.roundDuration, //int (ms)
       numOfRounds: this.state.numOfRound, //int
     };
     socket.emit(CHANGE_SETTINGS, settingPackageObject);
     //receive the final version of the settings from the server and apply that to the client
     socket.once(SETTINGS, (settings) => {
-      this.settingsReassign(settings);
+      this.reassignSettings(settings);
     });
   };
 
@@ -572,7 +573,7 @@ class App extends Component {
       rangeOfAvailableNumberLowBound: 1,
       rangeOfAvailableNumberHighBound: 13,
       maxRepeatNum: 4,
-      timeBetweenRound: 30000,
+      roundDuration: 30,
       numOfRound: 10,
     });
   }
@@ -587,35 +588,35 @@ class App extends Component {
   /**
    * set the value for rangeOfAvailableNumberLowBound
    */
-  rangeOfAvailableNumberLowBoundInputHandler = (event) => {
+  handleRangeOfAvailableNumberLowBoundInput = (event) => {
     this.setState({ rangeOfAvailableNumberLowBound: parseInt(event.target.value, 10) });
   };
 
   /**
    * set the value for rangeOfAvailableNumberHighBound
    */
-  rangeOfAvailableNumberHighBoundInputHandler = (event) => {
+  handleRangeOfAvailableNumberHighBoundInput = (event) => {
     this.setState({ rangeOfAvailableNumberHighBound: parseInt(event.target.value, 10) });
   };
 
   /**
    * set the value for maxRepeatNumInput
    */
-  maxRepeatNumInputHandler = (event) => {
+  handleMaxRepeatNumInput = (event) => {
     this.setState({ maxRepeatNum: parseInt(event.target.value, 10) });
   };
 
   /**
    * set the value for the time of each round 
    */
-  timeBetweenRoundInputHandler = (event) => {
-    this.setState({ timeBetweenRound: parseInt(event.target.value, 10) });
+  handleRoundDurationInput = (event) => {
+    this.setState({ roundDuration: parseInt(event.target.value, 10) });
   };
 
   /**
    * used by the slider that accepts only 10, 15, or 20 for the number of round per game
    */
-  numOfRoundInputHandler = (event) => {
+  handleNumOfRoundInput = (event) => {
     let num = event.target.value;
     if (num < 13) {
       num = 10;
@@ -631,13 +632,13 @@ class App extends Component {
    * the checkbox that controls the available operators during the game
    * @param {checkbox} event 
    */
-  availableOperatorCheckboxHandler = (event) => {
+  handleAvailableOperatorCheckbox = (event) => {
     let selectValue = event.target.value;
     switch (selectValue) {
       case TIMES:
         if (this.state.availableOperator.includes(TIMES)) {
           this.setState({
-            availableOperator: this.arrayRemove(
+            availableOperator: this.filterArray(
               this.state.availableOperator,
               TIMES
             ),
@@ -653,7 +654,7 @@ class App extends Component {
       case DIVIDES:
         if (this.state.availableOperator.includes(DIVIDES)) {
           this.setState({
-            availableOperator: this.arrayRemove(
+            availableOperator: this.filterArray(
               this.state.availableOperator,
               DIVIDES
             ),
@@ -669,7 +670,7 @@ class App extends Component {
       case PLUS:
         if (this.state.availableOperator.includes(PLUS)) {
           this.setState({
-            availableOperator: this.arrayRemove(
+            availableOperator: this.filterArray(
               this.state.availableOperator,
               PLUS
             ),
@@ -685,7 +686,7 @@ class App extends Component {
       case MINUS:
         if (this.state.availableOperator.includes(MINUS)) {
           this.setState({
-            availableOperator: this.arrayRemove(
+            availableOperator: this.filterArray(
               this.state.availableOperator,
               MINUS
             ),
@@ -707,7 +708,7 @@ class App extends Component {
    * When press the button, add the corresponding number or operator to the input expression
    * @param {int} eachNum the number or operator string associated with the button 
    */
-  addToInputHandler = (eachNum, index) => {
+  addNumToInput = (eachNum, index) => {
     let copy_disableStatus = [...this.state.multiplayerButtonDisable];
     let copy_expressionInput = [...this.state.expressionInput];
     //disable the button being clicked
@@ -722,7 +723,7 @@ class App extends Component {
   /**
    * When click the "DEL" button, delete a number or operator string from the input expression
    */
-  deleteInputHandler = () => {
+  pressDeleteInputButton = () => {
     let copy_expressionInput = [...this.state.expressionInput];
     if (copy_expressionInput.length >= 0) {
       let deletedNum = parseInt(copy_expressionInput.pop(), 10);
@@ -767,7 +768,7 @@ class App extends Component {
    * @param {array of int} digits the digits of the number from left to right
    * @returns {int} the number represented by the input digits array
    */
-  numberReform = (digits) => {
+  reformNumber = (digits) => {
     let timeFactor = 1;
     let number = 0;
     for (let i = this.state.roomNumMaxDigitNum - 1; i >= 0; i--) {
@@ -794,19 +795,19 @@ class App extends Component {
     switch (e.target.id) {
       case "first":
         digits[0] = digit;
-        this.setState({ roomNumber: this.numberReform(digits) });
+        this.setState({ roomNumber: this.reformNumber(digits) });
         break;
       case "second":
         digits[1] = digit;
-        this.setState({ roomNumber: this.numberReform(digits) });
+        this.setState({ roomNumber: this.reformNumber(digits) });
         break;
       case "third":
         digits[2] = digit;
-        this.setState({ roomNumber: this.numberReform(digits) });
+        this.setState({ roomNumber: this.reformNumber(digits) });
         break;
       case "last":
         digits[3] = digit;
-        this.setState({ roomNumber: this.numberReform(digits) });
+        this.setState({ roomNumber: this.reformNumber(digits) });
         break;
     }
   };
@@ -816,13 +817,13 @@ class App extends Component {
   /**
    * calculate the value of the inputed expression and send the expression to the server if it's valid
    */
-  calculateExpressionHandler = () => {
+  pressCalculateResultButton = () => {
     if (checkValid(this.state.expressionInput)) { //check the basic validity
       let result = calculate(this.state.expressionInput);
       //checkPostfixValid(result);
       if (result === "Invalid") {
         this.setState({ answer: "The expression is invalid" });
-      } else if (!this.allNumberUsed()) {
+      } else if (!this.areAllNumbersUsed()) {
         this.setState({ answer: "You must use all of the numbers" });
       } else {
         this.setState({ answer: result });
@@ -838,7 +839,7 @@ class App extends Component {
   /**
    * @returns whether or not all the numbers (slots) are used during the game
    */
-  allNumberUsed = () => {
+  areAllNumbersUsed = () => {
     for (let i = 0; i < this.state.multiplayerButtonDisable.length; i++) {
       if (this.state.multiplayerButtonDisable[i] === false) {
         return false;
@@ -853,44 +854,44 @@ class App extends Component {
       case HOMEPAGE: //1
         return (
           <HomePage
-            solveModeButtonPress={this.solveModeButtonPress}
-            gameModeButtonPress={this.gameModeButtonPress}
-            enterSinglePlayerButtonPress={this.enterSinglePlayerButtonPress}
+            pressSolveModeButton={this.pressSolveModeButton}
+            pressGameModeButton={this.pressGameModeButton}
+            pressSinglePlayModeButton={this.pressSinglePlayModeButton}
           ></HomePage>
         );
       case SOLVEPAGE: //2
         return (
           <SolvePage
-            returnHomePageButtonPress={this.returnHomePageButtonPress}
+            pressReturnHomePageButton={this.pressReturnHomePageButton}
           ></SolvePage>
         );
       case SELECTPAGE: //3
         return (
           <SelectPage
-            returnHomePageButtonPress={this.returnHomePageButtonPress}
+            pressReturnHomePageButton={this.pressReturnHomePageButton}
             setStateName={this.setStateName}
-            createRoomButtonPress={this.createRoomButtonPress}
-            joinRoomButtonPress={this.joinRoomButtonPress}
+            pressCreateRoomButton={this.pressCreateRoomButton}
+            pressJoinRoomButton={this.pressJoinRoomButton}
           ></SelectPage>
         );
       case HOSTPAGE: //4
         return (
           <HostPage
             gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
-            slotNumChangeHandler={this.slotNumChangeHandler}
-            targetNumChangeHandler={this.targetNumChangeHandler}
-            menuCloseHandler={this.menuCloseHandler}
-            rangeOfAvailableNumberLowBoundInputHandler={
-              this.rangeOfAvailableNumberLowBoundInputHandler
+            handleSlotNumChange={this.handleSlotNumChange}
+            handleTargetNumChange={this.handleTargetNumChange}
+            pressMenuCloseButton={this.pressMenuCloseButton}
+            handleRangeOfAvailableNumberLowBoundInput={
+              this.handleRangeOfAvailableNumberLowBoundInput
             }
-            rangeOfAvailableNumberHighBoundInputHandler={
-              this.rangeOfAvailableNumberHighBoundInputHandler
+            handleRangeOfAvailableNumberHighBoundInput={
+              this.handleRangeOfAvailableNumberHighBoundInput
             }
-            maxRepeatNumInputHandler={this.maxRepeatNumInputHandler}
-            timeBetweenRoundInputHandler={this.timeBetweenRoundInputHandler}
-            numOfRoundInputHandler={this.numOfRoundInputHandler}
-            availableOperatorCheckboxHandler={
-              this.availableOperatorCheckboxHandler
+            handleMaxRepeatNumInput={this.handleMaxRepeatNumInput}
+            handleRoundDurationInput={this.handleRoundDurationInput}
+            handleNumOfRoundInput={this.handleNumOfRoundInput}
+            handleAvailableOperatorCheckbox={
+              this.handleAvailableOperatorCheckbox
             }
             backToDefaultSettings={this.backToDefaultSettings}
             slotNum={this.state.gameModeBasicSetting.slotNum}
@@ -903,13 +904,13 @@ class App extends Component {
               this.state.rangeOfAvailableNumberHighBound
             }
             maxRepeatNum={this.state.maxRepeatNum}
-            timeBetweenRound={this.state.timeBetweenRound}
+            roundDuration={this.state.roundDuration}
             numOfRound={this.state.numOfRound}
             availableOperator={this.state.availableOperator}
             exitRoomButtonPress={this.exitRoomButtonPress}
             username={this.state.username}
             roomNumber={this.state.roomNumber}
-            startGameButtonPress={this.startGameButtonPress}
+            pressStartGameButton={this.pressStartGameButton}
             playerRoster={this.state.playerRoster}
             playerSolved={this.state.playerSolved}
             pageController={this.state.pageController}
@@ -924,7 +925,7 @@ class App extends Component {
             setStateName={this.setStateName}
             setRoomNum={this.setRoomNum}
             roomNumber={this.state.roomNumber}
-            joinRoomKeyButtonPress={this.joinRoomKeyButtonPress}
+            pressJoinRoomKeyButton={this.pressJoinRoomKeyButton}
           ></JoinRoomPage>
         );
       case WAITFORHOSTPAGE: //6
@@ -945,16 +946,16 @@ class App extends Component {
             whichRound={this.state.whichRound}
             numOfRound={this.state.numOfRound}
             gameNumbers={this.state.multiplayerGameNumbers}
-            on_addToInput={this.addToInputHandler}
+            addNumToInput={this.addNumToInput}
             expressionInput={this.state.expressionInput}
             targetNum={this.state.gameModeBasicSetting.targetNum}
             operators={this.state.availableOperator}
-            on_deleteInput={this.deleteInputHandler}
-            on_calculateExpression={this.calculateExpressionHandler}
+            pressDeleteInputButton={this.pressDeleteInputButton}
+            pressCalculateResultButton={this.pressCalculateResultButton}
             answer={this.state.answer}
             multiplayerButtonDisable={this.state.multiplayerButtonDisable}
             correctOrNotText={this.state.correctOrNotText}
-            on_noSolution={this.noSolutionHandler}
+            pressNoSolutionButton={this.pressNoSolutionButton}
             submitButtonDisable={this.state.submitButtonDisable}
             timeInGame={this.state.timeInGame}
             playerRosterLength={this.state.playerRoster.length}
@@ -966,7 +967,7 @@ class App extends Component {
       case SINGLEGAMEPAGE: //8
         return (
           <SingleGamePage
-            returnHomePageButtonPress={this.returnHomePageButtonPress}
+            pressReturnHomePageButton={this.pressReturnHomePageButton}
           ></SingleGamePage>
         );
       case LOADINGPAGE: //9: currently just for the host

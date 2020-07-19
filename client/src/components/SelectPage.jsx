@@ -8,7 +8,7 @@ const SelectPage = (props) => {
       <div className="row h-25">
         <div className="col my-auto">
           <ReturnHomePageButton
-            onReturn={props.returnHomePageButtonPress}
+            onReturn={props.pressReturnHomePageButton}
           ></ReturnHomePageButton>
         </div>
       </div>
@@ -29,13 +29,13 @@ const SelectPage = (props) => {
           ></NameInputUI>
           <button
             className="btn btn-primary mr-1"
-            onClick={props.createRoomButtonPress}
+            onClick={props.pressCreateRoomButton}
           >
             New Room
                 </button>
           <button
             className="btn btn-primary ml-1"
-            onClick={props.joinRoomButtonPress}
+            onClick={props.pressJoinRoomButton}
           >
             Join Room
                 </button>
