@@ -1,25 +1,32 @@
 import React, { Component } from "react";
+
+//imported API
 import { Helmet } from "react-helmet";
-import "./App.css";
-import ReturnHomePageButton from "./components/ReturnHomePageButton";
-import CancelRoomCreateButton from "./components/CancelRoomCreateButton";
-import GameSolver from "./components/GameSolver";
-import MenuSetting from "./components/MenuSetting";
-import NameInputUI from "./components/NameInputUI";
-import GameBoard from "./components/GameBoard";
 import io from "socket.io-client";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+//imported local classes/functions
+import "./App.css";
 import tabImage from "./tabImage.png";
 import calculate from "./calculate.js";
 import checkValid from "./checkValid.js";
-import Roster from "./components/Roster";
-import $ from "jquery";
-import RoomNumInput from "./components/RoomNumInput";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import Loader from 'react-loader-spinner';
-import SolutionsRank from "./components/SolutionsRank";
-import ScoresRank from "./components/ScoresRank";
+//all the page files
+import HomePage from "./components/HomePage"; //1
+import SolvePage from "./components/SolvePage"; //2
+import SelectPage from "./components/SelectPage"; //3
+import HostPage from "./components/HostPage"; //4
+import JoinRoomPage from "./components/JoinRoomPage"; //5
+import WaitForHostPage from "./components/WaitForHostPage"; //6
+import MultiGamePage from "./components/MultiGamePage"; //7
+import SingleGamePage from "./components/SingleGamePage"; //8
+import LoadingPage from "./components/LoadingPage"; //9
+import CountDownPage from "./components/CountDownPage"; //10
+import BetweenRoundPage from "./components/BetweenRoundPage"; //11
 
-
+//defined const
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
@@ -67,7 +74,7 @@ const DISCONNECT = "disconnect";
 
 const server = "http://localhost:2000";
 const socket = io.connect(server);
-
+toast.configure();
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
@@ -122,6 +129,19 @@ class App extends Component {
 
 
   /**
+   * 
+   * @param {string} message the text that you want it to appear in the error toast 
+   */
+  notifyError = (message) => toast.error(message, {
+    position: "bottom-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+  /**
    * Remove all the entries that has the value value from the array
    */
   arrayRemove = (arr, value) => {
@@ -161,22 +181,49 @@ class App extends Component {
   };
 
   /**
-   * In 4th page (the host) or the 6th page (the other players)
-   * to exit the room and tell the server
+   * Open or close the settings menu
    */
-  exitRoomButtonPress = () => {
+  switchSettingsMenu = () => {
     this.setState({
-      pageController: SELECTPAGE, //to page 3
+      gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
     });
-    socket.emit(EXIT_ROOM);
-
-    this.stopListenToGameEvent();
-    //set all of the game-related states back to default
-    this.backToDefaultAllStates();
-    //unlisten to this when exit the room
-    this.serverDisconnectUnlisten();
   };
 
+  /**
+   * In 4th page (the host) or the 6th page (the other players)
+   * to exit the room and tell the server
+   * There is a confirm window before the action of exiting really happens
+   */
+  exitRoomButtonPress = () => {
+    confirmAlert({
+      title: 'Confirm to Exit the Room',
+      message: 'Are you sure to do this?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+            this.setState({
+              pageController: SELECTPAGE, //to page 3
+            });
+            socket.emit(EXIT_ROOM);
+
+            this.stopListenToGameEvent();
+            //set all of the game-related states back to default
+            this.backToDefaultAllStates();
+            //unlisten to this when exit the room
+            this.serverDisconnectUnlisten();
+          }
+        },
+        {
+          label: 'No',
+        }
+      ]
+    });
+  };
+
+  /**
+   * When quittin gthe game, stop listening to all these events
+   */
   stopListenToGameEvent = () => {
     socket.removeAllListeners(TIMER);
     socket.removeAllListeners(ROSTER);
@@ -219,7 +266,7 @@ class App extends Component {
    */
   serverDisconnectListen = () => {
     socket.on(DISCONNECT, () => {
-      alert("Disconnected from the Server, go back to the home page");
+      this.notifyError("Disconnected from the Server, go back to the home page");
       this.stopListenToGameEvent();
       //set all of the game-related states back to default
       this.backToDefaultAllStates();
@@ -260,10 +307,10 @@ class App extends Component {
         });
       });
       socket.once(CREATE_ROOM_FAILURE, (msg) => {
-        alert(msg); //1. noRoomsAvailable - all room numbers are used
+        this.notifyError(msg); //1. noRoomsAvailable - all room numbers are used
       });
     } else {
-      alert("please enter a valid nickname");
+      this.notifyError("please enter a valid nickname");
     }
   };
 
@@ -278,7 +325,7 @@ class App extends Component {
         pageController: JOINROOMPAGE, //to 5th page
       });
     } else {
-      alert("please enter a valid nickname");
+      this.notifyError("please enter a valid nickname");
     }
   };
 
@@ -429,7 +476,7 @@ class App extends Component {
 
       //if the host of the room exits, all the players go back to the third page
       socket.once(ROOM_CLOSED, () => {
-        alert("The host has closed the room. You are removed from the room");
+        this.notifyError("The host has closed the room. You are removed from the room");
         this.setState({ pageController: SELECTPAGE });
       })
     });
@@ -437,16 +484,16 @@ class App extends Component {
     socket.once(JOIN_ROOM_FAILURE, (msg) => {
       switch (msg) {
         case "roomDoesNotExist":
-          alert("This room does not exist, please try another room number");
+          this.notifyError("This room does not exist, please try another room number");
           break;
         case "invalidRoomNumber":
-          alert("The room number entered is not valid. It is a 4-digit number");
+          this.notifyError("The room number entered is not valid. It is a 4-digit number");
           break;
         case "usernameTaken":
-          alert("The username has already been taken, please try another username");
+          this.notifyError("The username has already been taken, please try another username");
           break;
         case "gameInProgress":
-          alert("The game has already started in this room. You can either wait until the game finishes or enter another room instead");
+          this.notifyError("The game has already started in this room. You can either wait until the game finishes or enter another room instead");
           break;
         default:
           break;
@@ -734,7 +781,7 @@ class App extends Component {
    * Set the value of the room number with four separate input boxes
    * @param {onChange} e 
    */
-  setRoomNum(e) {
+  setRoomNum = (e) => {
     if (e.target.value.length === 0) {
       return;
     }
@@ -805,448 +852,143 @@ class App extends Component {
     switch (pageName) {
       case HOMEPAGE: //1
         return (
-          <div className="container h-100">
-            <div className="row h-25"></div>
-            <div className="row h-25">
-              <div className="col text-center my-auto">
-                <h1>1st Page (homePage)</h1>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col text-center my-auto">
-                <button
-                  className="btn btn-primary m-3"
-                  onClick={this.solveModeButtonPress}
-                >
-                  Solve
-                </button>
-                <button
-                  className="btn btn-primary m-3"
-                  onClick={this.gameModeButtonPress}
-                >
-                  Multiplayer
-                </button>
-                <button
-                  className="btn btn-primary"
-                  onClick={this.enterSinglePlayerButtonPress}
-                >
-                  Singleplayer
-                </button>
-
-              </div>
-            </div>
-            <div className="row h-25"></div>
-          </div>
+          <HomePage
+            solveModeButtonPress={this.solveModeButtonPress}
+            gameModeButtonPress={this.gameModeButtonPress}
+            enterSinglePlayerButtonPress={this.enterSinglePlayerButtonPress}
+          ></HomePage>
         );
       case SOLVEPAGE: //2
         return (
-          <div className="container-fluid h-100">
-            <div className="row">
-              <div className="col my-auto">
-                <ReturnHomePageButton
-                  onReturn={this.returnHomePageButtonPress}
-                ></ReturnHomePageButton>
-              </div>
-            </div>
-            <div className="row h-50">
-              <div className="col text-center my-auto">
-                <GameSolver />
-              </div>
-            </div>
-            <div className="row">
-            </div>
-          </div>
+          <SolvePage
+            returnHomePageButtonPress={this.returnHomePageButtonPress}
+          ></SolvePage>
         );
       case SELECTPAGE: //3
         return (
-          <div className="container-fluid h-100">
-            <div className="row h-25">
-              <div className="col my-auto">
-                <ReturnHomePageButton
-                  onReturn={this.returnHomePageButtonPress}
-                ></ReturnHomePageButton>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col text-center my-auto">
-                <h1>
-                  3rd Page (Create Room or Enter Room)
-                </h1>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col text-center my-auto">
-                <p>Enter your nickname</p>
-                <NameInputUI
-                  onChange={this.setStateName}
-                  placeHolder="Char Length <= 15"
-
-                ></NameInputUI>
-                <button
-                  className="btn btn-primary mr-1"
-                  onClick={this.createRoomButtonPress}
-                >
-                  New Room
-                </button>
-                <button
-                  className="btn btn-primary ml-1"
-                  onClick={this.joinRoomButtonPress}
-                >
-                  Join Room
-                </button>
-              </div>
-
-            </div>
-            <div className="row h-25">
-            </div>
-          </div>
-
+          <SelectPage
+            returnHomePageButtonPress={this.returnHomePageButtonPress}
+            setStateName={this.setStateName}
+            createRoomButtonPress={this.createRoomButtonPress}
+            joinRoomButtonPress={this.joinRoomButtonPress}
+          ></SelectPage>
         );
       case HOSTPAGE: //4
         return (
-          <div className="container-fluid h-100">
-            {this.state.gameModeSettingMenuOpen === true ?
-              <div className="row h-100">
-                <div className="col">
-                  <MenuSetting
-                    slotNumChangeHandler={this.slotNumChangeHandler}
-                    targetNumChangeHandler={this.targetNumChangeHandler}
-                    menuCloseHandler={this.menuCloseHandler}
-                    onRangeOfAvailableNumberLowBoundInput={
-                      this.rangeOfAvailableNumberLowBoundInputHandler
-                    }
-                    onRangeOfAvailableNumberHighBoundInput={
-                      this.rangeOfAvailableNumberHighBoundInputHandler
-                    }
-                    onMaxRepeatNumInput={this.maxRepeatNumInputHandler}
-                    onTimeBetweenRoundInput={this.timeBetweenRoundInputHandler}
-                    onNumOfRoundInput={this.numOfRoundInputHandler}
-                    onAvailableOperatorCheckbox={
-                      this.availableOperatorCheckboxHandler
-                    }
-                    backToDefaultSettings={this.backToDefaultSettings}
-                    slotNum={this.state.gameModeBasicSetting.slotNum}
-                    targetNum={this.state.gameModeBasicSetting.targetNum}
-                    showMenuBoolean={this.state.gameModeSettingMenuOpen}
-                    rangeOfAvailableNumberLowBound={
-                      this.state.rangeOfAvailableNumberLowBound
-                    }
-                    rangeOfAvailableNumberHighBound={
-                      this.state.rangeOfAvailableNumberHighBound
-                    }
-                    maxRepeatNum={this.state.maxRepeatNum}
-                    timeBetweenRound={this.state.timeBetweenRound}
-                    numOfRound={this.state.numOfRound}
-                    availableOperator={this.state.availableOperator}
-                  ></MenuSetting>
-                </div>
-              </div>
-              :
-              <div className="h-100 w-100">
-                <div className="row h-25">
-                  <div className="col my-auto">
-                    <CancelRoomCreateButton
-                      onCancel={this.exitRoomButtonPress}
-                    ></CancelRoomCreateButton>
-                    <button
-                      className="btn btn-info m-3 topRightCorner"
-                      onClick={() => {
-                        this.setState({
-                          gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
-                        });
-                      }}
-                    >
-                      Setting
-                    </button>
-                  </div>
-                </div>
-                <div className="row h-25">
-                  <div className="col text-center my-auto">
-                    <h1 className="cover-heading">
-                      4th Page
-                      <br />
-                      Nickname: {this.state.username}
-                      <br />
-                      Room Number: {this.state.roomNumber}
-                      <br />
-                      Please wait for other players to join
-                    </h1>
-                  </div>
-                </div>
-                <div className="row h-25">
-                  <div className="col text-center my-auto">
-                    <button
-                      className="btn btn-primary m-3"
-                      id="startGame"
-                      onClick={this.startGameButtonPress}
-                    >
-                      Start
-                    </button>
-                  </div>
-                </div>
-                <div className="row h-25 justify-content-center">
-                  <div className="col-6 pt-2 overflow-auto h-100">
-                    <Roster
-                      playerRoster={this.state.playerRoster}
-                      playerSolved={this.state.playerSolved}
-                      pageController={this.state.pageController}
-                    ></Roster>
-                  </div>
-                </div>
-              </div>}
-          </div>
-
+          <HostPage
+            gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
+            slotNumChangeHandler={this.slotNumChangeHandler}
+            targetNumChangeHandler={this.targetNumChangeHandler}
+            menuCloseHandler={this.menuCloseHandler}
+            rangeOfAvailableNumberLowBoundInputHandler={
+              this.rangeOfAvailableNumberLowBoundInputHandler
+            }
+            rangeOfAvailableNumberHighBoundInputHandler={
+              this.rangeOfAvailableNumberHighBoundInputHandler
+            }
+            maxRepeatNumInputHandler={this.maxRepeatNumInputHandler}
+            timeBetweenRoundInputHandler={this.timeBetweenRoundInputHandler}
+            numOfRoundInputHandler={this.numOfRoundInputHandler}
+            availableOperatorCheckboxHandler={
+              this.availableOperatorCheckboxHandler
+            }
+            backToDefaultSettings={this.backToDefaultSettings}
+            slotNum={this.state.gameModeBasicSetting.slotNum}
+            targetNum={this.state.gameModeBasicSetting.targetNum}
+            gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
+            rangeOfAvailableNumberLowBound={
+              this.state.rangeOfAvailableNumberLowBound
+            }
+            rangeOfAvailableNumberHighBound={
+              this.state.rangeOfAvailableNumberHighBound
+            }
+            maxRepeatNum={this.state.maxRepeatNum}
+            timeBetweenRound={this.state.timeBetweenRound}
+            numOfRound={this.state.numOfRound}
+            availableOperator={this.state.availableOperator}
+            exitRoomButtonPress={this.exitRoomButtonPress}
+            username={this.state.username}
+            roomNumber={this.state.roomNumber}
+            startGameButtonPress={this.startGameButtonPress}
+            playerRoster={this.state.playerRoster}
+            playerSolved={this.state.playerSolved}
+            pageController={this.state.pageController}
+            switchSettingsMenu={this.switchSettingsMenu}
+          ></HostPage>
         );
       case JOINROOMPAGE: //5
         return (
-          <div className="container-fluid h-100">
-            <div className="row h-25">
-              <div className="col my-auto">
-                <CancelRoomCreateButton
-                  onCancel={this.exitRoomButtonPress}
-                ></CancelRoomCreateButton>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col text-center my-auto">
-                <h1 className="cover-heading">
-                  5th Page
-                <br />
-                Please Enter the Room #
-                </h1>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col text-center h-100">
-                <div className="row h-50">
-                  <div className="col">
-                    Your nickname: <strong>{this.state.username}</strong>
-                    <form className="form-inline justify-content-center">
-                      <div className="form-group mx-sm-3 mb-2">
-                        <label htmlFor="inputPassword2" className="sr-only">
-                          Password
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder={this.state.username}
-                          maxLength="15"
-                          onChange={this.setStateName}
-                        />
-                      </div>
-                    </form>
-                  </div>
-                </div>
-
-                <div className="row h-50 justify-content-center">
-                  <RoomNumInput
-                    setRoomNum={(e) => this.setRoomNum(e)}
-                    roomNumber={this.state.roomNumber}
-                  ></RoomNumInput>
-                </div>
-              </div>
-            </div>
-            <div className="row h-25 justify-content-center">
-              <div className="col col-auto align-self-center">
-                <button
-                  className="btn btn-primary mb-2"
-                  onClick={this.joinRoomKeyButtonPress}
-                >
-                  Join
-                </button>
-              </div>
-            </div>
-          </div>
+          <JoinRoomPage
+            exitRoomButtonPress={this.exitRoomButtonPress}
+            username={this.state.username}
+            setStateName={this.setStateName}
+            setRoomNum={this.setRoomNum}
+            roomNumber={this.state.roomNumber}
+            joinRoomKeyButtonPress={this.joinRoomKeyButtonPress}
+          ></JoinRoomPage>
         );
       case WAITFORHOSTPAGE: //6
         return (
-          <div className="container-fluid h-100">
-            <div className="row h-25">
-              <div className="col my-auto">
-                <button
-                  className="btn btn-primary m-3"
-                  onClick={this.exitRoomButtonPress}
-                >
-                  Exit the Room
-            </button>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col text-center my-auto">
-                <h1 className="cover-heading">
-                  6th Page
-                <br />
-                Waiting For the Host to Start the Game
-            </h1>
-              </div>
-            </div>
-            <div className="row h-25 justify-content-center">
-              <div className="col-6 pt-2 overflow-auto h-100">
-                <Roster
-                  playerRoster={this.state.playerRoster}
-                  playerSolved={this.state.playerSolved}
-                  pageController={this.state.pageController}
-                ></Roster>
-              </div>
-            </div>
-            <div className="row h-25">
-            </div>
-          </div>
-
+          <WaitForHostPage
+            exitRoomButtonPress={this.exitRoomButtonPress}
+            playerRoster={this.state.playerRoster}
+            playerSolved={this.state.playerSolved}
+            pageController={this.state.pageController}
+          ></WaitForHostPage>
         );
       case MULTIGAMEPAGE: //7
         return (
-          <div className="container-fluid h-100">
-            <div className="row h-100">
-              <div className="col col-2 h-100">
-                <div className="row h-25">
-                  <div className="col text-center my-auto h-50">
-                    <CancelRoomCreateButton
-                      onCancel={this.exitRoomButtonPress}
-                    ></CancelRoomCreateButton>
-                  </div>
-                </div>
-                <div className="row h-25">
-                  <div className="col text-center my-auto">
-                    <h3>My Total Score (from prev rounds): {this.state.multiplayerTotalScore}</h3>
-                  </div>
-                </div>
-                <div className="row h-25">
-                  <div className="col text-center my-auto">
-                    <h1>My Name: {this.state.username}</h1>
-                  </div>
-                </div>
-                <div className="row h-25">
-                  <div className="col text-center my-auto">
-                    <h1>Round: {this.state.whichRound} / {this.state.numOfRound}</h1>
-                  </div>
-                </div>
-              </div>
-              <div className="col col-8 h-100">
-                <GameBoard
-                  gameNumbers={this.state.multiplayerGameNumbers}
-                  on_addToInput={this.addToInputHandler}
-                  expressionInput={this.state.expressionInput}
-                  targetNum={this.state.gameModeBasicSetting.targetNum}
-                  operators={this.state.availableOperator}
-                  on_deleteInput={this.deleteInputHandler}
-                  on_calculateExpression={this.calculateExpressionHandler}
-                  answer={this.state.answer}
-                  multiplayerButtonDisable={this.state.multiplayerButtonDisable}
-                  correctOrNotText={this.state.correctOrNotText}
-                  on_noSolution={this.noSolutionHandler}
-                  submitButtonDisable={this.state.submitButtonDisable}></GameBoard>
-              </div>
-              <div className="col col-2 h-100">
-                <div className="row h-25">
-                  <div className="col text-center my-auto">
-                    <h3>Time (s) Left:</h3>
-                    <h2>{this.state.timeInGame}s</h2>
-                  </div>
-                </div>
-                <div className="row h-25">
-                  <div className="col my-auto text-center">
-                    Total Player#/ Player Solved#
-                    <br />
-                    {this.state.playerRoster.length}/{this.state.playerSolved.length}
-                  </div>
-                </div>
-                <div className="row h-50">
-                  <div className="col h-100 overflow-auto">
-                    <Roster
-                      playerRoster={this.state.playerRoster}
-                      playerSolved={this.state.playerSolved}
-                    ></Roster>
-                  </div>
-                  {/*
-                  <div className="col pt-2 overflow-auto h-100">
-                    <div className="card bg-info mb-1">
-                      <div className="card-body">
-                        <div>Xin</div>
-                        <div>Yes</div>
-                      </div>
-                    </div>
-                  </div>
-                  */}
-                </div>
-              </div>
-            </div>
-          </div>
+          <MultiGamePage
+            exitRoomButtonPress={this.exitRoomButtonPress}
+            multiplayerTotalScore={this.state.multiplayerTotalScore}
+            username={this.state.username}
+            whichRound={this.state.whichRound}
+            numOfRound={this.state.numOfRound}
+            gameNumbers={this.state.multiplayerGameNumbers}
+            on_addToInput={this.addToInputHandler}
+            expressionInput={this.state.expressionInput}
+            targetNum={this.state.gameModeBasicSetting.targetNum}
+            operators={this.state.availableOperator}
+            on_deleteInput={this.deleteInputHandler}
+            on_calculateExpression={this.calculateExpressionHandler}
+            answer={this.state.answer}
+            multiplayerButtonDisable={this.state.multiplayerButtonDisable}
+            correctOrNotText={this.state.correctOrNotText}
+            on_noSolution={this.noSolutionHandler}
+            submitButtonDisable={this.state.submitButtonDisable}
+            timeInGame={this.state.timeInGame}
+            playerRosterLength={this.state.playerRoster.length}
+            playerSolvedLength={this.state.playerSolved.length}
+            playerRoster={this.state.playerRoster}
+            playerSolved={this.state.playerSolved}
+          ></MultiGamePage>
         );
       case SINGLEGAMEPAGE: //8
         return (
-          <div>
-            <ReturnHomePageButton
-              onReturn={this.returnHomePageButtonPress}
-            ></ReturnHomePageButton>
-            <h1 className="cover-heading">Game In Progress...(singleplayer)</h1>
-          </div>
+          <SingleGamePage
+            returnHomePageButtonPress={this.returnHomePageButtonPress}
+          ></SingleGamePage>
         );
       case LOADINGPAGE: //9: currently just for the host
         return (
-          <div className="container h-100">
-            <div className="row h-100">
-              <div className="col my-auto text-center">
-                <h2>The Game is Preparing...</h2>
-                <Loader
-                  type="Oval"
-                  color="#00BFFF"
-                  height={300}
-                  width={300}
-                />
-              </div>
-            </div>
-          </div>
+          <LoadingPage></LoadingPage>
         );
       case COUNTDOWNPAGE: //10: for both the host and the player
         return (
-          <div className="container h-100">
-            <div className="row h-100">
-              <div className="col my-auto text-center">
-                <h1>Final Countdown!</h1>
-                <h1>{this.state.timeInGame}</h1>
-              </div>
-            </div>
-          </div>
+          <CountDownPage
+            timeInGame={this.state.timeInGame}
+          ></CountDownPage>
         );
       case BTWROUNDPAGE: //11: the page being displayed between each round of the game
         return (
-          <div className="container-fluid h-100">
-            <div className="row h-25">
-              <div className="col my-auto text-center">
-                <h1>Round {this.state.whichRound}</h1>
-                <h1>Result</h1>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col my-auto text-center">
-                <h1>System Solution (random one)</h1>
-                <h1>{this.state.solution}</h1>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col h-100 text-center overflow-auto">
-                <h1>Player Solutions (the top three)</h1>
-                <SolutionsRank
-                  playerSolutions={this.state.playerSolutions}></SolutionsRank>
-              </div>
-            </div>
-            <div className="row h-25">
-              <div className="col-4 my-auto text-center">
-                <h1>The Next Round Will Start In</h1>
-                <h1>{this.state.timeInGame}s</h1>
-              </div>
-              <div className="col-4 h-100 overflow-auto text-center">
-                <h3>Your Ranking in the Room is</h3>
-                <h3>number {this.state.playerRanking}</h3>
-              </div>
-              <div className="col-4 h-100 overflow-auto text-center">
-                <h3>Player Scores (the top three)</h3>
-                <ScoresRank
-                  scoreRanking={this.state.scoreRanking}></ScoresRank>
-              </div>
-            </div>
-          </div>
+          <BetweenRoundPage
+            whichRound={this.state.whichRound}
+            solution={this.state.solution}
+            playerSolutions={this.state.playerSolutions}
+            timeInGame={this.state.timeInGame}
+            playerRanking={this.state.playerRanking}
+            scoreRanking={this.state.scoreRanking}
+          ></BetweenRoundPage>
         );
       default:
         return null;
