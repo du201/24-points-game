@@ -557,6 +557,9 @@ class Room {
       let deductedScore = WRONG_ANSWER_DEDUCT_POINT;
       this.rank[index].totalScore -= deductedScore;
       this.rank[index].totalScore = Math.max(this.rank[index].totalScore, 0);
+
+      this.rank.sort((a, b) => b.totalScore - a.totalScore);
+
       skt.emit(
         "solutionIncorrect",
         {
