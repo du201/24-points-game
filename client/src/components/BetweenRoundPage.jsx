@@ -26,7 +26,7 @@ const BetweenRoundPage = (props) => {
       </div>
       <div className="row h-25">
         <div className="col-4 my-auto text-center">
-          <h1>The Next Round Will Start In</h1>
+          <h1>{props.isLastRound === true ? "The summary page will appear in" : "The Next Round Will Start In"}</h1>
           <h1>{props.timeInGame}s</h1>
         </div>
         <div className="col-4 h-100 overflow-auto text-center">

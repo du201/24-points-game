@@ -204,7 +204,7 @@ const MenuSetting = (props) => {
                   <span className="col-form-label col-form-label-sm mr-2">Number of Rounds: {props.numOfRound} </span>
                   <input
                     type="range"
-                    min="10"
+                    min="5"
                     max="20"
                     value={props.numOfRound}
                     onChange={props.handleNumOfRoundInput}

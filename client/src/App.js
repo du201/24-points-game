@@ -25,6 +25,7 @@ import SingleGamePage from "./components/SingleGamePage"; //8
 import LoadingPage from "./components/LoadingPage"; //9
 import CountDownPage from "./components/CountDownPage"; //10
 import BetweenRoundPage from "./components/BetweenRoundPage"; //11
+import SummaryPage from "./components/SummaryPage"; //11
 
 //defined const
 const TIMES = "×";
@@ -45,6 +46,7 @@ const SINGLEGAMEPAGE = "singlePlayerGamePage"; //8
 const LOADINGPAGE = "gameLoadingPage"; //9
 const COUNTDOWNPAGE = "preGameCountDownPage"; //10
 const BTWROUNDPAGE = "betweenRoundPage"; //11
+const SUMMARYPAGE = "summaryPage";
 
 //the messages between client and server
 const CREATE_ROOM = "createRoom";
@@ -52,6 +54,7 @@ const JOIN_ROOM = "joinRoom";
 const EXIT_ROOM = "exitRoom";
 const CHANGE_SETTINGS = "changeSettings";
 const START_GAME = "startGame";
+const END_GAME = "endGame";
 const SEND_SOLUTION = "sendSolution";
 const CREATE_ROOM_SUCCESS = "createRoomSuccess";
 const CREATE_ROOM_FAILURE = "createRoomFailure";
@@ -114,7 +117,7 @@ class App extends Component {
     multiplayerScore: 0, //the score received from the server for the current round
     multiplayerTotalScore: 0, //the score received from the server for the whole game
     correctOrNotText: "", //the text indicated the judgement from the server
-    //the top three scores of the players, default can be [{ name: "Joseph", score: 100 }, { name: "Williams", score: 50 }, { name: "Gang", score: 30 }]
+    //the top three scores of the players, default can be [{ name: "Joseph", totalScore: 100 }]
     scoreRanking: [],
     submitButtonDisable: false, //once the answer is deemed to be correct by the server, disable all the buttons
   };
@@ -176,6 +179,10 @@ class App extends Component {
    * return back to the home page
    */
   pressReturnHomePageButton = () => {
+    //set all of the game-related states back to default
+    if (this.state.pageController === SUMMARYPAGE) {
+      this.backToDefaultAllStates();
+    }
     this.setState({
       pageController: HOMEPAGE, //to page 1
     });
@@ -233,6 +240,7 @@ class App extends Component {
     socket.removeAllListeners(SOLUTION_INCORRECT);
     socket.removeAllListeners(SOLUTION_CORRECT);
     socket.removeAllListeners(PLAYER_SOLVED);
+    socket.removeAllListeners(END_GAME);
   };
   /**
    * Set all the states back to their default value
@@ -356,6 +364,16 @@ class App extends Component {
       socket.on(TIMER, (time) => {
         this.setState({ timeInGame: time });
       });
+      socket.on(END_GAME, (playerRanking) => {
+        console.log(playerRanking);
+        this.setState({ scoreRanking: playerRanking });
+        this.setState({ pageController: SUMMARYPAGE, });
+
+        this.stopListenToGameEvent();
+        //unlisten to this when exit the room
+        this.unlistenToServerDisconnect();
+
+      });
       socket.on(NEW_ROUND, ({ numbers, settings }) => {
         console.log("NEW_ROUND");
         //increase the round number by 1
@@ -429,6 +447,16 @@ class App extends Component {
       buttonDisableStatus.push(false);
     }
     this.setState({ multiplayerButtonDisable: buttonDisableStatus });
+  }
+
+  /**
+   * Check whether or not the current round is the last round of this game
+   */
+  isLastRound = () => {
+    if (this.state.whichRound === this.state.numOfRound) {
+      return true;
+    }
+    return false;
   }
 
 
@@ -553,13 +581,14 @@ class App extends Component {
       rangeLo: this.state.rangeOfAvailableNumberLowBound, //int
       rangeHi: this.state.rangeOfAvailableNumberHighBound, //int
       maxNumOfRepeats: this.state.maxRepeatNum, //int
-      roundDuration: this.state.roundDuration, //int (ms)
+      roundDuration: this.state.roundDuration * 1000, //int (ms)
       numOfRounds: this.state.numOfRound, //int
     };
     socket.emit(CHANGE_SETTINGS, settingPackageObject);
     //receive the final version of the settings from the server and apply that to the client
     socket.once(SETTINGS, (settings) => {
       this.reassignSettings(settings);
+      console.log(settings);
     });
   };
 
@@ -618,7 +647,9 @@ class App extends Component {
    */
   handleNumOfRoundInput = (event) => {
     let num = event.target.value;
-    if (num < 13) {
+    if (num < 8) {
+      num = 5;
+    } else if (num < 13) {
       num = 10;
     } else if (num < 17) {
       num = 15;
@@ -989,7 +1020,15 @@ class App extends Component {
             timeInGame={this.state.timeInGame}
             playerRanking={this.state.playerRanking}
             scoreRanking={this.state.scoreRanking}
+            isLastRound={this.isLastRound()}
           ></BetweenRoundPage>
+        );
+      case SUMMARYPAGE: //12: the page at the end of the game (after receiving "endGame")
+        return (
+          <SummaryPage
+            pressReturnHomePageButton={this.pressReturnHomePageButton}
+            scoreRanking={this.state.scoreRanking}
+          ></SummaryPage>
         );
       default:
         return null;
