@@ -254,7 +254,7 @@ class Room {
     }
     if (settings.hasOwnProperty("numOfRounds")) {
       if (Number.isInteger(settings.numOfRounds) &&
-          [10, 15, 20].includes(settings.numOfRounds)) {
+          [5, 10, 15, 20].includes(settings.numOfRounds)) {
         this.settings.numOfRounds = settings.numOfRounds;
       }
     }
@@ -396,6 +396,7 @@ class Room {
                   let playerRanking = this.rank;
                   // Emit game summary.
                   skt.emit("endGame", playerRanking);
+                  this.closeRoom();
                 }
 
                 skt.emit("timer", skt.time);
