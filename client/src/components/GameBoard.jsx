@@ -29,7 +29,7 @@ class GameBoard extends Component {
                 onClick={() => {
                   this.props.addNumToInput(eachNum, index);
                 }}
-                disabled={this.props.multiplayerButtonDisable[index]}><h1>{eachNum}</h1></button>
+                disabled={this.props.multiplayerButtonDisable[index] || this.props.submitButtonDisable}><h1>{eachNum}</h1></button>
             </div>);
           })}
         </div>
@@ -69,12 +69,13 @@ class GameBoard extends Component {
             <button
               className="btn btn-success btn-lg w-75"
               onClick={this.props.pressCalculateResultButton}
-              disabled={this.props.submitButtonDisable}
+              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
             ><h1>Submit</h1></button>
+            <h3>Attemps Left: {this.props.attemptNum}</h3>
             <button
               className="btn btn-warning btn-lg w-75 mt-2"
               onClick={this.props.pressNoSolutionButton}
-              disabled={this.props.submitButtonDisable}
+              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
             ><h4>No Solution</h4></button>
           </div>
           <div className="col col-8 text-center h-100">

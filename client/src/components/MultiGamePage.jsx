@@ -44,7 +44,9 @@ const MultiGamePage = (props) => {
             multiplayerButtonDisable={props.multiplayerButtonDisable}
             correctOrNotText={props.correctOrNotText}
             pressNoSolutionButton={props.pressNoSolutionButton}
-            submitButtonDisable={props.submitButtonDisable}></GameBoard>
+            submitButtonDisable={props.submitButtonDisable}
+            attemptNum={props.attemptNum}
+          ></GameBoard>
         </div>
         <div className="col col-2 h-100">
           <div className="row h-25">

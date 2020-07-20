@@ -96,7 +96,7 @@ class App extends Component {
 
     expressionInput: [], //array of string, the inputed expression from the user
     answer: null, //int, the calculated answer of the input expression
-
+    attemptNum: 0, //int, the number of attempt for a player to submit the answer each round, it is 3 by default
 
     //Below are the signals received from the server
     roomNumber: null,
@@ -136,6 +136,16 @@ class App extends Component {
    * @param {string} message the text that you want it to appear in the error toast 
    */
   notifyError = (message) => toast.error(message, {
+    position: "bottom-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+
+  notifySuccess = (message) => toast.success(message, {
     position: "bottom-right",
     autoClose: 3000,
     hideProgressBar: false,
@@ -267,6 +277,7 @@ class App extends Component {
       multiplayerTotalScore: 0,
       correctOrNotText: "",
       scoreRanking: [],
+      attemptNum: 0,
     });
   };
   /**
@@ -380,6 +391,8 @@ class App extends Component {
         this.setState({ whichRound: this.state.whichRound + 1 });
         this.reassignSettings(settings);
         this.setState({ multiplayerGameNumbers: numbers });
+        //give each player three attempts each round
+        this.setState({ attemptNum: 3 });
         //create a multiplayerButtonDisable array that has the same length as multiplayerGameNumbers
         this.createButtonDisableStatus(numbers);
         //always put the page changing mechanism at the end to insure proper rendering
@@ -392,6 +405,7 @@ class App extends Component {
             correctOrNotText: "Your Answer is Correct!",
             submitButtonDisable: true,
           });
+          this.notifySuccess(`🦄 Your solution is correct!`);
           console.log("SOLUTION_CORRECT");
         });
         socket.on(SOLUTION_INCORRECT, ({ deductedScore, totalScore }) => {
@@ -399,6 +413,7 @@ class App extends Component {
             multiplayerTotalScore: totalScore,
             correctOrNotText: "Your Answer is Incorrect!",
           });
+          this.notifyError(`Your solution is incorrect. You have ${this.state.attemptNum} attempts left`);
           console.log("SOLUTION_INCORRECT");
         });
         //updating the roster on the side of the gameboard
@@ -554,6 +569,7 @@ class App extends Component {
    * sends null to the server in the SEND_SOLUTION event
    */
   pressNoSolutionButton = () => {
+    this.setState({ attemptNum: this.state.attemptNum - 1 });
     socket.emit(SEND_SOLUTION, null);
   };
 
@@ -849,13 +865,15 @@ class App extends Component {
    * calculate the value of the inputed expression and send the expression to the server if it's valid
    */
   pressCalculateResultButton = () => {
+    this.setState({ attemptNum: this.state.attemptNum - 1 });
     if (checkValid(this.state.expressionInput)) { //check the basic validity
       let result = calculate(this.state.expressionInput);
-      //checkPostfixValid(result);
       if (result === "Invalid") {
-        this.setState({ answer: "The expression is invalid" });
+        this.notifyError(`The Expression is Invalid. You have ${this.state.attemptNum} attempts left`);
+        this.setState({ answer: "" });
       } else if (!this.areAllNumbersUsed()) {
-        this.setState({ answer: "You must use all of the numbers" });
+        this.notifyError(`You must use all of the given numbers. You have ${this.state.attemptNum} attempts left`);
+        this.setState({ answer: "" });
       } else {
         this.setState({ answer: result });
         socket.emit(SEND_SOLUTION, this.state.expressionInput);
@@ -863,7 +881,8 @@ class App extends Component {
     }
 
     else {
-      this.setState({ answer: "The expression is invalid" });
+      this.notifyError(`The Expression is Invalid. You have ${this.state.attemptNum} attempts left`);
+      this.setState({ answer: "" });
     }
   }
 
@@ -993,6 +1012,7 @@ class App extends Component {
             playerSolvedLength={this.state.playerSolved.length}
             playerRoster={this.state.playerRoster}
             playerSolved={this.state.playerSolved}
+            attemptNum={this.state.attemptNum}
           ></MultiGamePage>
         );
       case SINGLEGAMEPAGE: //8
