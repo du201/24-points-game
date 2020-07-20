@@ -304,12 +304,8 @@ class Room {
         combination.push(num);
       }
 
-      let results = this.solver.solve(combination);
-      let solution = null;
-      if (results.length > 0) {
-        // Only send one solution.
-        solution = results[0];
-      }
+      let solution = this.solver.solve(combination);
+
       this.rounds[i].combination = combination;
       this.rounds[i].solution = solution;
     }

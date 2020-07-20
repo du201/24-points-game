@@ -189,7 +189,7 @@ class Solver {
    * @param {object} settings The settings of a game
    */
   constructor(settings) {
-    this.answers = new Set();
+    this.answer = null;
     this.operators = settings.availableOperators;
     this.target = settings.targetNumber;
   }
@@ -207,7 +207,7 @@ class Solver {
     // Correct answer.
     if (expList.length === 1 &&
         Math.abs(expList[0].getValue() - this.target) < Number.EPSILON) {
-      this.answers.add(expList[0].toString());
+      this.answer = expList[0].toString();
       return;
     }
 
@@ -227,16 +227,25 @@ class Solver {
           let newExpList = arrayCopy(remainList);
           newExpList.push(x.plus(y));
           this.solveHelper(newExpList);
+          if (this.answer !== null) {
+            return;
+          }
         }
 
         if (this.operators.includes(MINUS)) {
           let newExpList = arrayCopy(remainList);
           newExpList.push(x.minus(y));
           this.solveHelper(newExpList);
+          if (this.answer !== null) {
+            return;
+          }
           if (x.getValue() !== y.getValue()) {
             newExpList = arrayCopy(remainList);
             newExpList.push(y.minus(x));
             this.solveHelper(newExpList);
+            if (this.answer !== null) {
+              return;
+            }
           }
         }
 
@@ -244,6 +253,9 @@ class Solver {
           let newExpList = arrayCopy(remainList);
           newExpList.push(x.times(y));
           this.solveHelper(newExpList);
+          if (this.answer !== null) {
+            return;
+          }
         }
 
         if (this.operators.includes(DIVIDES)) {
@@ -251,11 +263,17 @@ class Solver {
             let newExpList = arrayCopy(remainList);
             newExpList.push(x.divides(y));
             this.solveHelper(newExpList);
+            if (this.answer !== null) {
+              return;
+            }
           }
           if (x.getValue() !== 0 && x.getValue() !== y.getValue()) {
             let newExpList = arrayCopy(remainList);
             newExpList.push(y.divides(x));
             this.solveHelper(newExpList);
+            if (this.answer !== null) {
+              return;
+            }
           }
         }
       }
@@ -273,13 +291,9 @@ class Solver {
     for (let n of combination) {
       expList.push(new Expression(n));
     }
-    let result = [];
-    this.answers.clear();
+    this.answer = null;
     this.solveHelper(expList);
-    this.answers.forEach(elem => {
-      result.push(elem);
-    });
-    return result;
+    return this.answer;
   }
 }
 
