@@ -107,7 +107,7 @@ class App extends Component {
     playerRoster: [], //array of string, the name of all the players in the room
     playerSolved: [], //array of string, the name of the players who solve the game in the current round
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
-    timeInGame: 5, //in s, the time sent by the server and displayed in the browser
+    timeInGame: null, //in s, the time sent by the server and displayed in the browser
     whichRound: 0, //which round do we currently in
     //default can be"3+5*2"
     solution: "", //the solution solved by the computer for the problem in the current round
@@ -268,7 +268,7 @@ class App extends Component {
       multiplayerButtonDisable: [],
       playerRoster: [],
       playerSolved: [],
-      timeInGame: 5,
+      timeInGame: null,
       whichRound: 0,
       solution: "",
       playerSolutions: [],
