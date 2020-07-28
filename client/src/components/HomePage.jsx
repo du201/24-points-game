@@ -15,7 +15,7 @@ const HomePage = (props) => {
         </div>
       </div>
       <div className="row h-25">
-        <div className="col text-center my-auto">
+        <div className="col align-self-start text-center">
           <div className="d-inline-flex flex-column">
             <button
               className="btn-outline grey-text btn mb-2"

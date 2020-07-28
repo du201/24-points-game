@@ -1,10 +1,11 @@
 .btn-outline {
   background-color: #ffffff !important;
   border-color: #707070 !important;
-  border-radius: 20px !important;
+  border-radius: 30px !important;
   transition-duration: 0.4s !important;
-  padding:0.365rem 2.6rem !important; 
+  padding:0.365rem 3.5rem !important; 
   letter-spacing: 0.002rem !important; 
+  font-size: 1.3rem !important;
 }
 
 .grey-text {
@@ -32,7 +33,16 @@ a:hover
 }
 
 .title-homepage {
-  font-size: 5rem;
+  font-size: 10rem;
   font-weight: 800;
   color: #707070;
 }
+
+@media only screen and (max-width: 600px) {
+  .title-homepage {
+    font-size: 6rem;
+    font-weight: 800;
+    color: #707070;
+  }
+}
+
