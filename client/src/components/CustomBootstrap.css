@@ -1,0 +1,38 @@
+.btn-outline {
+  background-color: #ffffff !important;
+  border-color: #707070 !important;
+  border-radius: 20px !important;
+  transition-duration: 0.4s !important;
+  padding:0.365rem 2.6rem !important; 
+  letter-spacing: 0.002rem !important; 
+}
+
+.grey-text {
+  font-weight: bold !important;
+  letter-spacing: 0.002rem !important;
+  color: #707070 !important;
+}
+
+.no-underline {
+  text-decoration: none !important;
+}
+
+
+a:hover
+{
+  color: #343A40 !important;
+  text-decoration: none;
+}
+
+.btn-outline:hover {
+  background: #707070 !important;
+  color: #ffffff !important;
+  border-color: #707070 !important;
+
+}
+
+.title-homepage {
+  font-size: 5rem;
+  font-weight: 800;
+  color: #707070;
+}

@@ -946,7 +946,6 @@ class App extends Component {
             backToDefaultSettings={this.backToDefaultSettings}
             slotNum={this.state.gameModeBasicSetting.slotNum}
             targetNum={this.state.gameModeBasicSetting.targetNum}
-            gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
             rangeOfAvailableNumberLowBound={
               this.state.rangeOfAvailableNumberLowBound
             }
@@ -1057,7 +1056,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="h-100">
+      <div className="h-100 bg-color">
         <Helmet>
           <meta charSet="UTF-8" />
           <title>
@@ -1068,9 +1067,9 @@ class App extends Component {
             content="This is an online platform for playing 24-point-game with your friends"
           />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <style>{`
-            body {
-              background-color:pink
+          <style type="text/css">{`
+            .bg-color {
+              background-color: white;
             }
             input::-webkit-outer-spin-button,
             input::-webkit-inner-spin-button {
