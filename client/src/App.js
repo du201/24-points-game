@@ -1083,6 +1083,9 @@ class App extends Component {
             }         
           `}</style>
           <link rel="shortcut icon" href={tabImage} />
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Lexend+Zetta&display=swap');
+</style>
         </Helmet>
         {this.renderSwitch(this.state.pageController)}
       </div>

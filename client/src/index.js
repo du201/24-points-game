@@ -22,6 +22,7 @@ ReactDOM.render(
   <React.StrictMode>
     <AlertProvider template={AlertTemplate} {...options}>
       <App />
+      <link href="https://fonts.googleapis.com/css?family=Titillium+Web:300,400,700" rel="stylesheet"></link>
     </AlertProvider>
   </React.StrictMode>,
   document.getElementById("root")

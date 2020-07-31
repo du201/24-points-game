@@ -2,7 +2,7 @@
   background-color: #ffffff !important;
   border-color: #707070 !important;
   border-radius: 30px !important;
-  transition-duration: 0.4s !important;
+  transition-duration: 0.2s !important;
   padding:0.365rem 3.5rem !important; 
   letter-spacing: 0.002rem !important; 
   font-size: 1.3rem !important;
@@ -33,8 +33,8 @@ a:hover
 }
 
 .title-homepage {
-  font-size: 10rem;
-  font-weight: 800;
+  font-size: 8rem;
+  font-family: "gotham-black";
   color: #707070;
 }
 
