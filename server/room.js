@@ -189,10 +189,23 @@ class Room {
   /**
    * Indicates whether or not this room instance is empty.
    *
-   * @return {number} Whether or not this room contains zero players
+   * @return {boolean} Whether or not this room contains zero players
    */
   isEmpty() {
     return this.getNumOfPlayers() === 0;
+  }
+
+  /**
+   * Indicates whether or not a number is within a specified boundary
+   * (inclusive).
+   *
+   * @param {number} num The number to be tested
+   * @param {number} lo Lower bound
+   * @param {number} hi Higher bound
+   * @return {boolean} Whether or not the number is with the bounds
+   */
+  isBetween(num, lo, hi) {
+    return Number.isInteger(num) && num >= lo && num <= hi;
   }
 
   /**
@@ -203,59 +216,58 @@ class Room {
    * @param {object} settings Input settings
    */
   changeSettings(settings) {
-    if (settings.hasOwnProperty("numOfSlots")) {
-      if (Number.isInteger(settings.numOfSlots) &&
-          settings.numOfSlots >= 2 &&
-          settings.numOfSlots <= 6) {
-        this.settings.numOfSlots = settings.numOfSlots;
-      }
-    }
-    if (settings.hasOwnProperty("targetNumber")) {
-      if (Number.isInteger(settings.targetNumber)) {
-        this.settings.targetNumber = settings.targetNumber;
-      }
-    }
-    if (settings.hasOwnProperty("availableOperators")) {
-      if (Array.isArray(settings.availableOperators) &&
-          settings.availableOperators.every(op => {
-            [TIMES, DIVIDES, PLUS, MINUS].includes(op);
-          })) {
-        this.settings.availableOperators = settings.availableOperators;
-      }
-    }
-    if (settings.hasOwnProperty("rangeLo")) {
-      if (Number.isInteger(settings.rangeLo)) {
-        this.settings.rangeLo = settings.rangeLo;
-      }
-    }
-    if (settings.hasOwnProperty("rangeHi")) {
-      if (Number.isInteger(settings.rangeHi)) {
-        if (settings.rangeHi >= settings.rangeLo) {
-          this.settings.rangeHi = settings.rangeHi;
-        } else {
-          settings.rangeLo = 1;
-          settings.rangeHi = 13;
-        }
-      }
-    }
-    if (settings.hasOwnProperty("maxNumOfRepeats")) {
-      if (Number.isInteger(settings.maxNumOfRepeats) &&
-          settings.maxNumOfRepeats >= 1 &&
-          settings.maxNumOfRepeats <= settings.numOfSlots) {
-        this.settings.maxNumOfRepeats = settings.maxNumOfRepeats;
-      }
-    }
-    if (settings.hasOwnProperty("roundDuration")) {
-      if (Number.isInteger(settings.roundDuration) &&
-          settings.roundDuration >= 10000 &&
-          settings.roundDuration <= 60000) {
-        this.settings.roundDuration = settings.roundDuration;
-      }
-    }
-    if (settings.hasOwnProperty("numOfRounds")) {
-      if (Number.isInteger(settings.numOfRounds) &&
-          [5, 10, 15, 20].includes(settings.numOfRounds)) {
-        this.settings.numOfRounds = settings.numOfRounds;
+    for (let prop in settings) {
+      switch (prop) {
+        case "numOfSlots":
+          if (this.isBetween(settings.numOfSlots, 2, 6)) {
+            this.settings.numOfSlots = settings.numOfSlots;
+          }
+          break;
+        case "targetNumber":
+          if (Number.isInteger(settings.targetNumber)) {
+            this.settings.targetNumber = settings.targetNumber;
+          }
+          break;
+        case "availableOperators":
+          if (Array.isArray(settings.availableOperators) &&
+              settings.availableOperators.every(op =>
+                this.settings.availableOperators.includes(op)
+              )) {
+            this.settings.availableOperators = settings.availableOperators;
+          }
+          break;
+        case "rangeLo":
+          if (Number.isInteger(settings.rangeLo)) {
+            this.settings.rangeLo = settings.rangeLo;
+          }
+          break;
+        case "rangeHi":
+          if (Number.isInteger(settings.rangeHi)) {
+            if (settings.rangeHi >= settings.rangeLo) {
+              this.settings.rangeHi = settings.rangeHi;
+            } else {
+              settings.rangeLo = 1;
+              settings.rangeHi = 13;
+            }
+          }
+          break;
+        case "maxNumOfRepeats":
+          if (this.isBetween(settings.maxNumOfRepeats, 1, settings.numOfSlots))
+          {
+            this.settings.maxNumOfRepeats = settings.maxNumOfRepeats;
+          }
+          break;
+        case "roundDuration":
+          if (this.isBetween(settings.roundDuration, 10000, 60000)) {
+            this.settings.roundDuration = settings.roundDuration;
+          }
+          break;
+        case "numOfRounds":
+          if (Number.isInteger(settings.numOfRounds) &&
+              [5, 10, 15, 20].includes(settings.numOfRounds)) {
+            this.settings.numOfRounds = settings.numOfRounds;
+          }
+          break;
       }
     }
 

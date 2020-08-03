@@ -281,7 +281,7 @@ class Solver {
   }
 
   /**
-   * Solves an number combination.
+   * Solves a number combination.
    *
    * @param {integer Array} combination The number combination
    * @return {string Array} The results of the combination
