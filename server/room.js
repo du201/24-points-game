@@ -9,6 +9,8 @@ const MINUS = "-";
 const PREP_TIME = 5;
 // Time (in s) between rounds.
 const ROUND_INTERVAL = 10;
+// One second in ms.
+const ONE_SECOND = 1000;
 // The number of people that will be shown in the ranking list.
 const RANK_COUNT = 3;
 // Deduct points if the solution is incorrect.
@@ -82,6 +84,10 @@ class Room {
     this.scoreboard = [];
     // Keeps track of the ranking in the game.
     this.rank = [];
+    // Used to cancel game timers when all players leave the room.
+    this.timerPromiseReject = null;
+    // Contains all the running setTimeout functions.
+    this.timeouts = [];
   }
 
   /**
@@ -124,8 +130,10 @@ class Room {
     socket.roomNum = null;
     socket.isHost = socket.isHost && false;
     this.socketSet.delete(socket);
-    if (socket.intervals !== null && socket.intervals !== undefined) {
-      socket.intervals.forEach(clearInterval);
+    if (this.isEmpty()) {
+      // Use errors to signal the termination of the game.
+      this.timerPromiseReject(new Error("endGame"));
+      this.timeouts.forEach(clearTimeout);
     }
   }
 
@@ -297,21 +305,13 @@ class Room {
         let num = Math.floor(Math.random() * (max - min + 1) + min);
 
         let count = 0;
-        combination.forEach(elem => {
-          if (elem === num) {
-            count++;
-          }
-        });
+        combination.forEach(elem => elem === num && count++);
 
         // Regenerate if exceeds the max num of repeats defined by the settings.
         while (count === this.settings.maxNumOfRepeats) {
           num = Math.floor(Math.random() * (max - min + 1) + min);
           count = 0;
-          combination.forEach(elem => {
-            if (elem === num) {
-              count++;
-            }
-          });
+          combination.forEach(elem => elem === num && count++);
         }
         combination.push(num);
       }
@@ -367,67 +367,93 @@ class Room {
   }
 
   /**
-   * Recursively sets up a new round (including round breaks) until the last
-   * round. Treats the preparation before the first round as a round break.
+   * Creates a promise that resolves after a specified timeout. Can be rejected
+   * from outside of the function scope to cancel the timeout.
+   *
+   * @param {number} ms Time (in ms) before the promise is resolved
+   * @return {Promise} The timeout promise
    */
-  newRound(skt, prepTime, rounds) {
-    skt.time = prepTime;
+  async pause(ms) {
+    return new Promise((resolve, reject) => {
+      this.timeouts.push(setTimeout(resolve, ms));
+      this.timerPromiseReject = reject;
+    });
+  }
 
-    // Starts a new round break.
-    skt.prepTimer = setInterval(() => {
-      if (skt.time === 0) { // Current round break ends.
-        skt.time = this.settings.roundDuration / 1000;
-        clearInterval(skt.prepTimer);
+  /**
+   * Sets up a new round timer. Emits a "timer" event every second.
+   *
+   * @return {Promise} Returns a resolved promise if no errors are thrown
+   */
+  async newRound() {
+    for (let time = this.settings.roundDuration / 1000; time > 0; time--) {
+      await this.pause(ONE_SECOND);
+      this.rounds[this.roundNum].timer = time;
+      this.broadcast("timer", time);
+    }
+  }
 
-        this.roundNum = this.settings.numOfRounds - rounds - 1;
-        // Starts a new round.
-        skt.emit("newRound", {
-          numbers: this.rounds[this.roundNum].combination,
-          settings: this.settings
-        });
-        skt.roundTimer = setInterval(() => {
-          // Update the timer in the current Round instance.
-          this.rounds[this.roundNum].timer = skt.time;
+  /**
+   * Sets up a new round interval timer. Emits a "timer" event every second.
+   *
+   * @return {Promise} Returns a resolved promise if no errors are thrown
+   */
+  async roundInterval() {
+    for (let time = ROUND_INTERVAL; time > 0; time--) {
+      await this.pause(ONE_SECOND);
+      this.broadcast("timer", time);
+    }
+  }
 
-          if (skt.time === 0) { // Current round ends.
-            clearInterval(skt.roundTimer);
-
-            this.endRound(skt);
-
-            if (rounds === 0) { // Last round.
-              skt.time = prepTime;
-
-              skt.lastBreakTimer = setInterval(() => {
-                if (skt.time === 0) { // Last round break ends.
-                  clearInterval(skt.lastBreakTimer);
-
-                  let playerRanking = this.rank;
-                  // Emit game summary.
-                  skt.emit("endGame", playerRanking);
-                  this.closeRoom();
-                }
-
-                skt.emit("timer", skt.time);
-                skt.time--;
-              }, 1000);
-
-              skt.intervals.push(skt.lastBreakTimer);
-              return;
-            } else {
-              this.newRound(skt, ROUND_INTERVAL, rounds - 1);
-            }
-          }
-
-          skt.emit("timer", skt.time);
-          skt.time--;
-        }, 1000);
-        skt.intervals.push(skt.roundTimer);
+  /**
+   * Starts the game and sets up the timers during different stages of the game.
+   * Stops all timers if receives an "engGame" error, which signifies that all
+   * players have left the room.
+   *
+   * @return {Promise} Returns a resolved promise
+   */
+  async start() {
+    try {
+      this.broadcast("timer", PREP_TIME);
+      // Preparation time before the first round starts.
+      for (let time = PREP_TIME - 1; time > 0; time--) {
+        await this.pause(ONE_SECOND);
+        this.broadcast("timer", time);
       }
 
-      skt.emit("timer", skt.time);
-      skt.time--;
-    }, 1000);
-    skt.intervals.push(skt.prepTimer);
+      for (let round = 0; round < this.settings.numOfRounds; round++) {
+        // New round starts.
+        this.roundNum = round;
+        this.timeouts.push(
+          setTimeout(() => {
+            this.broadcast("newRound", {
+              numbers: this.rounds[this.roundNum].combination,
+              settings: this.settings
+            });
+          }, ONE_SECOND)
+        );
+
+        await this.newRound();
+
+        this.timeouts.push(
+          setTimeout(() => {
+            this.getConnectionList().forEach((skt) => {
+              this.endRound(skt);
+            });
+          }, ONE_SECOND)
+        );
+
+        await this.roundInterval();
+      }
+
+      let playerRanking = this.rank;
+      this.broadcast("endGame", playerRanking);
+      this.closeRoom();
+    } catch (e) {
+      // Returns immediately after catching an error to cancel the timers.
+    } finally {
+      return Promise.resolve();
+    }
   }
 
   /**
@@ -461,15 +487,8 @@ class Room {
 
     console.log(`Game in room ${this.number} has started`);
 
-    this.socketSet.forEach(skt => {
-      skt.intervals = [];
-      skt.emit("gameStarted", this.settings);
-      this.newRound(
-        skt,
-        PREP_TIME,
-        this.settings.numOfRounds - 1
-      );
-    });
+    this.broadcast("gameStarted", this.settings);
+    this.start();
 
     return;
   }
