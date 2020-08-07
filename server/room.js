@@ -240,7 +240,8 @@ class Room {
           if (Array.isArray(settings.availableOperators) &&
               settings.availableOperators.every(op =>
                 this.settings.availableOperators.includes(op)
-              )) {
+              ) &&
+              settings.availableOperators.length >= 2) {
             this.settings.availableOperators = settings.availableOperators;
           }
           break;
@@ -266,7 +267,7 @@ class Room {
           }
           break;
         case "roundDuration":
-          if (this.isBetween(settings.roundDuration, 10000, 60000)) {
+          if (this.isBetween(settings.roundDuration, 20000, 120000)) {
             this.settings.roundDuration = settings.roundDuration;
           }
           break;
@@ -531,7 +532,7 @@ class Room {
     // String representation of all available operators.
     let opStr = this.settings.availableOperators.join("");
     // Infix notation patterns.
-    let regex = new RegExp("^\\(*[0-9]+([" + opStr + "]\\(*[0-9]+\\)*)*\\)*$");
+    let regex = new RegExp(`^\\(*[0-9]+([${opStr}]\\(*[0-9]+\\)*)*\\)*$`);
 
     return regex.test(exp.join("")) &&
            leftParenCount === rightParenCount &&
