@@ -11,6 +11,8 @@ const PREP_TIME = 5;
 const ROUND_INTERVAL = 10;
 // One second in ms.
 const ONE_SECOND = 1000;
+// Time before automatically start the game.
+const AUTO_START_TIME = 5 * 60 * ONE_SECOND;
 // The number of people that will be shown in the ranking list.
 const RANK_COUNT = 3;
 // Deduct points if the solution is incorrect.
@@ -88,6 +90,10 @@ class Room {
     this.timerPromiseReject = null;
     // Contains all the running setTimeout functions.
     this.timeouts = [];
+
+    this.timeouts.push(setTimeout(() => {
+      this.startGame();
+    }, AUTO_START_TIME));
   }
 
   /**
@@ -132,6 +138,7 @@ class Room {
     this.socketSet.delete(socket);
     if (this.isEmpty()) {
       // Use errors to signal the termination of the game.
+      this.timerPromiseReject !== null &&
       this.timerPromiseReject(new Error("endGame"));
       this.timeouts.forEach(clearTimeout);
     }
@@ -461,6 +468,11 @@ class Room {
    * Starts the game in this room instance.
    */
   startGame() {
+    if (this.inProgress) {
+      return;
+    }
+
+    this.timeouts.forEach(clearTimeout);
     this.inProgress = true;
 
     let socketArray = this.getConnectionList();
