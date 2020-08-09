@@ -5,12 +5,12 @@ const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
 const MINUS = "-";
-// Preparation time (in s) before the first round.
-const PREP_TIME = 5;
-// Time (in s) between rounds.
-const ROUND_INTERVAL = 10;
 // One second in ms.
 const ONE_SECOND = 1000;
+// Preparation time before the first round.
+const PREP_TIME = 5 * ONE_SECOND;
+// Time between rounds.
+const ROUND_INTERVAL = 10 * ONE_SECOND;
 // Time before automatically start the game.
 const AUTO_START_TIME = 5 * 60 * ONE_SECOND;
 // The number of people that will be shown in the ranking list.
@@ -69,7 +69,7 @@ class Room {
       rangeLo: 1,
       rangeHi: 13,
       maxNumOfRepeats: 4,
-      roundDuration: 30000,
+      roundDuration: 30 * ONE_SECOND,
       numOfRounds: 10
     };
     // The host of the game in this room.
@@ -274,7 +274,9 @@ class Room {
           }
           break;
         case "roundDuration":
-          if (this.isBetween(settings.roundDuration, 20000, 120000)) {
+          if (this.isBetween(settings.roundDuration,
+                             20 * ONE_SECOND,
+                             2 * 60 * ONE_SECOND)) {
             this.settings.roundDuration = settings.roundDuration;
           }
           break;
@@ -394,7 +396,8 @@ class Room {
    * @return {Promise} Returns a resolved promise if no errors are thrown
    */
   async newRound() {
-    for (let time = this.settings.roundDuration / 1000; time > 0; time--) {
+    for (let time = this.settings.roundDuration / ONE_SECOND; time > 0; time--)
+    {
       await this.pause(ONE_SECOND);
       this.rounds[this.roundNum].timer = time;
       this.broadcast("timer", time);
@@ -407,7 +410,7 @@ class Room {
    * @return {Promise} Returns a resolved promise if no errors are thrown
    */
   async roundInterval() {
-    for (let time = ROUND_INTERVAL; time > 0; time--) {
+    for (let time = ROUND_INTERVAL / ONE_SECOND; time > 0; time--) {
       await this.pause(ONE_SECOND);
       this.broadcast("timer", time);
     }
@@ -422,9 +425,9 @@ class Room {
    */
   async start() {
     try {
-      this.broadcast("timer", PREP_TIME);
+      this.broadcast("timer", PREP_TIME / ONE_SECOND);
       // Preparation time before the first round starts.
-      for (let time = PREP_TIME - 1; time > 0; time--) {
+      for (let time = PREP_TIME / ONE_SECOND - 1; time > 0; time--) {
         await this.pause(ONE_SECOND);
         this.broadcast("timer", time);
       }
