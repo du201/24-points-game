@@ -5,6 +5,15 @@ import "./GameBoard.css";
  * The place where the game UI exists
  */
 class GameBoard extends Component {
+  state = {
+    submitButtonRest: false
+  };
+
+  disableSubmitButtonTemp = () => {
+    this.setState({ submitButtonRest: true });
+    setTimeout(() => this.setState({ submitButtonRest: false }), 2000);
+  };
+
 
   render() {
     let displayExpression = "";
@@ -13,6 +22,7 @@ class GameBoard extends Component {
       displayExpression += num + " ";
       return num;
     });
+
 
     //add two parentheses to the available operator list
     let final_operators = [...this.props.operators];
@@ -68,8 +78,11 @@ class GameBoard extends Component {
           <div className="col col-4 text-center h-100">
             <button
               className="btn btn-success btn-lg w-75"
-              onClick={this.props.pressCalculateResultButton}
-              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+              onClick={() => {
+                this.disableSubmitButtonTemp()
+                this.props.pressCalculateResultButton()
+              }}
+              disabled={this.state.submitButtonRest || this.props.submitButtonDisable || this.props.attemptNum === 0}
             ><h1>Submit</h1></button>
             <h3>Attemps Left: {this.props.attemptNum}</h3>
             <button

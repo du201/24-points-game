@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withTranslation } from 'react-i18next';
 
 //imported API
 import { Helmet } from "react-helmet";
@@ -46,7 +47,7 @@ const SINGLEGAMEPAGE = "singlePlayerGamePage"; //8
 const LOADINGPAGE = "gameLoadingPage"; //9
 const COUNTDOWNPAGE = "preGameCountDownPage"; //10
 const BTWROUNDPAGE = "betweenRoundPage"; //11
-const SUMMARYPAGE = "summaryPage";
+const SUMMARYPAGE = "summaryPage"; //12
 
 //the messages between client and server
 const CREATE_ROOM = "createRoom";
@@ -81,9 +82,11 @@ toast.configure();
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOMEPAGE, //default should be homePage
+    pageController: HOSTPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
+    lang: 'en', //the displayed language, default is english. Also have Chinese
+    loading: false, //the loader displays on the start button when the loading is true
 
     //below are the settings for the multi-player game
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
@@ -165,6 +168,17 @@ class App extends Component {
   };
 
   /**
+   * 
+   * change the displayed language of the game
+   */
+  langChange = (lang) => {
+    this.setState({
+      lang
+    });
+  };
+
+
+  /**
    * In 1st page
    * In home page, choose the game mode (instead of single-player mode or solve mode) 
    */
@@ -213,6 +227,7 @@ class App extends Component {
    * There is a confirm window before the action of exiting really happens
    */
   exitRoomButtonPress = () => {
+    this.setState({ loading: false });
     confirmAlert({
       title: 'Confirm to Exit the Room',
       message: 'Are you sure to do this?',
@@ -278,6 +293,7 @@ class App extends Component {
       correctOrNotText: "",
       scoreRanking: [],
       attemptNum: 0,
+      submitButtonDisable: false
     });
   };
   /**
@@ -356,8 +372,11 @@ class App extends Component {
   pressStartGameButton = () => {
     socket.emit(START_GAME);
     //first go to the loading page while waiting for the server to finish calculating
+    // this.setState({
+    //   pageController: LOADINGPAGE, //to 9th page
+    // });
     this.setState({
-      pageController: LOADINGPAGE, //to 9th page
+      loading: true
     });
     this.startGame();
   };
@@ -368,6 +387,9 @@ class App extends Component {
    */
   startGame = () => {
     socket.once(GAME_STARTED, (settings) => {
+      this.setState({
+        loading: false
+      });
       //go to the game page
       this.setState({ pageController: COUNTDOWNPAGE, });
       //adopt the settings set by the game host
@@ -634,13 +656,35 @@ class App extends Component {
    * set the value for rangeOfAvailableNumberLowBound
    */
   handleRangeOfAvailableNumberLowBoundInput = (event) => {
-    this.setState({ rangeOfAvailableNumberLowBound: parseInt(event.target.value, 10) });
+    let value = parseInt(event.target.value, 10);
+    if (isNaN(value)) {
+      this.setState({ rangeOfAvailableNumberLowBound: "" });
+      return;
+    } else if (value < 1) {
+      this.notifyError("The Lower Bound of Range Must be At Least 1");
+      return;
+    } else if (value > this.state.rangeOfAvailableNumberHighBound) {
+      this.notifyError("The Lower Bound of Range Must be Smaller or Equal to the Upper Bound");
+      return;
+    }
+    this.setState({ rangeOfAvailableNumberLowBound: value });
   };
 
   /**
    * set the value for rangeOfAvailableNumberHighBound
    */
   handleRangeOfAvailableNumberHighBoundInput = (event) => {
+    let value = parseInt(event.target.value, 10);
+    if (isNaN(value)) {
+      this.setState({ rangeOfAvailableNumberHighBound: "" });
+      return;
+    } else if (value > 13) {
+      this.notifyError("The Upper Bound of Range Must be no More than 13");
+      return;
+    } else if (value < this.state.rangeOfAvailableNumberLowBound) {
+      this.notifyError("The Upper Bound of Range Must be Larger or Equal to the Lower Bound");
+      return;
+    }
     this.setState({ rangeOfAvailableNumberHighBound: parseInt(event.target.value, 10) });
   };
 
@@ -663,9 +707,7 @@ class App extends Component {
    */
   handleNumOfRoundInput = (event) => {
     let num = event.target.value;
-    if (num < 8) {
-      num = 5;
-    } else if (num < 13) {
+    if (num < 13) {
       num = 10;
     } else if (num < 17) {
       num = 15;
@@ -673,6 +715,33 @@ class App extends Component {
       num = 20;
     }
     this.setState({ numOfRound: num });
+  };
+
+
+  /**
+   * 
+   * @param {string} ops turn on or off the operator passed in 
+   */
+  operatorSwitch = (ops) => {
+    if (this.state.availableOperator.includes(ops)) {
+      //the minimum number of operators is 2
+      if (this.state.availableOperator.length <= 2) {
+        this.notifyError("You must have at least two available operators");
+        return;
+      }
+      this.setState({
+        availableOperator: this.filterArray(
+          this.state.availableOperator,
+          ops
+        ),
+      });
+    } else {
+      let copy_availableOperator = [...this.state.availableOperator];
+      copy_availableOperator.push(ops);
+      this.setState({
+        availableOperator: copy_availableOperator,
+      });
+    }
   };
 
   /**
@@ -683,68 +752,16 @@ class App extends Component {
     let selectValue = event.target.value;
     switch (selectValue) {
       case TIMES:
-        if (this.state.availableOperator.includes(TIMES)) {
-          this.setState({
-            availableOperator: this.filterArray(
-              this.state.availableOperator,
-              TIMES
-            ),
-          });
-        } else {
-          let copy_availableOperator = [...this.state.availableOperator];
-          copy_availableOperator.push(TIMES);
-          this.setState({
-            availableOperator: copy_availableOperator,
-          });
-        }
+        this.operatorSwitch(TIMES);
         break;
       case DIVIDES:
-        if (this.state.availableOperator.includes(DIVIDES)) {
-          this.setState({
-            availableOperator: this.filterArray(
-              this.state.availableOperator,
-              DIVIDES
-            ),
-          });
-        } else {
-          let copy_availableOperator = [...this.state.availableOperator];
-          copy_availableOperator.push(DIVIDES);
-          this.setState({
-            availableOperator: copy_availableOperator,
-          });
-        }
+        this.operatorSwitch(DIVIDES);
         break;
       case PLUS:
-        if (this.state.availableOperator.includes(PLUS)) {
-          this.setState({
-            availableOperator: this.filterArray(
-              this.state.availableOperator,
-              PLUS
-            ),
-          });
-        } else {
-          let copy_availableOperator = [...this.state.availableOperator];
-          copy_availableOperator.push(PLUS);
-          this.setState({
-            availableOperator: copy_availableOperator,
-          });
-        }
+        this.operatorSwitch(PLUS);
         break;
       case MINUS:
-        if (this.state.availableOperator.includes(MINUS)) {
-          this.setState({
-            availableOperator: this.filterArray(
-              this.state.availableOperator,
-              MINUS
-            ),
-          });
-        } else {
-          let copy_availableOperator = [...this.state.availableOperator];
-          copy_availableOperator.push(MINUS);
-          this.setState({
-            availableOperator: copy_availableOperator,
-          });
-        }
+        this.operatorSwitch(MINUS);
         break;
       default:
         break;
@@ -869,10 +886,10 @@ class App extends Component {
     if (checkValid(this.state.expressionInput)) { //check the basic validity
       let result = calculate(this.state.expressionInput);
       if (result === "Invalid") {
-        this.notifyError(`The Expression is Invalid. You have ${this.state.attemptNum} attempts left`);
+        this.notifyError(`The Expression is Invalid. You have ${this.state.attemptNum - 1} attempts left`);
         this.setState({ answer: "" });
       } else if (!this.areAllNumbersUsed()) {
-        this.notifyError(`You must use all of the given numbers. You have ${this.state.attemptNum} attempts left`);
+        this.notifyError(`You must use all of the given numbers. You have ${this.state.attemptNum - 1} attempts left`);
         this.setState({ answer: "" });
       } else {
         this.setState({ answer: result });
@@ -881,7 +898,7 @@ class App extends Component {
     }
 
     else {
-      this.notifyError(`The Expression is Invalid. You have ${this.state.attemptNum} attempts left`);
+      this.notifyError(`The Expression is Invalid. You have ${this.state.attemptNum - 1} attempts left`);
       this.setState({ answer: "" });
     }
   }
@@ -907,6 +924,8 @@ class App extends Component {
             pressSolveModeButton={this.pressSolveModeButton}
             pressGameModeButton={this.pressGameModeButton}
             pressSinglePlayModeButton={this.pressSinglePlayModeButton}
+            lang={this.state.lang}
+            langChange={this.langChange}
           ></HomePage>
         );
       case SOLVEPAGE: //2
@@ -964,6 +983,7 @@ class App extends Component {
             playerSolved={this.state.playerSolved}
             pageController={this.state.pageController}
             switchSettingsMenu={this.switchSettingsMenu}
+            loading={this.state.loading}
           ></HostPage>
         );
       case JOINROOMPAGE: //5
@@ -1055,6 +1075,7 @@ class App extends Component {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <div className="h-100 bg-color">
         <Helmet>
@@ -1093,4 +1114,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withTranslation()(App);

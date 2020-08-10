@@ -1,0 +1,22 @@
+{
+  "_comment1": "Below are for HomePage 1",
+  "Solve Mode": "解题模式",
+  "Multiplayer": "多人模式",
+  "Singleplayer": "单人模式",
+  "ABOUT": "关于",
+  "SHARE": "分享",
+  "SOURCE": "代码",
+  "BUG REPORT": "BUG报告",
+  "_comment2": "Below are for SolvePage 2",
+  "_comment3": "Below are for GamePage 3",
+  "3rd Page (Create Room or Enter Room)": "第三页",
+  "_comment4": "Below are for CreateRoomPage 4",
+  "_comment5": "Below are for JoinRoomNumPage 5",
+  "_comment6": "Below are for WaitForHostPage 6",
+  "_comment7": "Below are for MultiPlayerGamePage 7",
+  "_comment8": "Below are for SinglePlayerGamePage 8",
+  "_comment9": "Below are for GameLoadingPage 9",
+  "_comment10": "Below are for PreGameCountDownPage 10",
+  "_comment11": "Below are for BetweenRoundPage 11",
+  "_comment12": "Below are for SummaryPage 12"
+}

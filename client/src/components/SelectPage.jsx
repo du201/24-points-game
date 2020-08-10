@@ -1,8 +1,10 @@
 import React from "react";
 import ReturnHomePageButton from "./ReturnHomePageButton";
 import NameInputUI from "./NameInputUI";
+import { useTranslation } from 'react-i18next';
 
 const SelectPage = (props) => {
+  const { t } = useTranslation();
   return (
     <div className="container-fluid h-100">
       <div className="row h-25">
@@ -15,7 +17,7 @@ const SelectPage = (props) => {
       <div className="row h-25">
         <div className="col text-center my-auto">
           <h1>
-            3rd Page (Create Room or Enter Room)
+            {t('3rd Page (Create Room or Enter Room)')}
           </h1>
         </div>
       </div>

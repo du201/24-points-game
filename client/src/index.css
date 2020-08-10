@@ -18,8 +18,6 @@
   src: url(./fonts/gotham-xlight__.otf);
 }
 
-
-
 body {
   margin: 0;
   font-family: 'gotham-book', sans-serif !important;
@@ -31,3 +29,57 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.btn-outline {
+  background-color: #ffffff !important;
+  border-color: #707070 !important;
+  border-radius: 30px !important;
+  transition-duration: 0.2s !important;
+  padding:0.365rem 3.5rem !important; 
+  letter-spacing: 0.002rem !important; 
+  font-size: 1.3rem !important;
+}
+
+.grey-text {
+  font-weight: bold !important;
+  letter-spacing: 0.002rem !important;
+  color: #707070 !important;
+}
+
+.no-underline {
+  text-decoration: none !important;
+}
+
+
+a:hover
+{
+  color: #343A40 !important;
+  text-decoration: none;
+}
+
+.btn-outline:hover {
+  background: #707070 !important;
+  color: #ffffff !important;
+  border-color: #707070 !important;
+
+}
+
+.title-homepage {
+  font-size: 8rem;
+  font-family: "gotham-black";
+  color: #707070;
+}
+
+@media only screen and (max-width: 600px) {
+  .title-homepage {
+    font-size: 6rem;
+    font-weight: 800;
+    color: #707070;
+  }
+}
+
+.force-inline {
+  display: inline-block;
+}
+
+

@@ -1,5 +1,8 @@
 import React from "react";
+
 import "./MenuSetting.css";
+import Slider from "./common/Slider";
+import OperatorSettingButton from "./common/OperatorSettingButton";
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
@@ -38,32 +41,26 @@ const MenuSetting = (props) => {
             <div className="card-body">
               <form>
                 <div className="form-group row align-items-center">
-                  <label htmlFor="slot" className="col-4 col-form-label col-form-label-sm lead">Number of slots: {props.slotNum}</label>
-                  <div className="col-4">
-                    <input
-                      className="form-control-range"
-                      type="range"
-                      min="2"
-                      max="6"
-                      value={props.slotNum}
-                      id="slots"
-                      onChange={props.handleSlotNumChange}
-                    ></input>
-                  </div>
+                  <Slider
+                    min="2"
+                    max="6"
+                    value={props.slotNum}
+                    id="slots"
+                    onChange={props.handleSlotNumChange}
+                    labelText="Number of slots"
+                    labelData={props.slotNum}
+                  />
                 </div>
                 <div className="form-group row align-items-center">
-                  <label htmlFor="targetNum" className="col-4 col-form-label col-form-label-sm lead">Target Number: {props.targetNum}</label>
-                  <div className="col-4">
-                    <input
-                      className="form-control"
-                      type="number"
-                      id="targetNum"
-                      min="12"
-                      max="36"
-                      onChange={props.handleTargetNumChange}
-                      value={props.targetNum}
-                    ></input>
-                  </div>
+                  <Slider
+                    min="12"
+                    max="36"
+                    value={props.targetNum}
+                    id="targetNum"
+                    onChange={props.handleTargetNumChange}
+                    labelText="Target Number"
+                    labelData={props.targetNum}
+                  />
                 </div>
               </form>
             </div>
@@ -96,53 +93,40 @@ const MenuSetting = (props) => {
               <ul className="lead">
                 <span className="operator-title-shift col-form-label-sm">Available Operators: </span>
                 <li>
-                  <input
-                    type="checkbox"
+                  <OperatorSettingButton
                     id="checkMultiply"
                     value={TIMES}
-                    className="small-checkbox"
                     onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(TIMES)}
+                    img={{ src: "multiplySign.png", alt: "multiply" }}
                   />
-                  <label htmlFor="checkMultiply">
-                    <img src="multiplySign.png" alt="multiply" />
-                  </label>
                 </li>
                 <li>
-                  <input
-                    type="checkbox"
+                  <OperatorSettingButton
                     id="checkDivide"
                     value={DIVIDES}
                     onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(DIVIDES)}
+                    img={{ src: "divideSign.png", alt: "divide" }}
                   />
-                  <label htmlFor="checkDivide">
-                    <img src="divideSign.png" alt="divide" />
-                  </label>
                 </li>
                 <li>
-                  <input
-                    type="checkbox"
+                  <OperatorSettingButton
                     id="checkAdd"
                     value={PLUS}
                     onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(PLUS)}
+                    img={{ src: "addSign.png", alt: "add" }}
                   />
-                  <label htmlFor="checkAdd">
-                    <img src="addSign.png" alt="add" />
-                  </label>
                 </li>
                 <li>
-                  <input
-                    type="checkbox"
+                  <OperatorSettingButton
                     id="checkSubtract"
                     value={MINUS}
                     onChange={props.handleAvailableOperatorCheckbox}
                     checked={props.availableOperator.includes(MINUS)}
+                    img={{ src: "subtractSign.png", alt: "subtract" }}
                   />
-                  <label htmlFor="checkSubtract">
-                    <img src="subtractSign.png" alt="subtract" />
-                  </label>
                 </li>
               </ul>
 
@@ -150,7 +134,7 @@ const MenuSetting = (props) => {
               <div className="container my-container lead">
                 {/*This row is the range of available number */}
                 <div className="row my-row align-items-center">
-                  <label className="col-form-label-sm">Range of Available Number</label>
+                  <label className="col-form-label-sm">Range of Available Numbers</label>
                   <div className="col-4 my-col">
                     <input
                       className="form-control form-control-sm"
@@ -175,11 +159,12 @@ const MenuSetting = (props) => {
                 <div className="row my-row mb-2">
                   <form className="form-inline">
                     <div className="form-group">
-                      <label htmlFor="maxRepeatNum" className="col-form-label col-form-label-sm">Maximum Number of Repeated Number</label>
+                      <label htmlFor="maxRepeatNum" className="col-form-label col-form-label-sm">Maximum Number of Repeated Number: {props.maxRepeatNum} </label>
                       <input
                         id="maxRepeatNum"
-                        className="form-control form-control-sm ml-2"
-                        type="number"
+                        type="range"
+                        min="1"
+                        max="4"
                         onChange={props.handleMaxRepeatNumInput}
                         value={props.maxRepeatNum}
                       ></input>
@@ -189,11 +174,12 @@ const MenuSetting = (props) => {
                 <div className="row my-row mb-2">
                   <form className="form-inline">
                     <div className="form-group">
-                      <label htmlFor="timeBetweenRound" className="col-form-label col-form-label-sm">Time (ms) Between Each Round</label>
+                      <label htmlFor="roundDuration" className="col-form-label col-form-label-sm">Each Round's Duration (s): {props.roundDuration} </label>
                       <input
-                        id="timeBetweenRound"
-                        className="form-control form-control-sm ml-2"
-                        type="number"
+                        id="roundDuration"
+                        type="range"
+                        min="20"
+                        max="120"
                         onChange={props.handleRoundDurationInput}
                         value={props.roundDuration}
                       ></input>
@@ -204,7 +190,7 @@ const MenuSetting = (props) => {
                   <span className="col-form-label col-form-label-sm mr-2">Number of Rounds: {props.numOfRound} </span>
                   <input
                     type="range"
-                    min="5"
+                    min="10"
                     max="20"
                     value={props.numOfRound}
                     onChange={props.handleNumOfRoundInput}

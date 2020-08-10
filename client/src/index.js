@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
@@ -7,6 +7,7 @@ import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.js";
+import './i18next.js';
 
 // optional configuration
 const options = {
@@ -20,10 +21,12 @@ const options = {
 
 ReactDOM.render(
   <React.StrictMode>
-    <AlertProvider template={AlertTemplate} {...options}>
-      <App />
-      <link href="https://fonts.googleapis.com/css?family=Titillium+Web:300,400,700" rel="stylesheet"></link>
-    </AlertProvider>
+    <Suspense fallback={(<div>Loading...</div>)}>
+      <AlertProvider template={AlertTemplate} {...options}>
+        <App />
+        <link href="https://fonts.googleapis.com/css?family=Titillium+Web:300,400,700" rel="stylesheet"></link>
+      </AlertProvider>
+    </Suspense>
   </React.StrictMode>,
   document.getElementById("root")
 );

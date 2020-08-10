@@ -1,12 +1,30 @@
-import React from "react";
-import "./CustomBootstrap.css";
+import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLanguage } from "@fortawesome/free-solid-svg-icons";
 
-const HomePage = (props) => {
+function HomePage(props) {
+  const { t, i18n } = useTranslation();
+  const changeLang = () => {
+    if (props.lang === 'en') {
+      i18n.changeLanguage('chi');
+      props.langChange('chi');
+    } else if (props.lang === 'chi') {
+      i18n.changeLanguage('en');
+      props.langChange('en');
+    }
+  };
 
   return (
     <div className="container h-100">
       <div className="row" style={{ height: "15%" }}>
-        <div className="col text-center my-auto">
+        <div className="col my-auto">
+          <button
+            className="btn grey-text btn-outline-light"
+            onClick={() => changeLang()}
+          >
+            <FontAwesomeIcon icon={faLanguage} size='3x' />
+          </button>
         </div>
       </div>
       <div className="row h-25">
@@ -21,31 +39,31 @@ const HomePage = (props) => {
               className="btn-outline grey-text btn mb-2"
               onClick={props.pressSolveModeButton}
             >
-              Solve Mode
-                </button>
+              {t("Solve Mode")}
+            </button>
             <button
               className="btn-outline grey-text btn mb-2"
               onClick={props.pressGameModeButton}
             >
-              Multiplayer
-                </button>
+              {t("Multiplayer")}
+            </button>
             <button
               className="btn-outline grey-text btn mb-2"
               onClick={props.pressSinglePlayModeButton}
             >
-              Singleplayer
-                </button>
+              {t("Singleplayer")}
+            </button>
           </div>
         </div>
       </div>
       <div className="row h-25"></div>
       <div className="row" style={{ height: "10%" }}>
         <div className="col text-center my-auto">
-          <div className="d-inline-flex flex-md-row flex-column">
-            <a href="#" className="grey-text no-underline mx-3">ABOUT</a>
-            <a href="#" className="grey-text no-underline mx-3">SHARE</a>
-            <a href="#" className="grey-text no-underline mx-3">SOURCE</a>
-            <a href="#" className="grey-text no-underline mx-3">BUG REPORT</a>
+          <div className="d-inline-flex flex-row">
+            <a href="#" className="grey-text no-underline mx-3">{t("ABOUT")}</a>
+            <a href="#" className="grey-text no-underline mx-3">{t("SHARE")}</a>
+            <a href="#" className="grey-text no-underline mx-3">{t("SOURCE")}</a>
+            <a href="#" className="grey-text no-underline mx-3">{t("BUG REPORT")}</a>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React from "react";
 import MenuSetting from "./MenuSetting";
 import CancelRoomCreateButton from "./CancelRoomCreateButton";
 import Roster from "./Roster";
+import Loader from 'react-loader-spinner';
 
 const HostPage = (props) => {
   return (
@@ -77,8 +78,13 @@ const HostPage = (props) => {
                 id="startGame"
                 onClick={props.pressStartGameButton}
               >
-                Start
-                    </button>
+                Start {props.loading === true ? <div className="force-inline"><Loader
+                  type="TailSpin"
+                  color="#00BFFF"
+                  height={20}
+                  width={20}
+                /></div> : null}
+              </button>
             </div>
           </div>
           <div className="row h-25 justify-content-center">
