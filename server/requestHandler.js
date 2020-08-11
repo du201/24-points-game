@@ -192,21 +192,12 @@ class RequestHandler {
   }
 
   /**
-   * Handles changeSettings requests. If the host sends this request, validate
-   * this request and then send the successfully updated settings back to the
-   * host.
-   */
-  changeSettingsHandler(settings) {
-    roomList[this.socket.roomNum].changeSettings(settings);
-    this.socket.emit("settings", settings);
-  }
-
-  /**
    * Handles startGame requests. If the host sends this request, start the game
    * in the room.
    */
-  startGameHandler() {
+  startGameHandler(settings) {
     if (!roomList[this.socket.roomNum].isRunning()) {
+      roomList[this.socket.roomNum].changeSettings(settings);
       roomList[this.socket.roomNum].startGame();
     }
   }

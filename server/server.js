@@ -59,21 +59,12 @@ IO.on("connection", (socket) => {
   });
 
   /*
-   * Listens for changeSettings request, if the host sends this request, update
-   * the settings in the room and broadcast the change to all other clients in
-   * that room.
-   */
-  socket.on("changeSettings", (settings) => {
-    requestHandler.changeSettingsHandler(settings);
-  });
-
-  /*
    * Listens for startGame request, if the host sends this request, update
    * the settings in the room and broadcast the change to all other clients in
    * that room.
    */
-  socket.on("startGame", () => {
-    requestHandler.startGameHandler();
+  socket.on("startGame", (settings) => {
+    requestHandler.startGameHandler(settings);
   });
 
   /*
