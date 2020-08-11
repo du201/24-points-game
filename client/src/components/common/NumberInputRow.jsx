@@ -1,5 +1,9 @@
 import React from "react";
 
+/**
+ * 
+ * used in the solve mode to input numbers into the slots
+ */
 const NumberInputRow = (props) => {
   var textContent = null;
   var inputName = null;

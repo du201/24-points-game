@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLanguage } from "@fortawesome/free-solid-svg-icons";
 
+import HomePageButton from './common/HomePageButton';
+
 function HomePage(props) {
   const { t, i18n } = useTranslation();
   const changeLang = () => {
@@ -35,24 +37,18 @@ function HomePage(props) {
       <div className="row h-25">
         <div className="col align-self-start text-center">
           <div className="d-inline-flex flex-column">
-            <button
-              className="btn-outline grey-text btn mb-2"
+            <HomePageButton
               onClick={props.pressSolveModeButton}
-            >
-              {t("Solve Mode")}
-            </button>
-            <button
-              className="btn-outline grey-text btn mb-2"
+              display={t("Solve Mode")}
+            />
+            <HomePageButton
               onClick={props.pressGameModeButton}
-            >
-              {t("Multiplayer")}
-            </button>
-            <button
-              className="btn-outline grey-text btn mb-2"
+              display={t("Multiplayer")}
+            />
+            <HomePageButton
               onClick={props.pressSinglePlayModeButton}
-            >
-              {t("Singleplayer")}
-            </button>
+              display={t("Singleplayer")}
+            />
           </div>
         </div>
       </div>

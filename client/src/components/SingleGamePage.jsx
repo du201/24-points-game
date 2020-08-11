@@ -1,5 +1,5 @@
 import React from "react";
-import ReturnHomePageButton from "./ReturnHomePageButton";
+import ReturnHomePageButton from "./common/ReturnHomePageButton";
 
 const SingleGamePage = (props) => {
   return (

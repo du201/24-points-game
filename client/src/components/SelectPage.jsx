@@ -1,7 +1,8 @@
 import React from "react";
-import ReturnHomePageButton from "./ReturnHomePageButton";
-import NameInputUI from "./NameInputUI";
+import ReturnHomePageButton from "./common/ReturnHomePageButton";
+import NameInputUI from "./common/NameInputUI";
 import { useTranslation } from 'react-i18next';
+import Button from './common/Button';
 
 const SelectPage = (props) => {
   const { t } = useTranslation();
@@ -27,22 +28,18 @@ const SelectPage = (props) => {
           <NameInputUI
             onChange={props.setStateName}
             placeHolder="Char Length <= 15"
-
-          ></NameInputUI>
-          <button
-            className="btn btn-primary mr-1"
+          />
+          <Button
             onClick={props.pressCreateRoomButton}
-          >
-            New Room
-                </button>
-          <button
-            className="btn btn-primary ml-1"
+            display={"New Room"}
+            style={1}
+          />
+          <Button
             onClick={props.pressJoinRoomButton}
-          >
-            Join Room
-                </button>
+            display={"Join Room"}
+            style={0}
+          />
         </div>
-
       </div>
       <div className="row h-25">
       </div>

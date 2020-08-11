@@ -1,6 +1,10 @@
 import React from "react";
 import "./ReturnHomePageButton.css";
 
+/**
+ * 
+ * props.onReturn(): the onclick function
+ */
 const ReturnHomePageButton = (props) => {
   return (
     //<React.Fragment>

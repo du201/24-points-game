@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * 
+ * used in the setting for choosing the available operators
+ */
 const OperatorSettingButton = ({ id, value, onChange, checked, img }) => {
   return (
     <React.Fragment>

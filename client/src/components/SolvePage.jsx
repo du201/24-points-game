@@ -1,5 +1,5 @@
 import React from "react";
-import ReturnHomePageButton from "./ReturnHomePageButton";
+import ReturnHomePageButton from "./common/ReturnHomePageButton";
 import GameSolver from "./GameSolver";
 
 const SolvePage = (props) => {

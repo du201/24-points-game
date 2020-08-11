@@ -1,7 +1,12 @@
 import React from "react";
 import "./NameInputUI.css";
 
-const NameInputUI = (props) => {
+/**
+ *  The UI to let the player enters their names
+ *  placeHolder: the placeHolder text
+ *  onChange: the onChange event
+ */
+const NameInputUI = ({ placeHolder, onChange }) => {
   return (
     <form className="form-inline justify-content-center">
       <div className="form-group mx-sm-3 mb-2">
@@ -11,9 +16,9 @@ const NameInputUI = (props) => {
         <input
           type="text"
           className={"form-control"}
-          placeholder={props.placeHolder}
+          placeholder={placeHolder}
           maxLength="15"
-          onChange={(event) => props.onChange(event)}
+          onChange={(event) => onChange(event)}
           autoFocus
         />
       </div>

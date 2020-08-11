@@ -3,6 +3,7 @@ import React from "react";
 import "./MenuSetting.css";
 import Slider from "./common/Slider";
 import OperatorSettingButton from "./common/OperatorSettingButton";
+import RangeNumberInput from "./common/RangeNumberInput";
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
@@ -136,65 +137,62 @@ const MenuSetting = (props) => {
                 <div className="row my-row align-items-center">
                   <label className="col-form-label-sm">Range of Available Numbers</label>
                   <div className="col-4 my-col">
-                    <input
-                      className="form-control form-control-sm"
-                      type="number"
+                    <RangeNumberInput
                       id="lower-bound"
                       onChange={props.handleRangeOfAvailableNumberLowBoundInput}
                       value={props.rangeOfAvailableNumberLowBound}
                       placeholder="Lower Bound"
-                    ></input>
+                    />
                   </div>
                   <div className="col-4 my-col">
-                    <input
-                      className="form-control form-control-sm"
-                      type="number"
+                    <RangeNumberInput
                       id="higher-bound"
                       onChange={props.handleRangeOfAvailableNumberHighBoundInput}
                       value={props.rangeOfAvailableNumberHighBound}
                       placeholder="Upper Bound"
-                    ></input>
+                    />
                   </div>
                 </div>
                 <div className="row my-row mb-2">
                   <form className="form-inline">
                     <div className="form-group">
-                      <label htmlFor="maxRepeatNum" className="col-form-label col-form-label-sm">Maximum Number of Repeated Number: {props.maxRepeatNum} </label>
-                      <input
-                        id="maxRepeatNum"
-                        type="range"
+                      <Slider
                         min="1"
                         max="4"
-                        onChange={props.handleMaxRepeatNumInput}
                         value={props.maxRepeatNum}
-                      ></input>
+                        id="maxRepeatNum"
+                        onChange={props.handleMaxRepeatNumInput}
+                        labelText="Maximum number of repeats"
+                        labelData={props.maxRepeatNum}
+                      />
                     </div>
                   </form>
                 </div>
                 <div className="row my-row mb-2">
                   <form className="form-inline">
                     <div className="form-group">
-                      <label htmlFor="roundDuration" className="col-form-label col-form-label-sm">Each Round's Duration (s): {props.roundDuration} </label>
-                      <input
-                        id="roundDuration"
-                        type="range"
+                      <Slider
                         min="20"
                         max="120"
-                        onChange={props.handleRoundDurationInput}
                         value={props.roundDuration}
-                      ></input>
+                        id="roundDuration"
+                        onChange={props.handleRoundDurationInput}
+                        labelText="Round breaks"
+                        labelData={props.roundDuration + " seconds"}
+                      />
                     </div>
                   </form>
                 </div>
                 <div className="row my-row">
-                  <span className="col-form-label col-form-label-sm mr-2">Number of Rounds: {props.numOfRound} </span>
-                  <input
-                    type="range"
+                  <Slider
                     min="10"
                     max="20"
                     value={props.numOfRound}
+                    id="roundNum"
                     onChange={props.handleNumOfRoundInput}
-                  ></input>
+                    labelText="Number of rounds"
+                    labelData={props.numOfRound}
+                  />
                 </div>
               </div>
             </div>

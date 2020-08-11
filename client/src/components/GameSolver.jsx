@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import NumberInputRow from "./NumberInputRow.jsx";
+import NumberInputRow from "./common/NumberInputRow.jsx";
 import run from "../game.js";
 import "./GameSolver.css";
+import Slider from "./common/Slider.jsx";
 
 class GameSolver extends Component {
   state = {
@@ -37,16 +38,18 @@ class GameSolver extends Component {
       <div className="wrapper">
         <div className="solverInputSection">
           <div>
-            Number of slotsss: {this.state.numberNum}
+            Number of slots: {this.state.numberNum}
             <br></br>
-            <input
-              type="range"
+            <Slider
               min="2"
               max="6"
               value={this.state.numberNum}
               id="slots"
               onChange={this.sliderChangeHandler}
-            ></input>
+              labelText="Number of slots"
+              labelData={this.state.numberNum}
+            />
+
           </div>
           <form id="form">
             {this.state.numberCollection.map((eachNum) => {
