@@ -69,7 +69,7 @@ label img {
   z-index: -1;
 }
 
-.my-container {
+/* .my-container {
   border: 1px solid green;
 }
 
@@ -79,7 +79,7 @@ label img {
 
 .my-col {
   border: 3px dotted blue;
-}
+} */
 
 .small-input-size {
   width: 4em;
