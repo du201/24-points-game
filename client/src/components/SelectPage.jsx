@@ -1,5 +1,5 @@
 import React from "react";
-import ReturnHomePageButton from "./common/ReturnHomePageButton";
+import BackButton from "./common/BackButton";
 import NameInputUI from "./common/NameInputUI";
 import { useTranslation } from 'react-i18next';
 import Button from './common/Button';
@@ -10,9 +10,10 @@ const SelectPage = (props) => {
     <div className="container-fluid h-100">
       <div className="row h-25">
         <div className="col my-auto">
-          <ReturnHomePageButton
-            onReturn={props.pressReturnHomePageButton}
-          ></ReturnHomePageButton>
+          <BackButton
+            handleBack={props.handleBack}
+            prevPage="homePage"
+          ></BackButton>
         </div>
       </div>
       <div className="row h-25">

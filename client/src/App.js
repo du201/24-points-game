@@ -200,15 +200,15 @@ class App extends Component {
 
   /**
    * Appears in multiple pages
-   * return back to the home page
+   * return back to the specified prevPage
    */
-  pressReturnHomePageButton = () => {
+  handleBack = (prevPage) => {
     //set all of the game-related states back to default
     if (this.state.pageController === SUMMARYPAGE) {
       this.backToDefaultAllStates();
     }
     this.setState({
-      pageController: HOMEPAGE, //to page 1
+      pageController: prevPage, //to page 1
     });
   };
 
@@ -931,13 +931,13 @@ class App extends Component {
       case SOLVEPAGE: //2
         return (
           <SolvePage
-            pressReturnHomePageButton={this.pressReturnHomePageButton}
+            handleBack={this.handleBack}
           ></SolvePage>
         );
       case SELECTPAGE: //3
         return (
           <SelectPage
-            pressReturnHomePageButton={this.pressReturnHomePageButton}
+            handleBack={this.handleBack}
             setStateName={this.setStateName}
             pressCreateRoomButton={this.pressCreateRoomButton}
             pressJoinRoomButton={this.pressJoinRoomButton}
@@ -1037,7 +1037,7 @@ class App extends Component {
       case SINGLEGAMEPAGE: //8
         return (
           <SingleGamePage
-            pressReturnHomePageButton={this.pressReturnHomePageButton}
+            pressReturnHomePageButton={this.handleBack}
           ></SingleGamePage>
         );
       case LOADINGPAGE: //9: currently just for the host
@@ -1065,7 +1065,7 @@ class App extends Component {
       case SUMMARYPAGE: //12: the page at the end of the game (after receiving "endGame")
         return (
           <SummaryPage
-            pressReturnHomePageButton={this.pressReturnHomePageButton}
+            pressReturnHomePageButton={this.handleBack}
             scoreRanking={this.state.scoreRanking}
           ></SummaryPage>
         );

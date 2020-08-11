@@ -1,6 +1,6 @@
 import React from "react";
 import MenuSetting from "./MenuSetting";
-import CancelRoomCreateButton from "./CancelRoomCreateButton";
+import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
 import Roster from "./Roster";
 import Loader from 'react-loader-spinner';
 

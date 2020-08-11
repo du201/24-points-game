@@ -1,5 +1,5 @@
 import React from "react";
-import CancelRoomCreateButton from "./CancelRoomCreateButton";
+import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
 import GameBoard from "./GameBoard";
 import Roster from "./Roster";
 

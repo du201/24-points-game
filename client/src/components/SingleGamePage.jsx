@@ -1,12 +1,12 @@
 import React from "react";
-import ReturnHomePageButton from "./common/ReturnHomePageButton";
+import BackButton from "./common/BackButton";
 
 const SingleGamePage = (props) => {
   return (
     <div>
-      <ReturnHomePageButton
+      <BackButton
         onReturn={props.pressReturnHomePageButton}
-      ></ReturnHomePageButton>
+      ></BackButton>
       <h1 className="cover-heading">Game In Progress...(singleplayer)</h1>
     </div>
   );

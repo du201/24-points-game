@@ -1,5 +1,5 @@
 import React from "react";
-import ReturnHomePageButton from "./common/ReturnHomePageButton";
+import BackButton from "./common/BackButton";
 import GameSolver from "./GameSolver";
 
 const SolvePage = (props) => {
@@ -7,9 +7,10 @@ const SolvePage = (props) => {
     <div className="container-fluid h-100">
       <div className="row">
         <div className="col my-auto">
-          <ReturnHomePageButton
-            onReturn={props.pressReturnHomePageButton}
-          ></ReturnHomePageButton>
+          <BackButton
+            handleBack={props.handleBack}
+            prevPage="homePage"
+          ></BackButton>
         </div>
       </div>
       <div className="row h-50">

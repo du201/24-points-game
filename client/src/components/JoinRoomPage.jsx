@@ -1,7 +1,8 @@
 import React from "react";
-import CancelRoomCreateButton from "./CancelRoomCreateButton";
+import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
 import RoomNumInput from "./RoomNumInput";
 import NameInputUI from "./common/NameInputUI";
+import Button from "./common/Button";
 
 const JoinRoomPage = (props) => {
   return (
@@ -16,9 +17,7 @@ const JoinRoomPage = (props) => {
       <div className="row h-25">
         <div className="col text-center my-auto">
           <h1 className="cover-heading">
-            5th Page
-            <br />
-            Please Enter the Room #
+            Join A Room
           </h1>
         </div>
       </div>
@@ -26,14 +25,13 @@ const JoinRoomPage = (props) => {
         <div className="col text-center h-100">
           <div className="row h-50">
             <div className="col">
-              Your nickname: <strong>{props.username}</strong>
+              Your nickname
               <NameInputUI
                 placeHolder={props.username}
                 onChange={props.setStateName}
               />
             </div>
           </div>
-
           <div className="row h-50 justify-content-center">
             <RoomNumInput
               setRoomNum={props.setRoomNum}
@@ -44,12 +42,11 @@ const JoinRoomPage = (props) => {
       </div>
       <div className="row h-25 justify-content-center">
         <div className="col col-auto align-self-center">
-          <button
-            className="btn btn-primary mb-2"
+          <Button
             onClick={props.pressJoinRoomKeyButton}
-          >
-            Join
-                </button>
+            display={"Join"}
+            style={1}
+          />
         </div>
       </div>
     </div>
