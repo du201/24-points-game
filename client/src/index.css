@@ -39,6 +39,8 @@ code {
   width: 15.625rem; /* 250px by default */
   height: 3.125rem; /* 50px by default */
   font-size: 1.1785rem !important; /* 19px by default */
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .grey-text {

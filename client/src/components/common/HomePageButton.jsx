@@ -7,7 +7,7 @@ import React from 'react';
  */
 const HomePageButton = ({ onClick, display }) => {
   return (<button
-    className="btn-outline grey-text btn my-2"
+    className="btn-outline grey-text btn"
     onClick={onClick}
   >
     {display}
