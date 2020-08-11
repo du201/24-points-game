@@ -3,15 +3,17 @@ import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
 import RoomNumInput from "./RoomNumInput";
 import NameInputUI from "./common/NameInputUI";
 import Button from "./common/Button";
+import BackButton from "./common/BackButton";
 
 const JoinRoomPage = (props) => {
   return (
     <div className="container-fluid h-100">
       <div className="row h-25">
         <div className="col my-auto">
-          <CancelRoomCreateButton
-            onCancel={props.exitRoomButtonPress}
-          ></CancelRoomCreateButton>
+          <BackButton
+            handleBack={props.handleBack}
+            prevPage="gamePage"
+          />
         </div>
       </div>
       <div className="row h-25">

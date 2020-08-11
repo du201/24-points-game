@@ -2,7 +2,8 @@ import React from "react";
 
 /**
  * 
- * onReturn(): the onclick function
+ * handleBack: onClick function
+ * prevPage: the previous page to go to
  */
 const BackButton = ({ handleBack, prevPage }) => {
   return (

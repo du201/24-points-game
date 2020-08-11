@@ -989,7 +989,7 @@ class App extends Component {
       case JOINROOMPAGE: //5
         return (
           <JoinRoomPage
-            exitRoomButtonPress={this.exitRoomButtonPress}
+            handleBack={this.handleBack}
             username={this.state.username}
             setStateName={this.setStateName}
             setRoomNum={this.setRoomNum}
