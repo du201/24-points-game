@@ -203,7 +203,7 @@ const MenuSetting = (props) => {
         className="btn btn-primary btn-lg mt-2"
         onClick={props.pressMenuCloseButton}
       >
-        Apply
+        <img style={{ width: "100px" }} src="multiplySign.png"></img>
       </button>
       <button
         className="btn btn-info btn-lg mt-2 ml-2"

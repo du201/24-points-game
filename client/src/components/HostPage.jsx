@@ -73,17 +73,19 @@ const HostPage = (props) => {
           </div>
           <div className="row h-25">
             <div className="col text-center my-auto">
+              {/* This button is special, so the common button component is not used */}
               <button
                 className="btn btn-primary m-3"
                 id="startGame"
                 onClick={props.pressStartGameButton}
+                disabled={props.startGameButtonDisabled}
               >
-                Start {props.loading === true ? <div className="force-inline"><Loader
+                {props.loading === true ? <div className="force-inline"><Loader
                   type="TailSpin"
                   color="#00BFFF"
                   height={20}
                   width={20}
-                /></div> : null}
+                /></div> : "Start"}
               </button>
             </div>
           </div>

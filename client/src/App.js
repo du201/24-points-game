@@ -27,6 +27,7 @@ import LoadingPage from "./components/LoadingPage"; //9
 import CountDownPage from "./components/CountDownPage"; //10
 import BetweenRoundPage from "./components/BetweenRoundPage"; //11
 import SummaryPage from "./components/SummaryPage"; //11
+import { faTextHeight } from "@fortawesome/free-solid-svg-icons";
 
 //defined const
 const TIMES = "×";
@@ -79,14 +80,17 @@ const DISCONNECT = "disconnect";
 const server = "http://localhost:2000";
 const socket = io.connect(server);
 toast.configure();
+let startGameButtonTimeObj;
+const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOMEPAGE, //default should be homePage
+    pageController: HOSTPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     lang: 'en', //the displayed language, default is english. Also have Chinese
     loading: false, //the loader displays on the start button when the loading is true
+    startGameButtonDisabled: false, //disable the button for as long as 120s after press it
 
     //below are the settings for the multi-player game
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
@@ -227,7 +231,6 @@ class App extends Component {
    * There is a confirm window before the action of exiting really happens
    */
   exitRoomButtonPress = () => {
-    this.setState({ loading: false });
     confirmAlert({
       title: 'Confirm to Exit the Room',
       message: 'Are you sure to do this?',
@@ -235,6 +238,14 @@ class App extends Component {
         {
           label: 'Yes',
           onClick: () => {
+            //to prevent notification if press exit on page 4
+            clearTimeout(startGameButtonTimeObj);
+
+            this.setState({
+              loading: false,
+              startGameButtonDisabled: false
+            });
+
             this.setState({
               pageController: SELECTPAGE, //to page 3
             });
@@ -293,7 +304,9 @@ class App extends Component {
       correctOrNotText: "",
       scoreRanking: [],
       attemptNum: 0,
-      submitButtonDisable: false
+      submitButtonDisable: false,
+      loading: false,
+      startGameButtonDisabled: false
     });
   };
   /**
@@ -366,11 +379,33 @@ class App extends Component {
   };
 
   /**
+   * after 2 mins, still 
+   */
+  failToStartGame = () => {
+    this.setState({ startGameButtonDisabled: false });
+    this.setState({ loading: false });
+    this.notifyError("Failed to connect to the server");
+  };
+
+  /**
    * In page 4th (the game setting page)
    * the creator of the game room uses this function to start the multi-player game
    */
   pressStartGameButton = () => {
-    socket.emit(START_GAME);
+    this.setState({ startGameButtonDisabled: true });
+    startGameButtonTimeObj = setTimeout(() => this.failToStartGame(), startGameTimtOutSec * 1000);
+
+    let settingPackageObject = {
+      numOfSlots: this.state.gameModeBasicSetting.slotNum, //int
+      targetNumber: this.state.gameModeBasicSetting.targetNum, //int
+      availableOperators: this.state.availableOperator, //array of string
+      rangeLo: this.state.rangeOfAvailableNumberLowBound, //int
+      rangeHi: this.state.rangeOfAvailableNumberHighBound, //int
+      maxNumOfRepeats: this.state.maxRepeatNum, //int
+      roundDuration: this.state.roundDuration * 1000, //int (ms)
+      numOfRounds: this.state.numOfRound, //int
+    };
+    socket.emit(START_GAME, settingPackageObject);
     //first go to the loading page while waiting for the server to finish calculating
     // this.setState({
     //   pageController: LOADINGPAGE, //to 9th page
@@ -387,8 +422,11 @@ class App extends Component {
    */
   startGame = () => {
     socket.once(GAME_STARTED, (settings) => {
+      //reset some of the states
+      clearTimeout(startGameButtonTimeObj);
       this.setState({
-        loading: false
+        loading: false,
+        startGameButtonDisabled: false
       });
       //go to the game page
       this.setState({ pageController: COUNTDOWNPAGE, });
@@ -611,22 +649,6 @@ class App extends Component {
   pressMenuCloseButton = () => {
     this.setState({
       gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
-    });
-    let settingPackageObject = {
-      numOfSlots: this.state.gameModeBasicSetting.slotNum, //int
-      targetNumber: this.state.gameModeBasicSetting.targetNum, //int
-      availableOperators: this.state.availableOperator, //array of string
-      rangeLo: this.state.rangeOfAvailableNumberLowBound, //int
-      rangeHi: this.state.rangeOfAvailableNumberHighBound, //int
-      maxNumOfRepeats: this.state.maxRepeatNum, //int
-      roundDuration: this.state.roundDuration * 1000, //int (ms)
-      numOfRounds: this.state.numOfRound, //int
-    };
-    socket.emit(CHANGE_SETTINGS, settingPackageObject);
-    //receive the final version of the settings from the server and apply that to the client
-    socket.once(SETTINGS, (settings) => {
-      this.reassignSettings(settings);
-      console.log(settings);
     });
   };
 
@@ -946,6 +968,7 @@ class App extends Component {
       case HOSTPAGE: //4
         return (
           <HostPage
+            startGameButtonDisabled={this.state.startGameButtonDisabled}
             gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
             handleSlotNumChange={this.handleSlotNumChange}
             handleTargetNumChange={this.handleTargetNumChange}
@@ -1037,7 +1060,7 @@ class App extends Component {
       case SINGLEGAMEPAGE: //8
         return (
           <SingleGamePage
-            pressReturnHomePageButton={this.handleBack}
+            handleBack={this.handleBack}
           ></SingleGamePage>
         );
       case LOADINGPAGE: //9: currently just for the host
