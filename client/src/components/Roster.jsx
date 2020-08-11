@@ -12,8 +12,8 @@ const Roster = (props) => {
   return (
     <React.Fragment>
       {props.playerRoster.map((eachName, index) => {
-        return <div className="card bg-info mb-1" key={index}>
-          <div className="card-body">
+        return <div key={index}>
+          <div class="circle">
             <div>Name: {eachName}</div>
             {(props.pageController === "waitForHostPage" || props.pageController === "createRoomPage") ? null :
               <div>Solved? {props.playerSolved.includes(eachName) ? "Yes" : "No"}</div>}

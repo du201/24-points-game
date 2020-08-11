@@ -61,13 +61,16 @@ const HostPage = (props) => {
           <div className="row h-25">
             <div className="col text-center my-auto">
               <h1 className="cover-heading">
-                4th Page
-                      <br />
-                      Nickname: {props.username}
+                start the game
+                      {/* <br />
+                      Nickname: {props.username} */}
                 <br />
-                      Room Number: {props.roomNumber}
+                      Room number <br />
+                {props.roomNumber}
                 <br />
-                      Please wait for other players to join
+                    Players {props.playerRoster.length} of 10
+                <br />
+                      Waiting for other players to join...
                     </h1>
             </div>
           </div>

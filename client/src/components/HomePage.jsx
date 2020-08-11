@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLanguage } from "@fortawesome/free-solid-svg-icons";
@@ -7,6 +7,10 @@ import HomePageButton from './common/HomePageButton';
 
 function HomePage(props) {
   const { t, i18n } = useTranslation();
+  useEffect(() => {
+    i18n.changeLanguage(props.lang);
+  }, []);
+  // i18n.changeLanguage(props.lang);
   const changeLang = () => {
     if (props.lang === 'en') {
       i18n.changeLanguage('chi');
