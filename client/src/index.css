@@ -23,6 +23,7 @@ body {
   font-family: 'gotham-book', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 50rem; /* 800px by default */
 }
 
 code {
@@ -32,42 +33,53 @@ code {
 
 .btn-outline {
   background-color: #ffffff !important;
-  border-color: #707070 !important;
-  border-radius: 30px !important;
-  transition-duration: 0.2s !important;
-  padding:0.365rem 3.5rem !important; 
-  letter-spacing: 0.002rem !important; 
-  font-size: 1.3rem !important;
+  border: 0.125rem solid #707070 !important;
+  border-radius: 1.5625rem !important;
+  transition-duration: 0.15s !important;
+  width: 15.625rem; /* 250px by default */
+  height: 3.125rem; /* 50px by default */
+  font-size: 1.1785rem !important; /* 19px by default */
 }
 
 .grey-text {
-  font-weight: bold !important;
-  letter-spacing: 0.002rem !important;
+  font-family: "gotham-black";
   color: #707070 !important;
+}
+
+.home-page-link {
+  opacity: 75%;
+  font-size: 1rem; /* 16px by default */
+  transition-duration: 0.15s;
 }
 
 .no-underline {
   text-decoration: none !important;
 }
 
-
 a:hover
 {
   color: #343A40 !important;
   text-decoration: none;
+  transition-duration: 0.15s !important;
+  cursor: pointer;
 }
 
 .btn-outline:hover {
   background: #707070 !important;
   color: #ffffff !important;
   border-color: #707070 !important;
+}
 
+#change-lang {
+  color: #707070;
+  opacity: 75%;
 }
 
 .title-homepage {
-  font-size: 8rem;
+  font-size: 9.375rem; /* 150px by default */
   font-family: "gotham-black";
   color: #707070;
+  margin-bottom: 0.625rem; /* 10px by default */
 }
 
 @media only screen and (max-width: 600px) {
@@ -81,5 +93,3 @@ a:hover
 .force-inline {
   display: inline-block;
 }
-
-
