@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLanguage } from "@fortawesome/free-solid-svg-icons";
 
 import HomePageButton from './common/HomePageButton';
+import './HomePage.css'
 
 function HomePage(props) {
   const { t, i18n } = useTranslation();
@@ -28,8 +29,8 @@ function HomePage(props) {
   };
 
   return (
-    <div className="container h-100">
-      <div className="row" style={{ height: "15%" }}>
+    <div className="container-fluid h-100">
+      <div className="row" style={{ height: "10%" }}>
         <div className="my-auto">
           <a id="change-lang"
             onClick={() => changeLang()}
@@ -39,24 +40,30 @@ function HomePage(props) {
         </div>
       </div>
 
-      <div className="row" style={{ height: "75%" }}>
+      <div className="row" style={{ height: "80%" }}>
         <div className="col align-self-start text-center">
-          <div className="title-homepage">
+          <div className="title-homepage fnt-bold">
             24
           </div>
           <div className="d-inline-flex flex-column">
-            <HomePageButton
-              onClick={props.pressSolveModeButton}
-              display={t("Solver")}
-            />
-            <HomePageButton
-              onClick={props.pressSinglePlayModeButton}
-              display={t("Singleplayer")}
-            />
-            <HomePageButton
-              onClick={props.pressGameModeButton}
-              display={t("Multiplayer")}
-            />
+            <div className="btn-homepage fnt-bold">
+              <HomePageButton
+                onClick={props.pressSolveModeButton}
+                display={t("Solver")}
+              />
+            </div>
+            <div className="btn-homepage fnt-bold">
+              <HomePageButton
+                onClick={props.pressSinglePlayModeButton}
+                display={t("Singleplayer")}
+              />
+            </div>
+            <div className="btn-homepage fnt-bold">
+              <HomePageButton
+                onClick={props.pressGameModeButton}
+                display={t("Multiplayer")}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -64,10 +71,10 @@ function HomePage(props) {
       <div className="row" style={{ height: "10%" }}>
         <div className="col text-center my-auto">
           <div className="d-inline-flex flex-row">
-            <a href="#" className="grey-text no-underline mx-4 home-page-link">{t("ABOUT")}</a>
-            <a href="#" className="grey-text no-underline mx-4 home-page-link">{t("SHARE")}</a>
-            <a href="#" className="grey-text no-underline mx-4 home-page-link">{t("SOURCE")}</a>
-            <a href="#" className="grey-text no-underline mx-4 home-page-link">{t("BUG REPORT")}</a>
+            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("ABOUT")}</a>
+            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SHARE")}</a>
+            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SOURCE")}</a>
+            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("BUG REPORT")}</a>
           </div>
         </div>
       </div>

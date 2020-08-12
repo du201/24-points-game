@@ -1,0 +1,22 @@
+.title-homepage {
+  font-size: 9.375rem; /* 150px by default */
+  color: #707070;
+  margin-bottom: 1.25rem; /* 20px by default */
+}
+
+.link-homepage {
+  opacity: 75%;
+  font-size: 1rem; /* 16px by default */
+  transition-duration: 0.15s;
+}
+
+.btn-homepage {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#change-lang {
+  color: #707070;
+  opacity: 75%;
+  margin-left: 2rem;
+}

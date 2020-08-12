@@ -1,0 +1,22 @@
+#btn-selectpage-left {
+  margin-right: 1.5rem;
+}
+
+#btn-selectpage-right {
+  margin-left: 1.5rem;
+}
+
+#title-selectpage {
+  color: #707070;
+  margin-top: 5rem !important;
+  margin-bottom: 7rem !important;
+}
+
+#text-selectpage {
+  color: #707070;
+  margin-bottom: 1.5rem !important;
+}
+
+#input-selectpage {
+  margin-bottom: 1.75rem;
+}

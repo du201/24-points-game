@@ -1,0 +1,19 @@
+#input-name {
+  width: 17.5rem;
+  height: 3.125rem;
+  border-radius: 0.9375rem;
+  border-color: #707070 !important;
+  font-size: 1rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+#input-name:hover {
+  border-color: #4194F8 !important;
+}
+
+#input-name:focus {
+  border-color: #4194F8 !important;
+}

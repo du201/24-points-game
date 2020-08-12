@@ -85,7 +85,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOSTPAGE, //default should be homePage
+    pageController: HOMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     lang: 'en', //the displayed language, default is english. Also have Chinese as zh
@@ -139,8 +139,8 @@ class App extends Component {
 
 
   /**
-   * 
-   * @param {string} message the text that you want it to appear in the error toast 
+   *
+   * @param {string} message the text that you want it to appear in the error toast
    */
   notifyError = (message) => toast.error(message, {
     position: "bottom-right",
@@ -172,7 +172,7 @@ class App extends Component {
   };
 
   /**
-   * 
+   *
    * change the displayed language of the game
    */
   langChange = (lang) => {
@@ -184,7 +184,7 @@ class App extends Component {
 
   /**
    * In 1st page
-   * In home page, choose the game mode (instead of single-player mode or solve mode) 
+   * In home page, choose the game mode (instead of single-player mode or solve mode)
    */
   pressGameModeButton = () => {
     this.setState({
@@ -379,7 +379,7 @@ class App extends Component {
   };
 
   /**
-   * after 2 mins, still 
+   * after 2 mins, still
    */
   failToStartGame = () => {
     this.setState({ startGameButtonDisabled: false });
@@ -514,7 +514,7 @@ class App extends Component {
 
   /**
    * create the multiplayerButtonDisable default state
-   * @param {array of int} numbers the game numbers passed by the server 
+   * @param {array of int} numbers the game numbers passed by the server
    */
   createButtonDisableStatus = (numbers) => {
     let buttonDisableStatus = [];
@@ -634,7 +634,7 @@ class App extends Component {
   };
 
   /**
-   * 
+   *
    * change the value of the target number for multi-player game
    */
   handleTargetNumChange = (event) => {
@@ -718,7 +718,7 @@ class App extends Component {
   };
 
   /**
-   * set the value for the time of each round 
+   * set the value for the time of each round
    */
   handleRoundDurationInput = (event) => {
     this.setState({ roundDuration: parseInt(event.target.value, 10) });
@@ -741,8 +741,8 @@ class App extends Component {
 
 
   /**
-   * 
-   * @param {string} ops turn on or off the operator passed in 
+   *
+   * @param {string} ops turn on or off the operator passed in
    */
   operatorSwitch = (ops) => {
     if (this.state.availableOperator.includes(ops)) {
@@ -768,7 +768,7 @@ class App extends Component {
 
   /**
    * the checkbox that controls the available operators during the game
-   * @param {checkbox} event 
+   * @param {checkbox} event
    */
   handleAvailableOperatorCheckbox = (event) => {
     let selectValue = event.target.value;
@@ -792,7 +792,7 @@ class App extends Component {
 
   /**
    * When press the button, add the corresponding number or operator to the input expression
-   * @param {int} eachNum the number or operator string associated with the button 
+   * @param {int} eachNum the number or operator string associated with the button
    */
   addNumToInput = (eachNum, index) => {
     let copy_disableStatus = [...this.state.multiplayerButtonDisable];
@@ -828,7 +828,7 @@ class App extends Component {
 
   /**
    * This is able to handle digits other than 4
-   * @param {int} num the number whose digits are going to be separated 
+   * @param {int} num the number whose digits are going to be separated
    * @returns {array of int} the digits of the number from left to right
    */
   getDigits = (num) => {
@@ -866,7 +866,7 @@ class App extends Component {
   /**
    * This has not yet been able to handle digits other than 4 (due to the switch case part)
    * Set the value of the room number with four separate input boxes
-   * @param {onChange} e 
+   * @param {onChange} e
    */
   setRoomNum = (e) => {
     if (e.target.value.length === 0) {
@@ -1124,7 +1124,7 @@ class App extends Component {
             /* Firefox */
             input[type=number] {
               -moz-appearance: textfield;
-            }         
+            }
           `}</style>
           <link rel="shortcut icon" href={tabImage} />
           <style>
