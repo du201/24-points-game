@@ -8,16 +8,22 @@ import HomePageButton from './common/HomePageButton';
 function HomePage(props) {
   const { t, i18n } = useTranslation();
   useEffect(() => {
-    i18n.changeLanguage(props.lang);
+    let storedLang = localStorage.getItem('lang');
+    if (storedLang) {
+      i18n.changeLanguage(storedLang);
+      props.langChange(storedLang);
+    }
   }, []);
   // i18n.changeLanguage(props.lang);
   const changeLang = () => {
     if (props.lang === 'en') {
-      i18n.changeLanguage('chi');
-      props.langChange('chi');
-    } else if (props.lang === 'chi') {
+      i18n.changeLanguage('zh');
+      props.langChange('zh');
+      localStorage.setItem('lang', 'zh');
+    } else if (props.lang === 'zh') {
       i18n.changeLanguage('en');
       props.langChange('en');
+      localStorage.setItem('lang', 'en');
     }
   };
 

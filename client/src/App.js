@@ -88,7 +88,7 @@ class App extends Component {
     pageController: HOMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
-    lang: 'en', //the displayed language, default is english. Also have Chinese
+    lang: 'en', //the displayed language, default is english. Also have Chinese as zh
     loading: false, //the loader displays on the start button when the loading is true
     startGameButtonDisabled: false, //disable the button for as long as 120s after press it
 
