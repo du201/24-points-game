@@ -1,24 +1,50 @@
 import React from "react";
 import "./Roster.css";
+import { HOSTPAGE, MULTIGAMEPAGE } from './roomConst';
 
 /**
  * 
  * Display the current players in the room
  * If the player is in the waitForHostPage, only display the name
  * If the player is in the multiPlayerGamePage, display the name and whether or not 
- * each player has solved the problem in the current round
+ * each player has solved the problem in the current round plus the emoji functionality
  */
-const Roster = (props) => {
+const Roster = ({ playerRoster, playerSolved, pageController }) => {
+
+  const solvedOrNot = (eachName) => {
+    //only shows whether or not a player has solved the problem in the MULTIGAMEPAGE
+    if (pageController === HOSTPAGE) {
+      return null;
+    }
+
+    let display = playerSolved.includes(eachName) ?
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+      </svg> :
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z" />
+        <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z" />
+      </svg>;
+
+    return display;
+  };
+
+  const randomColor = () => {
+    const color = Math.floor(Math.random() * 16777215).toString(16);
+    return '#' + color;
+  };
+
   return (
     <React.Fragment>
-      {props.playerRoster.map((eachName, index) => {
-        return <div key={index}>
-          <div class="circle">
-            <div>Name: {eachName}</div>
-            {(props.pageController === "waitForHostPage" || props.pageController === "createRoomPage") ? null :
-              <div>Solved? {props.playerSolved.includes(eachName) ? "Yes" : "No"}</div>}
-          </div>
-        </div>
+      {playerRoster.map((eachName, index) => {
+        return (
+          <div className="centerize" key={index}>
+            <div className="circle" style={{ backgroundColor: randomColor() }}>
+              {solvedOrNot(eachName)}
+              <h1 className="name">{eachName[0]}</h1>
+            </div>
+            <div>{eachName}</div>
+          </div>);
       })}
     </React.Fragment>
 

@@ -3,6 +3,7 @@ import MenuSetting from "./MenuSetting";
 import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
 import Roster from "./Roster";
 import Loader from 'react-loader-spinner';
+import { HOSTPAGE } from './roomConst';
 
 const HostPage = (props) => {
   return (
@@ -50,12 +51,13 @@ const HostPage = (props) => {
               <CancelRoomCreateButton
                 onCancel={props.exitRoomButtonPress}
               ></CancelRoomCreateButton>
+              {/* the setting button is differnt from normal button */}
               <button
                 className="btn btn-info m-3 topRightCorner"
                 onClick={props.switchSettingsMenu}
               >
                 Setting
-                    </button>
+              </button>
             </div>
           </div>
           <div className="row h-25">
@@ -71,7 +73,7 @@ const HostPage = (props) => {
                     Players {props.playerRoster.length} of 10
                 <br />
                       Waiting for other players to join...
-                    </h1>
+              </h1>
             </div>
           </div>
           <div className="row h-25">
@@ -94,8 +96,15 @@ const HostPage = (props) => {
           </div>
           <div className="row h-25 justify-content-center">
             <div className="col-6 pt-2 overflow-auto h-100">
-              <Roster
+              {/* <Roster
                 playerRoster={props.playerRoster}
+                playerSolved={props.playerSolved}
+                pageController={props.pageController}
+                currentPage={HOSTPAGE}
+              ></Roster> */}
+              {/* just for testing purpose */}
+              <Roster
+                playerRoster={['Xin', 'Du', 'Gong', 'Zheng', 'zhe', 'Wuhan', 'Hua', 'Kao']}
                 playerSolved={props.playerSolved}
                 pageController={props.pageController}
               ></Roster>

@@ -1,0 +1,12 @@
+export const HOMEPAGE = "homePage"; //1
+export const SOLVEPAGE = "solvePage"; //2
+export const SELECTPAGE = "gamePage"; //3
+export const HOSTPAGE = "createRoomPage"; //4
+export const JOINROOMPAGE = "joinRoomNumPage"; //5
+export const WAITFORHOSTPAGE = "waitForHostPage"; //6
+export const MULTIGAMEPAGE = "multiPlayerGamePage"; //7
+export const SINGLEGAMEPAGE = "singlePlayerGamePage"; //8
+export const LOADINGPAGE = "gameLoadingPage"; //9
+export const COUNTDOWNPAGE = "preGameCountDownPage"; //10
+export const BTWROUNDPAGE = "betweenRoundPage"; //11
+export const SUMMARYPAGE = "summaryPage"; //12
