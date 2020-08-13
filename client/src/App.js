@@ -85,7 +85,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOMEPAGE, //default should be homePage
+    pageController: HOSTPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     lang: 'en', //the displayed language, default is english. Also have Chinese as zh
@@ -339,7 +339,9 @@ class App extends Component {
    * The creator of the room uses this to request the server for a room
    */
   pressCreateRoomButton = () => {
-    if (this.hasValidUsername()) {
+    if (!socket.connected) {
+      this.notifyError("You are not connected to our server");
+    } else if (this.hasValidUsername()) {
       socket.emit(CREATE_ROOM, this.state.username);
       socket.once(CREATE_ROOM_SUCCESS, (roomNum) => {
         this.listenToServerDisconnect();
@@ -369,7 +371,9 @@ class App extends Component {
    * to join is to be entered
    */
   pressJoinRoomButton = () => {
-    if (this.hasValidUsername()) {
+    if (!socket.connected) {
+      this.notifyError("You are not connected to our server");
+    } else if (this.hasValidUsername()) {
       this.setState({
         pageController: JOINROOMPAGE, //to 5th page
       });

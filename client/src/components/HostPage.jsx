@@ -46,7 +46,8 @@ const HostPage = (props) => {
         </div>
         :
         <div className="h-100 w-100">
-          <div className="row h-25">
+          {/* <div className="row h-100"> */}
+          <div className="row" style={{ height: "10%" }}>
             <div className="col my-auto">
               <CancelRoomCreateButton
                 onCancel={props.exitRoomButtonPress}
@@ -57,23 +58,23 @@ const HostPage = (props) => {
                 onClick={props.switchSettingsMenu}
               >
                 Setting
-              </button>
+                </button>
             </div>
           </div>
           <div className="row h-25">
             <div className="col text-center my-auto">
               <h1 className="cover-heading">
                 start the game
-                      {/* <br />
-                      Nickname: {props.username} */}
+                        {/* <br />
+                        Nickname: {props.username} */}
                 <br />
-                      Room number <br />
+                        Room number <br />
                 {props.roomNumber}
                 <br />
-                    Players {props.playerRoster.length} of 10
-                <br />
-                      Waiting for other players to join...
-              </h1>
+                      Players {props.playerRoster.length} of 10
+                  <br />
+                        Waiting for other players to join...
+                </h1>
             </div>
           </div>
           <div className="row h-25">
@@ -97,11 +98,11 @@ const HostPage = (props) => {
           <div className="row h-25 justify-content-center">
             <div className="col-6 pt-2 overflow-auto h-100">
               {/* <Roster
-                playerRoster={props.playerRoster}
-                playerSolved={props.playerSolved}
-                pageController={props.pageController}
-                currentPage={HOSTPAGE}
-              ></Roster> */}
+                  playerRoster={props.playerRoster}
+                  playerSolved={props.playerSolved}
+                  pageController={props.pageController}
+                  currentPage={HOSTPAGE}
+                ></Roster> */}
               {/* just for testing purpose */}
               <Roster
                 playerRoster={['Xin', 'Du', 'Gong', 'Zheng', 'zhe', 'Wuhan', 'Hua', 'Kao']}
@@ -110,6 +111,7 @@ const HostPage = (props) => {
               ></Roster>
             </div>
           </div>
+          {/* </div> */}
         </div>}
     </div>
 

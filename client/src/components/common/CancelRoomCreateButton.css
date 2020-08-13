@@ -1,5 +1,24 @@
-.topLeftCorner {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+.btn-back {
+  padding: 0 !important;
+  width: 5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem !important;
+}
+
+.btn-back:hover {
+  background-color: #F0F0F0;
+}
+
+.btn-back:active {
+  background-color: #E0E0E0;
+}
+
+.btn-back-svg {
+  padding-bottom: 0.2rem;
+  padding-right: 0.2rem;
+}
+
+.btn-back-text {
+  font-size: 1.1875rem;
+  color: #707070 !important;
 }
