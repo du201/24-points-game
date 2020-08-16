@@ -1,6 +1,6 @@
 .circle {
-  height: 100px;
-  width: 100px;
+  height: 5rem;
+  width: 5rem;
   border-radius: 50%;
   display: flex;
   align-items:center;
@@ -9,8 +9,10 @@
 
 .centerize {
   text-align: center;
+  margin: 1rem 1.5rem;
 }
 
 .name {
   color: white;
+  font-size: 3rem;
 }

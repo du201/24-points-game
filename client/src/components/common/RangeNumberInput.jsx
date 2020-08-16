@@ -7,7 +7,8 @@ import React from 'react';
 const RangeNumberInput = ({ id, onChange, value, placeholder }) => {
   return (
     <input
-      className="form-control form-control-sm"
+      className="form-control d-inline-block"
+      style={{ width: "42%" }}
       type="number"
       id={id}
       onChange={onChange}

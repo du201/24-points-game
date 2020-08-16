@@ -113,6 +113,7 @@ class App extends Component {
     multiplayerButtonDisable: [], //whether or not a button is disabled
     playerRoster: [], //array of string, the name of all the players in the room
     playerSolved: [], //array of string, the name of the players who solve the game in the current round
+    playerColor: [], //array of object ({playerName: color in hex form}), the color of all the players
     roomNumMaxDigitNum: 4, //the maximum number of digits for room number, default is 4
     timeInGame: null, //in s, the time sent by the server and displayed in the browser
     whichRound: 0, //which round do we currently in
@@ -179,6 +180,14 @@ class App extends Component {
     this.setState({
       lang
     });
+  };
+
+  /**
+   * randomly decide the color for players' image
+   */
+  randomColor = () => {
+    const color = Math.floor(Math.random() * 16777215).toString(16);
+    return '#' + color;
   };
 
 
@@ -294,6 +303,7 @@ class App extends Component {
       multiplayerButtonDisable: [],
       playerRoster: [],
       playerSolved: [],
+      playerColor: [],
       timeInGame: null,
       whichRound: 0,
       solution: "",
@@ -972,6 +982,7 @@ class App extends Component {
       case HOSTPAGE: //4
         return (
           <HostPage
+            randomColor={this.randomColor}
             startGameButtonDisabled={this.state.startGameButtonDisabled}
             gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
             handleSlotNumChange={this.handleSlotNumChange}

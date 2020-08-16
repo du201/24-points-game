@@ -7,7 +7,10 @@ import React from 'react';
 const Slider = ({ min, max, value, id, onChange, labelText, labelData }) => {
   return (
     <React.Fragment>
-      <label htmlFor={id} className="col-form-label col-form-label-sm lead">{labelText} {labelData}</label>
+      <div style={{ clear: "both" }}>
+        <p className="fnt-bold float-left grey-text">{labelText}</p>
+        <p className="float-right grey-text">{labelData}</p>
+      </div>
       <input
         className="form-control-range"
         type="range"

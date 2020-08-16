@@ -9,7 +9,7 @@ import { HOSTPAGE, MULTIGAMEPAGE } from './roomConst';
  * If the player is in the multiPlayerGamePage, display the name and whether or not 
  * each player has solved the problem in the current round plus the emoji functionality
  */
-const Roster = ({ playerRoster, playerSolved, pageController }) => {
+const Roster = ({ playerRoster, playerSolved, pageController, randomColor }) => {
 
   const solvedOrNot = (eachName) => {
     //only shows whether or not a player has solved the problem in the MULTIGAMEPAGE
@@ -29,24 +29,25 @@ const Roster = ({ playerRoster, playerSolved, pageController }) => {
     return display;
   };
 
-  const randomColor = () => {
-    const color = Math.floor(Math.random() * 16777215).toString(16);
-    return '#' + color;
-  };
+  // const randomColor = () => {
+  //   const color = Math.floor(Math.random() * 16777215).toString(16);
+  //   return '#' + color;
+  // };
 
   return (
-    <React.Fragment>
+
+    <div className="d-flex flex-wrap roster-wrapper">
       {playerRoster.map((eachName, index) => {
         return (
           <div className="centerize" key={index}>
             <div className="circle" style={{ backgroundColor: randomColor() }}>
               {solvedOrNot(eachName)}
-              <h1 className="name">{eachName[0]}</h1>
+              <div className="name">{eachName[0]}</div>
             </div>
             <div>{eachName}</div>
           </div>);
       })}
-    </React.Fragment>
+    </div>
 
   );
 };

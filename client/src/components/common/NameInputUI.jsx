@@ -7,8 +7,12 @@ import "./NameInputUI.css";
  *  onChange: the onChange event
  */
 const NameInputUI = ({ placeHolder, onChange }) => {
+  function formPreventDefault(e) {
+    e.preventDefault();
+  };
+
   return (
-    <form className="form-inline justify-content-center" >
+    <form onSubmit={formPreventDefault} id="name-form" className="form-inline justify-content-center" >
       <div className="form-group mx-sm-3 mb-2">
         <input
           type="text"
