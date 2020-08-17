@@ -1,0 +1,18 @@
+.input-roomNum {
+  width: 4.5rem !important;
+  height: 5rem !important;
+  border-radius: 1.25rem !important;
+  border-color: #707070 !important;
+  font-size: 1.75rem !important;
+  text-align: center;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+.input-roomNum:hover {
+  border-color: #4194F8 !important;
+}
+
+.input-roomNum:focus {
+  border-color: #4194F8 !important;
+}

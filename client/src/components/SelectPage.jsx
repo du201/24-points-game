@@ -17,41 +17,38 @@ const SelectPage = (props) => {
           ></BackButton>
         </div>
       </div>
+      
       <div className="row" style={{ height: "90%" }}>
-        <div className="col align-self-start text-center">
-          <div className="col text-center my-auto" id="title-selectpage">
-            <h1 className="fnt-bold">
-              {t('Create or join a room')}
-            </h1>
+        <div className="col text-center">
+          <h1 id="title-selectpage" className="fnt-bold">
+            {t('Create or join a room')}
+          </h1>
+
+          <h3 id="text-selectpage" className="fnt-medium">
+            Please enter a nickname
+          </h3>
+
+          <div id="input-selectpage">
+            <NameInputUI
+              onChange={props.setStateName}
+              placeHolder="No more than 15 characters"
+            />
           </div>
 
-          <div className="col text-center my-auto">
-            <h3 id="text-selectpage" className="fnt-medium">
-              Please enter a nickname
-            </h3>
+          <div id="btn-selectpage-left" className="force-inline fnt-medium">
+            <Button
+              onClick={props.pressCreateRoomButton}
+              display={"Create"}
+              style={0}
+            />
+          </div>
 
-            <div id="input-selectpage">
-              <NameInputUI
-                onChange={props.setStateName}
-                placeHolder="No more than 15 characters"
-              />
-            </div>
-
-            <div id="btn-selectpage-left" className="force-inline fnt-medium">
-              <Button
-                onClick={props.pressCreateRoomButton}
-                display={"Create"}
-                style={0}
-              />
-            </div>
-
-            <div id="btn-selectpage-right" className="force-inline fnt-medium">
-              <Button
-                onClick={props.pressJoinRoomButton}
-                display={"Join"}
-                style={0}
-              />
-            </div>
+          <div id="btn-selectpage-right" className="force-inline fnt-medium">
+            <Button
+              onClick={props.pressJoinRoomButton}
+              display={"Join"}
+              style={0}
+            />
           </div>
         </div>
       </div>
