@@ -8,6 +8,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { deepCopy } from './components/deepCopy.js'
 
 //imported local classes/functions
 import "./App.css";
@@ -85,7 +86,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOMEPAGE, //default should be homePage
+    pageController: HOSTPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     lang: 'en', //the displayed language, default is english. Also have Chinese as zh
@@ -366,6 +367,7 @@ class App extends Component {
         //also be able to see who is in the room and who solved the problem during the game
         socket.on(ROSTER, (roster) => {
           this.setState({ playerRoster: roster });
+          this.setPlayerColor(roster);
         });
       });
       socket.once(CREATE_ROOM_FAILURE, (msg) => {
@@ -374,6 +376,17 @@ class App extends Component {
     } else {
       this.notifyError("please enter a valid nickname");
     }
+  };
+
+
+  setPlayerColor = (roster) => {
+    let copyPlayerColor = deepCopy(this.state.playerColor);
+    for (let playerName of roster) {
+      if (copyPlayerColor[playerName] === undefined) {
+        copyPlayerColor[playerName] = this.randomColor();
+      }
+    }
+    this.setState({ playerColor: copyPlayerColor });
   };
 
   /**
@@ -589,6 +602,7 @@ class App extends Component {
       //also be able to see the player list and who has solved the problem in the game room
       socket.on(ROSTER, (roster) => {
         this.setState({ playerRoster: roster });
+        this.setPlayerColor(roster);
       });
       //start to wait for the host to start the game and then go to the "multiPlayerGamePage"
       this.startGame();
@@ -983,7 +997,6 @@ class App extends Component {
       case HOSTPAGE: //4
         return (
           <HostPage
-            randomColor={this.randomColor}
             startGameButtonDisabled={this.state.startGameButtonDisabled}
             gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
             handleSlotNumChange={this.handleSlotNumChange}
@@ -1020,6 +1033,7 @@ class App extends Component {
             pressStartGameButton={this.pressStartGameButton}
             playerRoster={this.state.playerRoster}
             playerSolved={this.state.playerSolved}
+            playerColor={this.state.playerColor}
             pageController={this.state.pageController}
             switchSettingsMenu={this.switchSettingsMenu}
             loading={this.state.loading}
@@ -1042,6 +1056,7 @@ class App extends Component {
             exitRoomButtonPress={this.exitRoomButtonPress}
             playerRoster={this.state.playerRoster}
             playerSolved={this.state.playerSolved}
+            playerColor={this.state.playerColor}
             pageController={this.state.pageController}
           ></WaitForHostPage>
         );
@@ -1070,7 +1085,9 @@ class App extends Component {
             playerSolvedLength={this.state.playerSolved.length}
             playerRoster={this.state.playerRoster}
             playerSolved={this.state.playerSolved}
+            playerColor={this.state.playerColor}
             attemptNum={this.state.attemptNum}
+            pageController={this.state.pageController}
           ></MultiGamePage>
         );
       case SINGLEGAMEPAGE: //8
@@ -1145,7 +1162,8 @@ class App extends Component {
           <link rel="shortcut icon" href={tabImage} />
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Lexend+Zetta&display=swap');
-</style>
+</style>import {deepCopy} from './components/deepCopy';
+
         </Helmet>
         {this.renderSwitch(this.state.pageController)}
       </div>

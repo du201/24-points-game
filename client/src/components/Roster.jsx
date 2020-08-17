@@ -1,6 +1,6 @@
 import React from "react";
 import "./Roster.css";
-import { HOSTPAGE, MULTIGAMEPAGE } from './roomConst';
+import { HOSTPAGE, WAITFORHOSTPAGE, MULTIGAMEPAGE } from './roomConst';
 
 /**
  * 
@@ -9,11 +9,11 @@ import { HOSTPAGE, MULTIGAMEPAGE } from './roomConst';
  * If the player is in the multiPlayerGamePage, display the name and whether or not 
  * each player has solved the problem in the current round plus the emoji functionality
  */
-const Roster = ({ playerRoster, playerSolved, pageController, randomColor }) => {
+const Roster = ({ playerRoster, playerSolved, pageController, playerColor }) => {
 
   const solvedOrNot = (eachName) => {
     //only shows whether or not a player has solved the problem in the MULTIGAMEPAGE
-    if (pageController === HOSTPAGE) {
+    if (pageController === HOSTPAGE || WAITFORHOSTPAGE) {
       return null;
     }
 
@@ -40,7 +40,7 @@ const Roster = ({ playerRoster, playerSolved, pageController, randomColor }) => 
       {playerRoster.map((eachName, index) => {
         return (
           <div className="centerize" key={index}>
-            <div className="circle" style={{ backgroundColor: randomColor() }}>
+            <div className="circle" style={{ backgroundColor: playerColor[eachName] }}>
               {solvedOrNot(eachName)}
               <div className="name">{eachName[0]}</div>
             </div>

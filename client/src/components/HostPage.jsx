@@ -105,17 +105,24 @@ const HostPage = (props) => {
                 Start the game
               </h1>
               <h3 className="fnt-bold grey-text">Room number</h3>
-              <h1 className="">{1234}</h1>
+              <h1 className="">{props.roomNumber}</h1>
 
               <h2>Players {props.playerRoster.length} of 10</h2>
 
               <h3>Waiting for other players to join...</h3>
 
-              <Roster
+              {/* <Roster
                 playerRoster={['Xin', 'Du', 'Gong', 'Zheng', 'zhe', 'Wuhan', 'Hua', 'Kao']}
                 playerSolved={props.playerSolved}
                 pageController={props.pageController}
                 randomColor={props.randomColor}
+                
+              ></Roster> */}
+              <Roster
+                playerRoster={props.playerRoster}
+                playerSolved={props.playerSolved}
+                pageController={props.pageController}
+                playerColor={props.playerColor}
               ></Roster>
               <h2>The game will begin automatically in 34 seconds</h2>
               <Button
@@ -133,12 +140,7 @@ const HostPage = (props) => {
               />
             </div>
           </div>
-          {/* <Roster
-                    playerRoster={props.playerRoster}
-                    playerSolved={props.playerSolved}
-                    pageController={props.pageController}
-                    currentPage={HOSTPAGE}
-                  ></Roster> */}
+
           {/* just for testing purpose */}
         </div>
       </div>
