@@ -85,7 +85,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOSTPAGE, //default should be homePage
+    pageController: HOMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     lang: 'en', //the displayed language, default is english. Also have Chinese as zh
@@ -222,6 +222,7 @@ class App extends Component {
     }
     this.setState({
       pageController: prevPage, //to page 1
+      username: "",
     });
   };
 
@@ -1103,7 +1104,7 @@ class App extends Component {
       case SUMMARYPAGE: //12: the page at the end of the game (after receiving "endGame")
         return (
           <SummaryPage
-            pressReturnHomePageButton={this.handleBack}
+            exitRoomButtonPress={this.exitRoomButtonPress}
             scoreRanking={this.state.scoreRanking}
           ></SummaryPage>
         );
