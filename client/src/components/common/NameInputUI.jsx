@@ -13,7 +13,7 @@ const NameInputUI = ({ placeHolder, onChange }) => {
 
   return (
     <form onSubmit={formPreventDefault} id="name-form" className="form-inline justify-content-center" >
-      <div className="form-group">
+      <div>
         <input
           type="text"
           className="form-control fnt-regular"

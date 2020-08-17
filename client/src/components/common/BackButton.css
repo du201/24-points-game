@@ -3,6 +3,7 @@
   width: 5rem;
   height: 2.5rem;
   border-radius: 0.5rem !important;
+  margin-left: 1rem;
 }
 
 .btn-back:hover {
