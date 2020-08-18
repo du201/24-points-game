@@ -92,6 +92,8 @@ class App extends Component {
     lang: 'en', //the displayed language, default is english. Also have Chinese as zh
     loading: false, //the loader displays on the start button when the loading is true
     startGameButtonDisabled: false, //disable the button for as long as 120s after press it
+    waitTimeMax: 300, //in s, the maximum time that the waiting room would stay open before the game is forced to start
+    maxPlayerNum: 10, //the maximum number of players in each room
 
     //below are the settings for the multi-player game
     gameModeBasicSetting: { slotNum: 4, targetNum: 24 }, //use as dynamic source in client side
@@ -171,6 +173,10 @@ class App extends Component {
     return arr.filter((ele) => {
       return ele !== value;
     });
+  };
+
+  setGameModeSettingMenuOpenFalse = () => {
+    this.setState({ gameModeSettingMenuOpen: false });
   };
 
   /**
@@ -966,6 +972,25 @@ class App extends Component {
     return true;
   }
 
+
+  /**
+   * When enter the hostpage, start counting down the timer until the game starts or 
+   * force the game to start at 0s
+   */
+  startCountDown = () => {
+    let countDownInterval = setInterval(() => {
+      if (this.state.waitTimeMax === 0) {
+        clearInterval(countDownInterval);
+        this.pressStartGameButton();
+      } else {
+        this.setState({ waitTimeMax: this.state.waitTimeMax - 1 });
+      }
+    },
+      1000);
+  };
+
+
+
   //page display switch function
   renderSwitch(pageName) {
     switch (pageName) {
@@ -1037,6 +1062,10 @@ class App extends Component {
             pageController={this.state.pageController}
             switchSettingsMenu={this.switchSettingsMenu}
             loading={this.state.loading}
+            waitTimeMax={this.state.waitTimeMax}
+            maxPlayerNum={this.state.maxPlayerNum}
+            startCountDown={this.startCountDown}
+            setGameModeSettingMenuOpenFalse={this.setGameModeSettingMenuOpenFalse}
           ></HostPage>
         );
       case JOINROOMPAGE: //5

@@ -44,7 +44,7 @@ const Roster = ({ playerRoster, playerSolved, pageController, playerColor }) => 
               {solvedOrNot(eachName)}
               <div className="name">{eachName[0]}</div>
             </div>
-            <div>{eachName}</div>
+            <div id="player-name">{eachName}</div>
           </div>);
       })}
     </div>

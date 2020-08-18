@@ -1,3 +1,5 @@
+
+
 .circle {
   height: 5rem;
   width: 5rem;
@@ -6,6 +8,7 @@
   align-items:center;
   justify-content:center;
 }
+
 
 .centerize {
   text-align: center;
@@ -16,3 +19,52 @@
   color: white;
   font-size: 3rem;
 }
+
+
+
+@media (max-width: 767.98px) {
+  .circle {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .name {
+    color: white;
+    font-size: 2.4rem;
+  }
+
+  .centerize {
+    text-align: center;
+    margin: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .circle {
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .name {
+    color: white;
+    font-size: 1.6rem;
+  }
+
+  .centerize {
+    text-align: center;
+    margin: 0.2rem 0.5rem;
+  }
+
+  #player-name {
+    font-size: 0.6rem;
+  }
+}
+

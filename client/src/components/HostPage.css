@@ -8,3 +8,87 @@
   margin-left:auto;
   margin-right:auto;
 }
+
+
+#room-number-text {
+  font-size: 3rem !important;
+
+}
+
+
+
+.grey-content {
+  background-color: #F7F7F7;
+}
+
+
+
+#menu-switch {
+  display:none;
+  margin-right: 1.8rem;
+}
+
+#menu-sidebar {
+  width: 30.25rem;
+  background-color: #F7F7F7;
+}
+
+
+
+#menu-sidebar-top {
+  clear: both;
+  margin-top: 1.4rem;
+}
+
+
+
+
+
+@media (max-width: 1199.98px) {
+  .display-none {
+  display: none;
+}
+
+  #menu-switch {
+    display:inline-block;
+  }
+
+  #menu-sidebar {
+    width: 100%;
+    background-color: #F7F7F7;
+    height: 5rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  #rightside-hostpage {
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  #rightside-hostpage {
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  #rightside-hostpage {
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  #wait-text {
+    font-size: 0.8rem!important;
+  }
+}
+
+
+
+
+

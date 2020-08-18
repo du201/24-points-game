@@ -68,22 +68,6 @@ const MenuSetting = (props) => {
           <span className="fnt-bold grey-text">Available operators<br /></span>
 
           <OperatorSettingButton
-            id="checkMultiply"
-            value={TIMES}
-            onChange={props.handleAvailableOperatorCheckbox}
-            checked={props.availableOperator.includes(TIMES)}
-            img={{ src: "multiplySign.png", alt: "multiply" }}
-          />
-
-          <OperatorSettingButton
-            id="checkDivide"
-            value={DIVIDES}
-            onChange={props.handleAvailableOperatorCheckbox}
-            checked={props.availableOperator.includes(DIVIDES)}
-            img={{ src: "divideSign.png", alt: "divide" }}
-          />
-
-          <OperatorSettingButton
             id="checkAdd"
             value={PLUS}
             onChange={props.handleAvailableOperatorCheckbox}
@@ -97,6 +81,22 @@ const MenuSetting = (props) => {
             onChange={props.handleAvailableOperatorCheckbox}
             checked={props.availableOperator.includes(MINUS)}
             img={{ src: "subtractSign.png", alt: "subtract" }}
+          />
+
+          <OperatorSettingButton
+            id="checkMultiply"
+            value={TIMES}
+            onChange={props.handleAvailableOperatorCheckbox}
+            checked={props.availableOperator.includes(TIMES)}
+            img={{ src: "multiplySign.png", alt: "multiply" }}
+          />
+
+          <OperatorSettingButton
+            id="checkDivide"
+            value={DIVIDES}
+            onChange={props.handleAvailableOperatorCheckbox}
+            checked={props.availableOperator.includes(DIVIDES)}
+            img={{ src: "divideSign.png", alt: "divide" }}
           />
 
         </SettingWrapper>
@@ -174,7 +174,8 @@ const MenuSetting = (props) => {
    >
          <img style={{ width: "100px" }} src="multiplySign.png"></img>
        </button> */}
-      <div className="row justify-content-center">
+      <div className="row justify-content-center" style={{ marginBottom: "2rem" }}>
+        {/* <div id="default-button"> */}
         <Button
           onClick={props.backToDefaultSettings}
           display="Default"
