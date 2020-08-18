@@ -14,7 +14,7 @@ const Button = ({ onClick, display, style, disabled = false }) => {
     "btn btn-white";
   return (
     <button
-      className={css}
+      className={css + " fnt-medium"}
       onClick={onClick}
       disabled={disabled}
     >

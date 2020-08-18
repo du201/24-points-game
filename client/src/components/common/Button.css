@@ -18,6 +18,11 @@
   color: #4194F8 !important;
 }
 
+.btn-blue:disabled {
+  background-color: #4194F8 !important;
+  opacity: 75% !important;
+}
+
 .btn-white {
   width: 7.5rem !important; /* 120px by default */
   height: 3.125rem !important; /* 50px by default */
@@ -36,4 +41,9 @@
 .btn-white:active {
   background-color: #505050 !important;
   color: #ffffff !important;
+}
+
+.btn-white:disabled {
+  background-color: #FFFFFF !important;
+  opacity: 75% !important;
 }
