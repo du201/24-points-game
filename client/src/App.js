@@ -86,9 +86,10 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOSTPAGE, //default should be homePage
+    pageController: MULTIGAMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
+    gameModeScoresMenuOpen: false, //controls the display of the score menu in multigame page
     lang: 'en', //the displayed language, default is english. Also have Chinese as zh
     loading: false, //the loader displays on the start button when the loading is true
     startGameButtonDisabled: false, //disable the button for as long as 120s after press it
@@ -127,7 +128,7 @@ class App extends Component {
     playerRanking: 1, //the score ranking of the player in the room
     multiplayerScore: 0, //the score received from the server for the current round
     multiplayerTotalScore: 0, //the score received from the server for the whole game
-    correctOrNotText: "", //the text indicated the judgement from the server
+    answerCorrect: undefined, //bool, indicates the judgement from the server
     //the top three scores of the players, default can be [{ name: "Joseph", totalScore: 100 }]
     scoreRanking: [],
     submitButtonDisable: false, //once the answer is deemed to be correct by the server, disable all the buttons
@@ -177,6 +178,10 @@ class App extends Component {
 
   setGameModeSettingMenuOpenFalse = () => {
     this.setState({ gameModeSettingMenuOpen: false });
+  };
+
+  setGameModeScoresMenuOpenFalse = () => {
+    this.setState({ gameModeScoresMenuOpen: false });
   };
 
   /**
@@ -239,6 +244,15 @@ class App extends Component {
   switchSettingsMenu = () => {
     this.setState({
       gameModeSettingMenuOpen: !this.state.gameModeSettingMenuOpen,
+    });
+  };
+
+  /**
+   * Open or close the scores menu
+   */
+  switchScoresMenu = () => {
+    this.setState({
+      gameModeScoresMenuOpen: !this.state.gameModeScoresMenuOpen,
     });
   };
 
@@ -319,7 +333,7 @@ class App extends Component {
       playerRanking: 1,
       multiplayerScore: 0,
       multiplayerTotalScore: 0,
-      correctOrNotText: "",
+      answerCorrect: "",
       scoreRanking: [],
       attemptNum: 0,
       submitButtonDisable: false,
@@ -496,7 +510,7 @@ class App extends Component {
           this.setState({
             multiplayerScore: score,
             multiplayerTotalScore: totalScore,
-            correctOrNotText: "Your Answer is Correct!",
+            answerCorrect: true,
             submitButtonDisable: true,
           });
           this.notifySuccess(`🦄 Your solution is correct!`);
@@ -505,7 +519,7 @@ class App extends Component {
         socket.on(SOLUTION_INCORRECT, ({ deductedScore, totalScore }) => {
           this.setState({
             multiplayerTotalScore: totalScore,
-            correctOrNotText: "Your Answer is Incorrect!",
+            answerCorrect: false,
           });
           this.notifyError(`Your solution is incorrect. You have ${this.state.attemptNum} attempts left`);
           console.log("SOLUTION_INCORRECT");
@@ -530,7 +544,7 @@ class App extends Component {
           scoreRanking: scoreRanking
         });
         //empty some states to prepare for the next round
-        this.setState({ correctOrNotText: "" });
+        this.setState({ answerCorrect: undefined });
         this.setState({ multiplayerScore: 0 });
         this.setState({ playerSolved: [] });
         this.setState({ expressionInput: [] });
@@ -1092,6 +1106,9 @@ class App extends Component {
       case MULTIGAMEPAGE: //7
         return (
           <MultiGamePage
+            setGameModeScoresMenuOpenFalse={this.setGameModeScoresMenuOpenFalse}
+            switchScoresMenu={this.switchScoresMenu}
+            gameModeScoresMenuOpen={this.state.gameModeScoresMenuOpen}
             exitRoomButtonPress={this.exitRoomButtonPress}
             multiplayerTotalScore={this.state.multiplayerTotalScore}
             username={this.state.username}
@@ -1106,7 +1123,7 @@ class App extends Component {
             pressCalculateResultButton={this.pressCalculateResultButton}
             answer={this.state.answer}
             multiplayerButtonDisable={this.state.multiplayerButtonDisable}
-            correctOrNotText={this.state.correctOrNotText}
+            answerCorrect={this.state.answerCorrect}
             pressNoSolutionButton={this.pressNoSolutionButton}
             submitButtonDisable={this.state.submitButtonDisable}
             timeInGame={this.state.timeInGame}

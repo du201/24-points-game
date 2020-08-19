@@ -26,17 +26,19 @@ const MenuSetting = (props) => {
   return (
     <React.Fragment>
       {/*Basic part of the setting menu */}
-      <SettingWrapper>
-        <Slider
-          min="12"
-          max="36"
-          value={props.targetNum}
-          id="targetNum"
-          onChange={props.handleTargetNumChange}
-          labelText="Target Number"
-          labelData={props.targetNum}
-        />
-      </SettingWrapper>
+      <div style={{ marginTop: "5rem" }}>
+        <SettingWrapper>
+          <Slider
+            min="12"
+            max="36"
+            value={props.targetNum}
+            id="targetNum"
+            onChange={props.handleTargetNumChange}
+            labelText="Target Number"
+            labelData={props.targetNum}
+          />
+        </SettingWrapper>
+      </div>
       <SettingWrapper>
         <Slider
           min="2"
@@ -174,7 +176,7 @@ const MenuSetting = (props) => {
    >
          <img style={{ width: "100px" }} src="multiplySign.png"></img>
        </button> */}
-      <div className="row justify-content-center" style={{ marginBottom: "2rem" }}>
+      <div id="default-button" className="row justify-content-center" style={{ marginBottom: "2rem" }}>
         {/* <div id="default-button"> */}
         <Button
           onClick={props.backToDefaultSettings}

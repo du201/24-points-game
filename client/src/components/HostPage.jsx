@@ -139,9 +139,6 @@ const HostPage = (props) => {
               />
             </div>
           </div>
-
-
-          {/* just for testing purpose */}
         </div>
       </div>
     </div>

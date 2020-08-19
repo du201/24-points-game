@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import "./GameBoard.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBackspace } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * The place where the game UI exists
@@ -12,7 +13,33 @@ class GameBoard extends Component {
   disableSubmitButtonTemp = () => {
     this.setState({ submitButtonRest: true });
     setTimeout(() => this.setState({ submitButtonRest: false }), 2000);
-  };
+  }
+
+  answerCorrectText = () => {
+    if (this.props.answerCorrect === true) {
+      return <p>{this.props.answer} is Correct! Congrats.</p>;
+    } else if (this.props.answerCorrect === false) {
+      return <p>{this.props.answer} is Incorrect! You have {this.props.attemptNum} attemps left.</p>;
+    }
+    return null; //in the case of undefined
+  }
+
+  findOperatorImage = (ope) => {
+    if (ope === '×') {
+      return <img src='multiplySign.png' alt='time' />;
+    } else if (ope === '-') {
+      return <img src='subtractSign.png' alt='subtract' />;
+    } else if (ope === '+') {
+      return <img src='addSign.png' alt='add' />;
+    } else if (ope === '÷') {
+      return <img src='divideSign.png' alt='divide' />;
+    } else if (ope === '(') {
+      return <span className="grey-text parans">(</span>;
+      // return <img src='divideSign.png' alt='leftParan' />;
+    } else if (ope === ')') {
+      return <span className="grey-text parans">)</span>;
+    }
+  }
 
 
   render() {
@@ -23,81 +50,80 @@ class GameBoard extends Component {
       return num;
     });
 
-
     //add two parentheses to the available operator list
     let final_operators = [...this.props.operators];
-    final_operators.push('(');
-    final_operators.push(')');
+    let leftRightParans = ['(', ')'];
     return (
       <React.Fragment>
-        <div className="row h-25">
+        <div className="d-flex flex-row" style={{ marginTop: "5rem" }}>
           {this.props.gameNumbers.map((eachNum, index) => {
-            return (<div key={index} className="col text-center my-auto">
+            return (<div key={index}>
               <button
-                className="btn btn-primary btn-lg w-75"
-                value={eachNum}
+                className="btn btn-round-blue"
                 onClick={() => {
                   this.props.addNumToInput(eachNum, index);
                 }}
-                disabled={this.props.multiplayerButtonDisable[index] || this.props.submitButtonDisable}><h1>{eachNum}</h1></button>
+                disabled={this.props.multiplayerButtonDisable[index] || this.props.submitButtonDisable}>
+                <span>{eachNum}</span>
+              </button>
             </div>);
           })}
         </div>
-        <div className="row h-25">
-          <div className="col-8 my-col my-auto">
-            <h1>{displayExpression}</h1>
-          </div>
-          <div className="col my-col my-auto text-center">
-            <button
-              className="btn btn-primary btn-lg"
-              onClick={() => {
-                this.props.pressDeleteInputButton();
-              }}
-              disabled={this.props.submitButtonDisable}
-            ><h1>DEL</h1></button>
-          </div>
-          <div className="col my-col my-auto text-center">
-            <h1>{"=" + this.props.targetNum}</h1>
-          </div>
-        </div>
-        <div className="row h-25">
+        <div className="d-flex flex-wrap flex-row justify-content-around" style={{ marginTop: "5rem" }}>
           {final_operators.map((eachOpe, index) => {
-            return (<div key={index} className="col text-center my-auto">
+            return (<div key={index}>
               <button
-                className="btn btn-info btn-lg w-75"
-                value={eachOpe}
+                className="btn btn-operator fnt-medium"
                 onClick={() => {
                   this.props.addNumToInput(eachOpe);
                 }}
                 disabled={this.props.submitButtonDisable}
-              ><h1>{eachOpe}</h1></button>
+              >{this.findOperatorImage(eachOpe)}</button>
             </div>);
           })}
+          <div className="break"></div>
+          {leftRightParans.map((eachOpe, index) => {
+            return (<div key={index}>
+              <button
+                className="btn btn-operator fnt-medium"
+                onClick={() => {
+                  this.props.addNumToInput(eachOpe);
+                }}
+                disabled={this.props.submitButtonDisable}
+              >{this.findOperatorImage(eachOpe)}</button>
+            </div>);
+          })}
+          <button
+            className="btn btn-round-red"
+            onClick={this.props.pressNoSolutionButton}
+            disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+          >No Solution</button>
         </div>
-        <div className="row h-25">
-          <div className="col col-4 text-center h-100">
-            <button
-              className="btn btn-success btn-lg w-75"
-              onClick={() => {
-                this.disableSubmitButtonTemp()
-                this.props.pressCalculateResultButton()
-              }}
-              disabled={this.state.submitButtonRest || this.props.submitButtonDisable || this.props.attemptNum === 0}
-            ><h1>Submit</h1></button>
-            <h3>Attemps Left: {this.props.attemptNum}</h3>
-            <button
-              className="btn btn-warning btn-lg w-75 mt-2"
-              onClick={this.props.pressNoSolutionButton}
-              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
-            ><h4>No Solution</h4></button>
+
+        <div className="d-flex flex-wrap flex-row justify-content-around" style={{ marginTop: "5rem" }}>
+          <div className="form-group">
+            <input id="expression" className="form-control" type="text" value={displayExpression} />
+            <p id="result-text">23 is Incorrect! You have 2 attemps left</p>
           </div>
-          <div className="col col-8 text-center h-100">
-            <h4>(Client side check and calcualte) Answer: <br></br>{this.props.answer}</h4>
-            <h4>(Server side check and calcualte) Server Response Would Appear Below...</h4>
-            <h4>{this.props.correctOrNotText}</h4>
-          </div>
+          <button
+            id="delete-button"
+            className="btn btn-round-blue"
+            onClick={() => {
+              this.props.pressDeleteInputButton();
+            }}
+            disabled={this.props.submitButtonDisable}
+          ><FontAwesomeIcon icon={faBackspace} size="1x" /></button>
+          <div className="break"></div>
+          <button
+            className="btn btn-round-green"
+            onClick={() => {
+              this.disableSubmitButtonTemp()
+              this.props.pressCalculateResultButton()
+            }}
+            disabled={this.state.submitButtonRest || this.props.submitButtonDisable || this.props.attemptNum === 0}
+          >Submit</button>
         </div>
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 }

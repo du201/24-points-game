@@ -1,0 +1,541 @@
+.roster-wrapper {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#rightside-hostpage {
+  width:90%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#game-top-text {
+  margin-top: 8rem;
+}
+
+
+/* .container {
+  border: 5px solid yellow;
+}
+
+.row {
+  border: 5px solid red;
+  height: 100px;
+}
+
+.col {
+  border: 5px dotted blue;
+} */
+
+#expression {
+  height: 7rem;
+  width: 45.5rem;
+  font-size:3rem;
+  border-radius: 2.5rem !important;
+}
+
+#result-text {
+  position:relative;
+  top: 1rem;
+}
+
+.btn-round-blue {
+  width:7rem;
+  height:7rem;
+  margin-left:1rem;
+  margin-right:1rem;
+  border: 0.125rem solid #4194F8 !important;
+  border-radius: 1.5625rem !important;
+  background-color: #4194F8 !important;
+  font-size: 3rem !important; /* 19px by default */
+  color: #FFFFFF !important;
+}
+
+.btn-round-blue:hover {
+  background-color: #FFFFFF !important;
+  color: #4194F8 !important;
+}
+
+.btn-round-blue:active {
+  background-color: #F5F5F5 !important;
+  color: #4194F8 !important;
+}
+
+.btn-round-green {
+  width:10rem;
+  height:7rem;
+  border: 0.125rem solid #4bb543 !important;
+  border-radius: 1.5625rem !important;
+  background-color: #4bb543 !important;
+  font-size: 2rem !important; 
+  color: #FFFFFF !important;
+}
+
+.btn-round-green:hover {
+  background-color: #FFFFFF !important;
+  color: #4bb543 !important;
+}
+
+.btn-round-green:active {
+  background-color: #F5F5F5 !important;
+  color: #4bb543 !important;
+}
+
+.btn-round-red {
+  width:10rem;
+  height:7rem;
+  margin-left:1rem;
+  margin-right:1rem;
+  border: 0.125rem solid #C50707 !important;
+  border-radius: 1.5625rem !important;
+  background-color: #C50707 !important;
+  font-size: 2rem !important; 
+  color: #FFFFFF !important;
+}
+
+.btn-round-red:hover {
+  background-color: #FFFFFF !important;
+  color: #C50707 !important;
+}
+
+.btn-round-red:active {
+  background-color: #F5F5F5 !important;
+  color: #C50707 !important;
+}
+
+.btn-operator {
+  width: 7rem;
+  height: 7rem;
+  margin-left:1rem;
+  margin-right:1rem;
+  border: 0.125rem solid #F8C741 !important;
+  border-radius: 50% !important;
+  background-color: #F8C741 !important;
+  box-shadow: 0rem 0rem 0.01rem #888888;
+  font-size:3rem !important;
+}
+
+.btn-operator img {
+  position:relative;
+  top: -0.5rem;
+  height: 3rem;
+  width: 3rem;
+}
+
+.btn-operator:hover {
+  background-color: #FFFFFF !important;
+  color: #F8C741 !important;
+}
+
+.parans {
+  font-size:2.7rem;
+  position:relative;
+  top: -0.3rem;
+}
+
+
+#room-number-text {
+  font-size: 3rem !important;
+}
+
+#goal-text {
+  font-size: 3rem !important;
+  color: #F59C24;
+}
+
+#timer-text {
+  font-size: 3rem !important;
+  color: #51D840;
+}
+
+
+.grey-content {
+  background-color: #F7F7F7;
+}
+
+
+
+#menu-switch {
+  display:none;
+  margin-right: 1.8rem;
+}
+
+#menu-sidebar {
+  width: 30.25rem;
+  background-color: #F7F7F7;
+}
+
+
+
+#menu-sidebar-top {
+  clear: both;
+  margin-top: 1.4rem;
+}
+
+@media (max-width: 1699.98px) {
+  .btn-round-green {
+    width:7rem;
+    height:7rem;
+    border: 0.125rem solid #4bb543 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4bb543 !important;
+    font-size: 1.2rem !important; 
+    color: #FFFFFF !important;
+  }
+  
+  .btn-round-red {
+    width:7rem;
+    height:7rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #C50707 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #C50707 !important;
+    font-size: 1.2rem !important; 
+    color: #FFFFFF !important;
+  }
+  
+  
+  .btn-operator {
+    width: 7rem;
+    height: 7rem;
+    margin-left:0.3rem !important;
+    margin-right:0.3rem !important;
+    border: 0.125rem solid #F8C741 !important;
+    border-radius: 50% !important;
+    background-color: #F8C741 !important;
+    box-shadow: 0rem 0rem 0.01rem #888888;
+    font-size:3rem !important;
+  }
+  
+  .btn-operator img {
+    position:relative;
+    top: -0.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  
+  .parans {
+    font-size:2.5rem;
+    position:relative;
+    top: -0.3rem;
+  }
+
+  #expression {
+    height: 7rem;
+    width: 37rem;
+    font-size:3rem;
+    border-radius: 2.5rem !important;
+  }
+  
+  #result-text {
+    position:relative;
+    top: 1rem;
+  }
+  
+}
+
+@media (max-width: 1499.98px) {
+  .btn-round-blue {
+    width:5rem;
+    height:5rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #4194F8 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4194F8 !important;
+    font-size: 2.5rem !important; /* 19px by default */
+    color: #FFFFFF !important;
+  }
+
+  .btn-round-green {
+    width:5rem;
+    height:5rem;
+    border: 0.125rem solid #4bb543 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4bb543 !important;
+    font-size: 1rem !important; 
+    color: #FFFFFF !important;
+  }
+  
+  .btn-round-red {
+    width:5rem;
+    height:5rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #C50707 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #C50707 !important;
+    font-size: 0.8rem !important; 
+    color: #FFFFFF !important;
+  }
+  
+  
+  .btn-operator {
+    width: 5rem;
+    height: 5rem;
+    margin-left:0.1rem !important;
+    margin-right:0.1rem !important;
+    border: 0.125rem solid #F8C741 !important;
+    border-radius: 50% !important;
+    background-color: #F8C741 !important;
+    box-shadow: 0rem 0rem 0.01rem #888888;
+    font-size:2rem !important;
+  }
+  
+  .btn-operator img {
+    position:relative;
+    top: -0.2rem;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  
+  
+  .parans {
+    font-size:2.5rem;
+    position:relative;
+    top: -0.1rem;
+  }
+
+  #expression {
+    height: 5rem;
+    width: 25rem;
+    font-size:2rem;
+    border-radius: 2.5rem !important;
+  }
+  
+  #result-text {
+    position:relative;
+    top: 0.8rem;
+  }
+  
+}
+
+
+@media (max-width: 1199.98px) {
+  .btn-round-blue {
+    width:7rem;
+    height:7rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #4194F8 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4194F8 !important;
+    font-size: 3rem !important; /* 19px by default */
+    color: #FFFFFF !important;
+  }
+
+  .btn-round-green {
+    width:10rem;
+    height:7rem;
+    border: 0.125rem solid #4bb543 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4bb543 !important;
+    font-size: 1.5rem !important; 
+    color: #FFFFFF !important;
+  }
+  
+  .btn-round-red {
+    width:10rem;
+    height:7rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #C50707 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #C50707 !important;
+    font-size: 1.5rem !important; 
+    color: #FFFFFF !important;
+  }
+  
+  
+  .btn-operator {
+    width: 7rem;
+    height: 7rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #F8C741 !important;
+    border-radius: 50% !important;
+    background-color: #F8C741 !important;
+    box-shadow: 0rem 0rem 0.01rem #888888;
+    font-size:3rem !important;
+  }
+  
+  .btn-operator img {
+    position:relative;
+    top: -0.5rem;
+    height: 3rem;
+    width: 3rem;
+  }
+  
+  .parans {
+    font-size:2.7rem;
+    position:relative;
+    top: -0.3rem;
+  }
+
+  #expression {
+    height: 7rem;
+    width: 31rem;
+    font-size:2rem;
+    border-radius: 2.5rem !important;
+  }
+  
+  #result-text {
+  position:relative;
+  top: 1rem;
+}
+  .display-none {
+  display: none;
+}
+
+  #menu-switch {
+    display:inline-block;
+  }
+
+  #menu-sidebar {
+    width: 100%;
+    background-color: #F7F7F7;
+    height: 5rem;
+  }
+
+  .break {
+    flex-basis: 100%;
+    height: 0;
+    margin-top:0.5rem;
+    margin-bottom:0.5rem;
+  }
+}
+
+
+@media (max-width: 991.98px) {
+  #rightside-hostpage {
+    width:98%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+
+}
+
+@media (max-width: 767.98px) {
+  #rightside-hostpage {
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  #expression {
+    height: 7rem;
+    width: 20rem;
+    font-size:1.5rem;
+    border-radius: 2.5rem !important;
+  }
+
+  .btn-round-blue {
+    width:6rem;
+    height:6rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #4194F8 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4194F8 !important;
+    font-size: 3rem !important; /* 19px by default */
+    color: #FFFFFF !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .btn-round-blue {
+    width:4rem;
+    height:4rem;
+    margin-left:0.3rem;
+    margin-right:0.3rem;
+    border: 0.125rem solid #4194F8 !important;
+    border-radius: 0.8rem !important;
+    background-color: #4194F8 !important;
+    font-size: 1.5rem !important; /* 19px by default */
+    color: #FFFFFF !important;
+  }
+
+  .btn-round-green {
+    width:6rem;
+    height:4rem;
+    border: 0.125rem solid #4bb543 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4bb543 !important;
+    font-size: 1rem !important; 
+    color: #FFFFFF !important;
+  }
+  
+  .btn-round-red {
+    width:6rem;
+    height:4rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #C50707 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #C50707 !important;
+    font-size: 1rem !important; 
+    color: #FFFFFF !important;
+  }
+
+  .btn-operator {
+    width: 4rem;
+    height: 4rem;
+    margin-left:1rem;
+    margin-right:1rem;
+    border: 0.125rem solid #F8C741 !important;
+    border-radius: 50% !important;
+    background-color: #F8C741 !important;
+    box-shadow: 0rem 0rem 0.01rem #888888;
+    font-size:2.5rem !important;
+  }
+  
+  .btn-operator img {
+    position:relative;
+    top: -0.6rem;
+    height: 1.9rem;
+    width: 1.9rem;
+  }
+  
+  .parans {
+    font-size:2rem;
+    position:relative;
+    top: -0.6rem;
+  }
+
+  #expression {
+    height: 4rem;
+    width: 100%;
+    font-size:2rem;
+    border-radius: 2.5rem !important;
+  }
+  
+  #result-text {
+    position:relative;
+    top: 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  #rightside-hostpage {
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  #wait-text {
+    font-size: 0.8rem!important;
+  }
+
+  #delete-button {
+    margin-left:1rem !important;
+    margin-right:0 !important;
+    position:relative;
+    left:-0.5rem;
+  }
+
+  #game-top-text {
+    margin-top: 3rem;
+    font-size: 0.95rem !important;
+  }
+}
