@@ -16,12 +16,12 @@ class RoomNumInput extends Component {
       if (e.keyCode === BACKSPACE && this.value.length === 0) {
         $(this).closest("div").prev("div").children('.inputs').select();
       }
+    }).keyup(function (e) {
       if (((e.keyCode >= DIGIT_ZERO && e.keyCode <= DIGIT_NINE) ||
           (e.keyCode >= NUMPAD_ZERO && e.keyCode <= NUMPAD_NINE)) &&
           this.value.length === this.maxLength) {
         $(this).closest("div").next("div").children('.inputs').select();
       }
-    }).keyup(function (e) {
       // Extra safty measure, adapted from https://stackoverflow.com/a/39292545
       $(this).val($(this).val().replace(/[^0-9]/g, ''));
     }).click(function() {
