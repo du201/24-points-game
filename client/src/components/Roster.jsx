@@ -1,6 +1,9 @@
 import React from "react";
 import "./Roster.css";
 import { HOSTPAGE, WAITFORHOSTPAGE, MULTIGAMEPAGE } from './roomConst';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * 
@@ -10,22 +13,20 @@ import { HOSTPAGE, WAITFORHOSTPAGE, MULTIGAMEPAGE } from './roomConst';
  * each player has solved the problem in the current round plus the emoji functionality
  */
 const Roster = ({ playerRoster, playerSolved, pageController, playerColor }) => {
-
+  let rosterVersion = "";
+  if (pageController === HOSTPAGE || pageController === WAITFORHOSTPAGE) {
+    rosterVersion = "bigVersion";
+  } else {
+    rosterVersion = "smallVersion";
+  }
   const solvedOrNot = (eachName) => {
     //only shows whether or not a player has solved the problem in the MULTIGAMEPAGE
-    if (pageController === HOSTPAGE || WAITFORHOSTPAGE) {
+    if (pageController === HOSTPAGE || pageController === WAITFORHOSTPAGE) {
       return null;
     }
-
-    let display = playerSolved.includes(eachName) ?
-      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
-      </svg> :
-      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z" />
-        <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z" />
-      </svg>;
-
+    let display = playerSolved.includes(eachName) === true ?
+      <span id="check-green"><FontAwesomeIcon icon={faCheckCircle} size="x" /></span> :
+      <span id="times-red"><FontAwesomeIcon icon={faTimesCircle} size="x" /></span>;
     return display;
   };
 
@@ -36,15 +37,15 @@ const Roster = ({ playerRoster, playerSolved, pageController, playerColor }) => 
 
   return (
 
-    <div className="d-flex flex-wrap roster-wrapper">
+    <div className="d-flex flex-wrap">
       {playerRoster.map((eachName, index) => {
         return (
-          <div className="centerize" key={index}>
-            <div className="circle" style={{ backgroundColor: playerColor[eachName] }}>
-              {solvedOrNot(eachName)}
-              <div className="name">{eachName[0]}</div>
+          <div className={rosterVersion === "bigVersion" ? "centerize" : "centerize-small"} key={index}>
+            <div id="solve-check">{solvedOrNot(eachName)}</div>
+            <div className={rosterVersion === "bigVersion" ? "circle" : "circle-small"} style={{ backgroundColor: playerColor[eachName] }}>
+              <div className={rosterVersion === "bigVersion" ? "name" : "name-small"}>{eachName[0]}</div>
             </div>
-            <div id="player-name">{eachName}</div>
+            <div id={rosterVersion === "bigVersion" ? "player-name" : "player-name-small"}>{eachName}</div>
           </div>);
       })}
     </div>

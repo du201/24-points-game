@@ -1,4 +1,46 @@
+#solve-check {
+  position:absolute;
+  left:2.2rem;
+  top:-0.3rem;
+}
 
+#check-green {
+  color:#60E68F;
+}
+
+#times-red {
+  color:#FF6767;
+}
+
+#player-name-small {
+  text-align:center;
+  position:absolute;
+  font-size: 0.76rem;
+  left: 0rem;
+  width:3rem;
+}
+
+
+.circle-small {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+}
+
+
+.centerize-small {
+  position:relative;
+  text-align: center;
+  margin: 0.9rem 1rem;
+}
+
+.name-small {
+  color: white;
+  font-size: 2rem;
+}
 
 .circle {
   height: 5rem;
@@ -9,8 +51,8 @@
   justify-content:center;
 }
 
-
 .centerize {
+  position:relative;
   text-align: center;
   margin: 1rem 1.5rem;
 }

@@ -162,14 +162,40 @@
 
 #menu-sidebar {
   width: 30.25rem;
-  background-color: #F7F7F7;
+  background-color:#Ffffff !important;
+  height:100%;
+  /* background-color: #F7F7F7; */
 }
 
+.menu-sidebar-info {
+  height:75%;
+  width:90%;
+  margin-left: 3rem;
+  margin-top: 8rem;
+  background-color:#F0F0F0 !important;
+  border-radius: 5% !important;
+  border: 50px solid #F0F0F0;
+}
 
+/* #game-sidebar {
+  height:90%;
+  width:100%;
+  position: relative;
+  top: 4rem;
+  left: 2rem;
+  background-color:red !important;
+  border-radius: 10% !important;
+} */
+
+#round-text {
+
+}
+
+#score-text {
+
+}
 
 #menu-sidebar-top {
-  clear: both;
-  margin-top: 1.4rem;
 }
 
 @media (max-width: 1699.98px) {
@@ -313,6 +339,11 @@
 
 
 @media (max-width: 1199.98px) {
+  .menu-sidebar-info-whentrue {
+    margin-left:3rem;
+    margin-top:5rem;
+  }
+
   .btn-round-blue {
     width:7rem;
     height:7rem;
@@ -383,10 +414,10 @@
   #result-text {
   position:relative;
   top: 1rem;
-}
-  .display-none {
-  display: none;
-}
+  }
+  .menu-sidebar-info {
+    display: none;
+  }
 
   #menu-switch {
     display:inline-block;
@@ -394,7 +425,7 @@
 
   #menu-sidebar {
     width: 100%;
-    background-color: #F7F7F7;
+    background-color: #F7F7F7 !important;
     height: 5rem;
   }
 

@@ -158,7 +158,7 @@ const MultiGamePage = (props) => {
       <div className={props.gameModeScoresMenuOpen === false ? "row h-100" : "row h-100 grey-content"}>
         {/* A fixed width column */}
         <div id="menu-sidebar">
-          <div id="menu-sidebar-top" style={{ clear: "both" }}>
+          <div id="menu-sidebar-top">
             <div className="float-left">
               <CancelRoomCreateButton
                 onCancel={props.exitRoomButtonPress}
@@ -175,11 +175,15 @@ const MultiGamePage = (props) => {
               </a>
             </div>
           </div>
-          <div className={props.gameModeScoresMenuOpen === false ? "display-none" : ""}>
-            <h1>Score Content</h1>
+          <div className={props.gameModeScoresMenuOpen === false ? "menu-sidebar-info" : "menu-sidebar-info-whentrue"} style={{ clear: "both" }}>
+            <h2 id="round-text" className="fnt-bold">Round</h2>
+            <p>3 of 10</p>
+            <h2 id="score-text" className="fnt-bold">My Score</h2>
+            <p>100</p>
+            <h2 id="score-text" className="fnt-bold">Players</h2>
             <Roster
               playerRoster={['Xin', 'Du', 'Gong', 'Zheng', 'zhe', 'Wuhan', 'Hua', 'Kao', 'a', 'b', 'c', 'd', 'e', 'f']}
-              playerSolved={props.playerSolved}
+              playerSolved={['Xin', 'Gong', 'Zheng']}
               pageController={props.pageController}
               playerColor={{
                 Xin: "#123456", Du: "#123456", Gong: "#123456", Zheng: "#123456", zhe: "#123456", Wuhan: "#123456", Hua: "#123456", Kao: "#123456",
@@ -187,6 +191,7 @@ const MultiGamePage = (props) => {
               }}
             ></Roster>
           </div>
+
         </div>
         {/* The game board area */}
         <div className={props.gameModeScoresMenuOpen === false ? "col" : "display-none"}>
