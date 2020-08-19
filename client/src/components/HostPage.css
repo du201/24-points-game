@@ -3,25 +3,9 @@
   margin-right:auto;
 }
 
-#rightside-hostpage {
-  width:60%;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-
-#room-number-text {
-  font-size: 3rem !important;
-
-}
-
-
-
 .grey-content {
   background-color: #F7F7F7;
 }
-
-
 
 #menu-switch {
   display:none;
@@ -46,8 +30,6 @@
   background-color:red;
 } */
 
-
-
 @media (max-width: 1199.98px) {
   .display-none {
   display: none;
@@ -63,36 +45,3 @@
     height: 5rem;
   }
 }
-
-@media (max-width: 991.98px) {
-  #rightside-hostpage {
-    width:90%;
-    margin-left:auto;
-    margin-right:auto;
-  }
-}
-
-@media (max-width: 767.98px) {
-  #rightside-hostpage {
-    width:90%;
-    margin-left:auto;
-    margin-right:auto;
-  }
-}
-
-@media (max-width: 575.98px) {
-  #rightside-hostpage {
-    width:100%;
-    margin-left:auto;
-    margin-right:auto;
-  }
-
-  #wait-text {
-    font-size: 0.8rem!important;
-  }
-}
-
-
-
-
-
