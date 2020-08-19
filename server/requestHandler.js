@@ -196,8 +196,8 @@ class RequestHandler {
    * in the room.
    */
   startGameHandler(settings) {
-    if (!roomList[this.socket.roomNum] === undefined &&
-        !roomList[this.socket.roomNum] === null && 
+    if (roomList[this.socket.roomNum] !== undefined &&
+        roomList[this.socket.roomNum] !== null &&
         !roomList[this.socket.roomNum].isRunning()) {
       roomList[this.socket.roomNum].changeSettings(settings);
       roomList[this.socket.roomNum].startGame();
