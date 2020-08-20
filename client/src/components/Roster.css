@@ -6,10 +6,14 @@
 
 #check-green {
   color:#60E68F;
+  background-color:white;
+  border-radius:50%;
 }
 
 #times-red {
   color:#FF6767;
+  background-color:white;
+  border-radius:50%;
 }
 
 #player-name-small {

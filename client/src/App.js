@@ -86,7 +86,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: MULTIGAMEPAGE, //default should be homePage
+    pageController: HOSTPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeScoresMenuOpen: false, //controls the display of the score menu in multigame page

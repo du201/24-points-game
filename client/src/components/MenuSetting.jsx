@@ -51,16 +51,7 @@ const MenuSetting = (props) => {
         />
       </SettingWrapper>
       {/*Advanced part of the setting menu */}
-      {
-        menuExpanded === false ?
-          <SettingWrapper>
-            <MenuExpand
-              onClick={adjustMenu}
-              text={"Advanced"}
-            />
-          </SettingWrapper> :
-          null
-      }
+
       <div
         id="collapseAdvanced"
         className="collapse"
@@ -160,16 +151,12 @@ const MenuSetting = (props) => {
           />
         </SettingWrapper>
       </div>
-      {
-        menuExpanded === true ?
-          <SettingWrapper>
-            <MenuExpand
-              onClick={adjustMenu}
-              text={"Hide"}
-            />
-          </SettingWrapper> :
-          null
-      }
+      <SettingWrapper>
+        <MenuExpand
+          onClick={adjustMenu}
+          text={menuExpanded === true ? "Hide" : "Advanced"}
+        />
+      </SettingWrapper>
       {/* <button
          className="btn btn-primary btn-lg mt-2"
          onClick={props.pressMenuCloseButton}
