@@ -160,9 +160,9 @@
   margin-right: 1.8rem;
 }
 
-#menu-sidebar {
+.menu-sidebar {
   width: 30.25rem;
-  background-color:#Ffffff !important;
+  background-color:#FFFFFF !important;
   height:100%;
   /* background-color: #F7F7F7; */
 }
@@ -423,7 +423,7 @@
     display:inline-block;
   }
 
-  #menu-sidebar {
+  .menu-sidebar {
     width: 100%;
     background-color: #F7F7F7 !important;
     height: 5rem;

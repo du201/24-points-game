@@ -1,87 +1,26 @@
 import React, { Component } from "react";
-import NumberInputRow from "./common/NumberInputRow.jsx";
-import run from "../game.js";
 import "./GameSolver.css";
-import Slider from "./common/Slider.jsx";
 
-class GameSolver extends Component {
-  state = {
-    numberNum: 4,
-    numberCollection: [
-      { id: 1, value: 0 },
-      { id: 2, value: 0 },
-      { id: 3, value: 0 },
-      { id: 4, value: 0 },
-      { id: 5, value: 0 },
-      { id: 6, value: 0 },
-    ],
-  };
 
-  sliderChangeHandler = (event) => {
-    this.setState({ numberNum: event.target.value });
-  };
-
-  inputNumHandler = (event, index) => {
-    let numberCollectionCopy = [...this.state.numberCollection];
-    numberCollectionCopy[index - 1] = {
-      ...this.state.numberCollection[index - 1],
-    };
-    const numNewValue = event.target.value;
-    numberCollectionCopy[index - 1].value = parseInt(numNewValue, 10);
-    //console.log(numberCollectionCopy);
-    //console.log(this.state.numberCollection);
-    this.setState({ numberCollection: numberCollectionCopy });
-  };
-
-  render() {
-    return (
-      <div className="wrapper">
-        <div className="solverInputSection">
-          <div>
-            Number of slots: {this.state.numberNum}
-            <br></br>
-            <Slider
-              min="2"
-              max="6"
-              value={this.state.numberNum}
-              id="slots"
-              onChange={this.sliderChangeHandler}
-              labelText="Number of slots"
-              labelData={this.state.numberNum}
-            />
-
-          </div>
-          <form id="form">
-            {this.state.numberCollection.map((eachNum) => {
-              return eachNum.id <= this.state.numberNum ? (
-                <NumberInputRow
-                  onChange={this.inputNumHandler}
-                  value={eachNum.value}
-                  id={eachNum.id}
-                  key={eachNum.id}
-                />
-              ) : null;
-            })}
-          </form>
-
-          <button
-            className="btn btn-primary mt-2"
-            type="button"
-            name="button"
-            onClick={() => {
-              run(this.state.numberNum);
-            }}
-          >
-            Calculate
-          </button>
+const GameSolver = (props) => {
+  return (props.numberCollection.map((eachNum) => {
+    return eachNum.id <= props.slotNum ? (
+      <React.Fragment key={eachNum.id}>
+        <div className="force-inline fnt-thin flex-grow-1">
+          <input className="input-solveNum form-control inputs center-align" type="Number" maxLength="1" id="second" onChange={(e) => props.inputNumHandler(e, eachNum.id)} />
         </div>
-        <div className="solverOutputSection">
-          <section id="count"></section>
-          <section id="answers" className="scrollTextBox"></section>
-        </div>
-      </div>
-    );
+        {props.slotNum === 4 && eachNum.id === 2 ? <div id="optional-flex-break"></div> : null}
+        {props.slotNum > 4 && eachNum.id === 3 ? <div id="optional-flex-break"></div> : null}
+      </React.Fragment>
+      // <NumberInputRow
+      //   onChange={this.props.inputNumHandler}
+      //   value={eachNum.value}
+      //   id={eachNum.id}
+      //   key={eachNum.id}
+      // />
+    ) : null;
   }
+  ));
 }
 
 export default GameSolver;

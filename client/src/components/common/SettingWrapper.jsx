@@ -3,7 +3,7 @@ import './SettingWrapper.css';
 
 const SettingWrapper = ({ children }) => {
   return (
-    <div class="setting-wrapper">
+    <div className="setting-wrapper">
       {children}
     </div>
   );

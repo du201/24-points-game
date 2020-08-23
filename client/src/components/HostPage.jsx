@@ -38,7 +38,7 @@ const HostPage = (props) => {
     <div className="container-fluid h-100">
       <div className={props.gameModeSettingMenuOpen === false ? "row h-100" : "row h-100 grey-content"}>
         {/* A fixed width column */}
-        <div id="menu-sidebar">
+        <div className="menu-sidebar-hostpage">
           <div id="menu-sidebar-top" style={{ clear: "both" }}>
             <div className="float-left">
               <CancelRoomCreateButton

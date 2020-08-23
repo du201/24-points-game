@@ -18,13 +18,13 @@ class RoomNumInput extends Component {
       }
     }).keyup(function (e) {
       if (((e.keyCode >= DIGIT_ZERO && e.keyCode <= DIGIT_NINE) ||
-          (e.keyCode >= NUMPAD_ZERO && e.keyCode <= NUMPAD_NINE)) &&
-          this.value.length === this.maxLength) {
+        (e.keyCode >= NUMPAD_ZERO && e.keyCode <= NUMPAD_NINE)) &&
+        this.value.length === this.maxLength) {
         $(this).closest("div").next("div").children('.inputs').select();
       }
       // Extra safty measure, adapted from https://stackoverflow.com/a/39292545
       $(this).val($(this).val().replace(/[^0-9]/g, ''));
-    }).click(function() {
+    }).click(function () {
       $(this).select();
     });
   };
@@ -33,16 +33,16 @@ class RoomNumInput extends Component {
     return (
       <React.Fragment>
         <div className="force-inline fnt-thin">
-          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="first" onChange={this.props.setRoomNum} autoFocus/>
+          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="first" onChange={this.props.setRoomNum} autoFocus />
         </div>
         <div className="force-inline fnt-thin">
-          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="second" onChange={this.props.setRoomNum}/>
+          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="second" onChange={this.props.setRoomNum} />
         </div>
         <div className="force-inline fnt-thin">
-          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="third" onChange={this.props.setRoomNum}/>
+          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="third" onChange={this.props.setRoomNum} />
         </div>
         <div className="force-inline fnt-thin">
-          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="last" onChange={this.props.setRoomNum}/>
+          <input className="input-roomNum form-control inputs" type="Number" maxLength="1" id="last" onChange={this.props.setRoomNum} />
         </div>
       </React.Fragment >
     );

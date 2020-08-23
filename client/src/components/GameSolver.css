@@ -1,18 +1,57 @@
-.scrollTextBox {
-  position: relative;
-  top: -10px;
-  width: 300px;
-  height: 300px;
-  margin: auto;
-  overflow: auto;
+.input-solveNum {
+  width: 6rem !important;
+  height: 7rem !important;
+  border-radius: 1.25rem !important;
+  border-color: #707070 !important;
+  font-size: 2rem !important;
+  text-align: center;
+  margin-left: 0.7rem;
+  margin-right: 0.7rem;
+  margin-bottom: 0.7rem;
 }
 
-.solverInputSection {
-  float: left;
-  width: 50%;
+.center-align {
+  margin:auto !important;
 }
 
-.solverOutputSection {
-  float: left;
-  width: 50%;
+.input-solveNum:hover {
+  border-color: #4194F8 !important;
+}
+
+.input-solveNum:focus {
+  border-color: #4194F8 !important;
+}
+
+
+
+@media (max-width: 767.98px) {
+  .input-solveNum {
+    width: 4.5rem !important;
+    height: 5rem !important;
+    border-radius: 1.25rem !important;
+    border-color: #707070 !important;
+    font-size: 1.5rem !important;
+    text-align: center;
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .input-solveNum {
+    width: 4.5rem !important;
+    height: 5rem !important;
+    border-radius: 1.25rem !important;
+    border-color: #707070 !important;
+    font-size: 1.5rem !important;
+    text-align: center;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+
+  #optional-flex-break {
+    flex-basis: 100%;
+    height: 0;
+    margin: 1rem;
+  }
 }

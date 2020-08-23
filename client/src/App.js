@@ -86,7 +86,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOSTPAGE, //default should be homePage
+    pageController: SOLVEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeScoresMenuOpen: false, //controls the display of the score menu in multigame page
@@ -1022,6 +1022,7 @@ class App extends Component {
         return (
           <SolvePage
             handleBack={this.handleBack}
+            notifyError={this.notifyError}
           ></SolvePage>
         );
       case SELECTPAGE: //3

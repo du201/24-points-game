@@ -1,3 +1,4 @@
+import React from 'react';
 const TIMES = "×";
 const DIVIDES = "÷";
 const PLUS = "+";
@@ -9,14 +10,14 @@ let answers = new Set();
 class Expression {
   constructor(value, left, op, right) {
     if (value !== null && left === undefined &&
-        op === undefined && right === undefined) {
+      op === undefined && right === undefined) {
       this.isNumber = true;
       this.value = value;
       this.left = null;
       this.right = null;
       this.operator = null;
     } else if (value === null && left !== undefined &&
-               op !== undefined && right !== undefined) {
+      op !== undefined && right !== undefined) {
       this.isNumber = false;
       this.value = null;
       this.left = left;
@@ -111,7 +112,7 @@ function solve(expList) {
     return;
   }
   if (expList.length === 1 &&
-      Math.abs(expList[0].getValue() - target) < Number.EPSILON) {
+    Math.abs(expList[0].getValue() - target) < Number.EPSILON) {
     answers.add(expList[0].toString());
     return;
   }
@@ -170,29 +171,30 @@ function solve(expList) {
 function printResults() {
   let result = "";
   for (let x of answers) {
-    result += "<section>" + x + "</section>";
+    result += <section>{x}</section>;
   }
 
-  let countElement = document.getElementById("count");
-  let answerElement = document.getElementById("answers");
   let size = answers.size;
 
   if (size === 0) {
-    countElement.innerHTML = "<p>There are no answers</p>";
+    return <p>There are no answers{result}</p>;
   } else if (size === 1) {
-    countElement.innerHTML = "<p>There is 1 answer</p>";
+    return <p>There is 1 answer</p>;
   } else {
-    countElement.innerHTML = "<p>There are " + answers.size + " answers</p>";
+    return <p>There are {answers.size} answers</p>;
   }
-  answerElement.innerHTML = result;
 }
 
-function run(numOfSlots) {
-  let form = document.getElementById("form");
+/**
+ * 
+ * @param {int} numOfSlots 
+ * @param {array of int} inputNums 
+ */
+function run(numOfSlots, inputNums) {
   let numbers = [];
   answers.clear();
   for (let i = 0; i < numOfSlots; i++) {
-    let value = parseInt(form[i].value);
+    let value = parseInt(inputNums[i], 10);
     numbers.push(value);
   }
 
@@ -201,7 +203,7 @@ function run(numOfSlots) {
     expList.push(new Expression(n));
   }
   solve(expList);
-  printResults();
+  return printResults();
 }
 
 export default run;
