@@ -53,6 +53,15 @@ class GameBoard extends Component {
     //add two parentheses to the available operator list
     let final_operators = [...this.props.operators];
     let leftRightParans = ['(', ')'];
+
+    let resultText = "";
+    if (this.props.attemptNum === 3) { //at the beginning
+      resultText = "You have 3 attemps left";
+    } else if (this.props.answer === null) { //if the player clicked "no solution" but there is a solution
+      resultText = `There is actually a solution! You have ${this.props.attemptNum} attemps left`;
+    } else {
+      resultText = `Your answer is Incorrect! You have ${this.props.attemptNum} attemps left`;
+    }
     return (
       <React.Fragment>
         <div className="d-flex flex-row" style={{ marginTop: "5rem" }}>
@@ -102,8 +111,8 @@ class GameBoard extends Component {
 
         <div className="d-flex flex-wrap flex-row justify-content-around" style={{ marginTop: "5rem" }}>
           <div className="form-group">
-            <input id="expression" className="form-control" type="text" value={displayExpression} />
-            <p id="result-text">23 is Incorrect! You have 2 attemps left</p>
+            <input id="expression" className="form-control" type="text" value={displayExpression} readOnly />
+            <p id="result-text">{resultText}</p>
           </div>
           <button
             id="delete-button"

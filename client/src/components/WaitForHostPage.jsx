@@ -1,6 +1,6 @@
 import React from "react";
 import Roster from "./Roster";
-import CancelButton from "./common/CancelRoomCreateButton.jsx";
+import ExitRoomButton from "./common/ExitRoomButton.jsx";
 import RoomInfo from "./RoomInfo.jsx";
 
 const WaitForHostPage = (props) => {
@@ -8,7 +8,7 @@ const WaitForHostPage = (props) => {
     <div className="container-fluid h-100">
       <div className="row" style={{ height: "10%" }}>
         <div className="col my-auto">
-          <CancelButton
+          <ExitRoomButton
             onCancel={props.exitRoomButtonPress}
           />
         </div>
@@ -19,7 +19,7 @@ const WaitForHostPage = (props) => {
           <h1 className="fnt-bold grey-text" style={{ marginTop: "5rem" }}>
             Waiting for the game to start
           </h1>
-          
+
           <RoomInfo
             playerRoster={props.playerRoster}
             playerSolved={props.playerSolved}

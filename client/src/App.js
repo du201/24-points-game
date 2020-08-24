@@ -86,7 +86,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: SOLVEPAGE, //default should be homePage
+    pageController: HOMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeScoresMenuOpen: false, //controls the display of the score menu in multigame page
@@ -399,6 +399,10 @@ class App extends Component {
   };
 
 
+  /**
+   * set a hex color value for every player in the roster
+   * @param {object} roster player roster 
+   */
   setPlayerColor = (roster) => {
     let copyPlayerColor = deepCopy(this.state.playerColor);
     for (let playerName of roster) {
@@ -1151,6 +1155,7 @@ class App extends Component {
         return (
           <CountDownPage
             timeInGame={this.state.timeInGame}
+            exitRoomButtonPress={this.exitRoomButtonPress}
           ></CountDownPage>
         );
       case BTWROUNDPAGE: //11: the page being displayed between each round of the game

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MenuSetting from "./MenuSetting";
-import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
+import ExitRoomButton from "./common/ExitRoomButton";
 import Roster from "./Roster";
 import Loader from 'react-loader-spinner';
 import { HOSTPAGE } from './roomConst';
@@ -41,9 +41,9 @@ const HostPage = (props) => {
         <div className="menu-sidebar-hostpage">
           <div id="menu-sidebar-top" style={{ clear: "both" }}>
             <div className="float-left">
-              <CancelRoomCreateButton
+              <ExitRoomButton
                 onCancel={props.exitRoomButtonPress}
-              ></CancelRoomCreateButton>
+              ></ExitRoomButton>
             </div>
             <div className="float-right">
               <a

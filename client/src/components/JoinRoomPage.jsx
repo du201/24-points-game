@@ -1,5 +1,5 @@
 import React from "react";
-import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
+import ExitRoomButton from "./common/ExitRoomButton";
 import RoomNumInput from "./RoomNumInput";
 import NameInputUI from "./common/NameInputUI";
 import Button from "./common/Button";
@@ -17,7 +17,7 @@ const JoinRoomPage = (props) => {
           />
         </div>
       </div>
-      
+
       <div className="row" style={{ height: "90%" }}>
         <div className="col text-center">
           <h1 id="title-joinroompage" className="fnt-bold">

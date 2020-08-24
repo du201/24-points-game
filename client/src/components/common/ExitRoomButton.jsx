@@ -1,7 +1,7 @@
 import React from "react";
-import "./CancelRoomCreateButton.css";
+import "./ExitRoomButton.css";
 
-const CancelRoomCreateButton = (props) => {
+const ExitRoomButton = (props) => {
 
   return (
     <React.Fragment>
@@ -22,4 +22,4 @@ const CancelRoomCreateButton = (props) => {
   );
 };
 
-export default CancelRoomCreateButton;
+export default ExitRoomButton;

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import CancelRoomCreateButton from "./common/CancelRoomCreateButton";
+import ExitRoomButton from "./common/ExitRoomButton";
 import GameBoard from "./GameBoard";
 import Roster from "./Roster";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,9 +24,9 @@ const MultiGamePage = (props) => {
     //     <div className="col col-2 h-100">
     //       <div className="row h-25">
     //         <div className="col text-center my-auto h-50">
-    //           <CancelRoomCreateButton
+    //           <ExitRoomButton
     //             onCancel={props.exitRoomButtonPress}
-    //           ></CancelRoomCreateButton>
+    //           ></ExitRoomButton>
     //         </div>
     //       </div>
     //       <div className="row h-25">
@@ -99,9 +99,9 @@ const MultiGamePage = (props) => {
     //     <div className="col col-2 h-100">
     //       <div className="row h-25">
     //         <div className="col text-center my-auto h-50">
-    //           <CancelRoomCreateButton
+    //           <ExitRoomButton
     //             onCancel={props.exitRoomButtonPress}
-    //           ></CancelRoomCreateButton>
+    //           ></ExitRoomButton>
     //         </div>
     //       </div>
     //       <div className="row h-25">
@@ -160,9 +160,9 @@ const MultiGamePage = (props) => {
         <div className="menu-sidebar">
           <div id="menu-sidebar-top">
             <div className="float-left">
-              <CancelRoomCreateButton
+              <ExitRoomButton
                 onCancel={props.exitRoomButtonPress}
-              ></CancelRoomCreateButton>
+              ></ExitRoomButton>
             </div>
             <div className="float-right">
               <a
@@ -177,18 +177,15 @@ const MultiGamePage = (props) => {
           </div>
           <div className={props.gameModeScoresMenuOpen === false ? "menu-sidebar-info" : "menu-sidebar-info-whentrue"} style={{ clear: "both" }}>
             <h2 id="round-text" className="fnt-bold">Round</h2>
-            <p>3 of 10</p>
+            <p>{props.whichRound} of {props.numOfRound}</p>
             <h2 id="score-text" className="fnt-bold">My Score</h2>
-            <p>100</p>
+            <p>{props.multiplayerTotalScore}</p>
             <h2 id="score-text" className="fnt-bold">Players</h2>
             <Roster
-              playerRoster={['Xin', 'Du', 'Gong', 'Zheng', 'zhe', 'Wuhan', 'Hua', 'Kao', 'a', 'b', 'c', 'd', 'e', 'f']}
-              playerSolved={['Xin', 'Gong', 'Zheng']}
+              playerRoster={props.playerRoster}
+              playerSolved={props.playerSolved}
               pageController={props.pageController}
-              playerColor={{
-                Xin: "#123456", Du: "#123456", Gong: "#123456", Zheng: "#123456", zhe: "#123456", Wuhan: "#123456", Hua: "#123456", Kao: "#123456",
-                a: "#123456", b: "#123456", c: "#123456", d: "#123456", e: "#123456", f: "#123456"
-              }}
+              playerColor={props.playerColor}
             ></Roster>
           </div>
 
@@ -197,11 +194,11 @@ const MultiGamePage = (props) => {
         <div className={props.gameModeScoresMenuOpen === false ? "col" : "display-none"}>
           <div id="rightside-hostpage" className="d-flex flex-column align-items-center ">
             <h2 id="game-top-text" className="fnt-bold">
-              Try to reach <span id="goal-text" className="fnt-regular">24</span> in <span id="timer-text" className="fnt-regular">5</span> seconds!
+              Try to reach <span id="goal-text" className="fnt-regular">{props.targetNum}</span> in <span id="timer-text" className="fnt-regular">{props.timeInGame}</span> seconds!
               {/* this.props.targetNum */}
             </h2>
             <GameBoard
-              gameNumbers={[1, 2, 3, 4]}
+              gameNumbers={props.gameNumbers}
               addNumToInput={props.addNumToInput}
               expressionInput={props.expressionInput}
               targetNum={props.targetNum}

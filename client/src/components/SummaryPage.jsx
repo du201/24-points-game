@@ -2,7 +2,7 @@ import React from "react";
 import BackButton from "./common/BackButton";
 import ScoresRank from "./ScoresRank";
 import { HOMEPAGE } from './roomConst';
-import CancelRoomCreateButton from './common/CancelRoomCreateButton';
+import ExitRoomButton from './common/ExitRoomButton';
 
 const SummaryPage = (props) => {
 
@@ -10,7 +10,7 @@ const SummaryPage = (props) => {
     <div className="container h-100">
       <div className="row h-25">
         <div className="col text-center my-auto">
-          <CancelRoomCreateButton
+          <ExitRoomButton
             onCancel={props.exitRoomButtonPress}
           />
           <h1>Game Summary</h1>

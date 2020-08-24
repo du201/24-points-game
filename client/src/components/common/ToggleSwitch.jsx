@@ -8,7 +8,7 @@ const ToggleSwitch = ({ showAllAnswers, handleShowAllAnswers }) => {
         type="checkbox"
         checked={showAllAnswers}
         onChange={handleShowAllAnswers} />
-      <span class="slider round"></span>
+      <span className="slider round"></span>
     </label>
   );
 }

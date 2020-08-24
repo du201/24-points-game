@@ -17,6 +17,16 @@ const DIVIDES = "÷";
 const PLUS = "+";
 const MINUS = "-";
 let operators = [TIMES, DIVIDES, PLUS, MINUS];
+const defaultNumberCollection = [
+  { id: 1, value: "empty" },
+  { id: 2, value: "empty" },
+  { id: 3, value: "empty" },
+  { id: 4, value: "empty" },
+  { id: 5, value: "empty" },
+  { id: 6, value: "empty" },
+];
+let solutions = null;
+let title = null;
 
 const SolvePage = (props) => {
 
@@ -25,14 +35,7 @@ const SolvePage = (props) => {
   const [settingMenuOpen, setSettingMenuOpen] = useState(false);
   const [targetNum, setTargetNum] = useState(24);
   const [slotNum, setSlotNum] = useState(4);
-  const [numberCollection, setNumberCollection] = useState([
-    { id: 1, value: "empty" },
-    { id: 2, value: "empty" },
-    { id: 3, value: "empty" },
-    { id: 4, value: "empty" },
-    { id: 5, value: "empty" },
-    { id: 6, value: "empty" },
-  ]); //when the slot is not filled, its value is "empty", otherwise, it should be an int 
+  const [numberCollection, setNumberCollection] = useState(defaultNumberCollection); //when the slot is not filled, its value is "empty", otherwise, it should be an int 
   const [availableOperator, setAvailableOperator] = useState(operators);
   const [showAllAnswers, setShowAllAnswers] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -41,7 +44,7 @@ const SolvePage = (props) => {
   useEffect(() => {
     $("#solution-scroll").scroll(function () {
       //document.getElementById('solution-scroll').scroll(function () {
-      if ($(".solution-overflow").height() + $(".solution-overflow").scrollTop() == document.getElementById('solution-scroll').scrollHeight) {
+      if ($(".solution-overflow").height() + $(".solution-overflow").scrollTop() === document.getElementById('solution-scroll').scrollHeight) {
         setBottomFadeoutDisplay(false);
       } else {
         setBottomFadeoutDisplay(true);
@@ -65,26 +68,26 @@ const SolvePage = (props) => {
   const calculate = () => {
     let inputNums = [];
     let filledSlotNum = 0;
+    let decimalNumExist = false;
     for (let numSet of numberCollection) {
-      inputNums.push(numSet.value);
       if (numSet.value !== "empty") {
+        inputNums.push(numSet.value);
         filledSlotNum++;
+        if (!Number.isInteger(numSet.value)) {
+          decimalNumExist = true;
+        }
       }
     }
-    //console.log(filledSlotNum);
-    //console.log(inputNums);
-    //if some slots are not filled
-    if (filledSlotNum !== slotNum) {
-      props.notifyError(`All the slots must be filled. You only filled ${filledSlotNum} out of ${slotNum}`);
+
+    if (filledSlotNum !== slotNum || decimalNumExist) { //if some slots are not filled
+      props.notifyError(`All the slots must be filled with INTEGER.`);
     } else {
       setLoading(true);
-      //start calculating
-      let inputNums = [];
-      for (let numSet of numberCollection) {
-        inputNums.push(numSet.value);
+
+      ({ title, solutions } = run(slotNum, inputNums, availableOperator, targetNum));
+      if (!showAllAnswers) {
+        solutions = solutions[0];
       }
-      //console.log(inputNums);
-      //run(slotNum, );
       //after calculating
       setLoading(false);
       setModalOpen(true);
@@ -99,14 +102,7 @@ const SolvePage = (props) => {
   const backToDefaultSettings = () => {
     setTargetNum(24);
     setSlotNum(4);
-    setNumberCollection([
-      { id: 1, value: 0 },
-      { id: 2, value: 0 },
-      { id: 3, value: 0 },
-      { id: 4, value: 0 },
-      { id: 5, value: 0 },
-      { id: 6, value: 0 },
-    ]);
+    setNumberCollection(defaultNumberCollection);
     setAvailableOperator(operators);
     setShowAllAnswers(true);
   }
@@ -160,6 +156,7 @@ const SolvePage = (props) => {
 
   const handleSlotNumChange = (event) => {
     setSlotNum(parseInt(event.target.value, 10));
+    setNumberCollection(defaultNumberCollection);
   };
 
   const handleTargetNumChange = (event) => {
@@ -173,14 +170,19 @@ const SolvePage = (props) => {
       ...numberCollection[index - 1],
     };
     const numNewValue = event.target.value;
-    //if the player empties the slot
-    if (numNewValue === "") {
+    let floatInput = parseFloat(numNewValue, 10);
+    let intInput = parseInt(numNewValue, 10);
+    if (numNewValue === "") { //if the player empties the slot
       numberCollectionCopy[index - 1].value = "empty";
     } else {
-      numberCollectionCopy[index - 1].value = parseInt(numNewValue, 10);
+      numberCollectionCopy[index - 1].value = parseFloat(numNewValue, 10);
     }
-
     setNumberCollection(numberCollectionCopy);
+  };
+
+  const closeSolutionModal = () => {
+    setModalOpen(false);
+    setNumberCollection(defaultNumberCollection);
   };
 
   return (
@@ -188,10 +190,12 @@ const SolvePage = (props) => {
       <div className="container-fluid h-100">
         <div className={modalOpen === true ? "result-modal" : "d-none"}>
           <div className={bottomFadeoutDisplay === true ? "result-modal-body-with-fadeout" : "result-modal-body"}>
-            <a id="delete-cross" onClick={() => setModalOpen(false)}><span className="result-modal-delete">&times;</span></a>
+            <a id="delete-cross" onClick={closeSolutionModal}><span className="result-modal-delete">&times;</span></a>
             <div style={{ clear: "both" }}></div>
-            <h2 id={topFadeoutDisplay === true ? "solution-top-text-with-fadeout" : "solution-top-text"} className="fnt-bold" style={{ marginBottom: "-2rem", marginTop: "3rem" }}>We found 454 solutions</h2>
+            <h2 id={topFadeoutDisplay === true ? "solution-top-text-with-fadeout" : "solution-top-text"} className="fnt-bold" style={{ marginBottom: "-2rem", marginTop: "3rem" }}>{title}{showAllAnswers === true ? null : " (only one is shown)"}</h2>
             <div id="solution-scroll" className="solution-overflow">
+              {solutions}
+              {/* <p className="solution">12+12+12+12</p>
               <p className="solution">12+12+12+12</p>
               <p className="solution">12+12+12+12</p>
               <p className="solution">12+12+12+12</p>
@@ -224,8 +228,7 @@ const SolvePage = (props) => {
               <p className="solution">12+12+12+12</p>
               <p className="solution">12+12+12+12</p>
               <p className="solution">12+12+12+12</p>
-              <p className="solution">12+12+12+12</p>
-              <p className="solution">12+12+12+12</p>
+              <p className="solution">12+12+12+12</p> */}
             </div>
           </div>
         </div>

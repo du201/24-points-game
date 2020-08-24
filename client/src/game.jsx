@@ -169,19 +169,22 @@ function solve(expList) {
 }
 
 function printResults() {
-  let result = "";
-  for (let x of answers) {
-    result += <section>{x}</section>;
-  }
-
+  // let result = null;
+  // for (let x of answers) {
+  //   console.log(x);
+  //   result += <p>{x}</p>;
+  // }
+  let answersArray = [...answers];
+  let result = answersArray.map((answer, index) => <p key={index}>{answer}</p>);
   let size = answers.size;
 
+
   if (size === 0) {
-    return <p>There are no answers{result}</p>;
+    return { title: "There are no answers", solutions: null };
   } else if (size === 1) {
-    return <p>There is 1 answer</p>;
+    return { title: "There is one answer", solutions: result };
   } else {
-    return <p>There are {answers.size} answers</p>;
+    return { title: `There are ${answers.size} answer`, solutions: result };
   }
 }
 
@@ -190,7 +193,9 @@ function printResults() {
  * @param {int} numOfSlots 
  * @param {array of int} inputNums 
  */
-function run(numOfSlots, inputNums) {
+function run(numOfSlots, inputNums, availableOperator, targetNum) {
+  operators = availableOperator;
+  target = targetNum;
   let numbers = [];
   answers.clear();
   for (let i = 0; i < numOfSlots; i++) {

@@ -25,8 +25,8 @@ const Roster = ({ playerRoster, playerSolved, pageController, playerColor }) => 
       return null;
     }
     let display = playerSolved.includes(eachName) === true ?
-      <span id="check-green"><FontAwesomeIcon icon={faCheckCircle} size="x" /></span> :
-      <span id="times-red"><FontAwesomeIcon icon={faTimesCircle} size="x" /></span>;
+      <span id="check-green"><FontAwesomeIcon icon={faCheckCircle} size="1x" /></span> :
+      <span id="times-red"><FontAwesomeIcon icon={faTimesCircle} size="1x" /></span>;
     return display;
   };
 
