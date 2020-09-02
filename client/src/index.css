@@ -52,6 +52,12 @@ h2 {
   color: #707070;
 }
 
+.center-horizontal {
+  margin-left:auto;
+  margin-right:auto;
+  width:6.25rem;
+}
+
 h3 {
   font-size: 1.1875rem !important;
   color: #707070;

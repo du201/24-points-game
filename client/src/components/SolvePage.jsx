@@ -269,7 +269,7 @@ const SolvePage = (props) => {
           </div>
           <div className={settingMenuOpen === false ? "col text-center" : "display-none"}>
             <div id="solvePage-mainContent" className="d-flex flex-column align-items-center">
-              <div className="d-flex flex-wrap" style={{ marginBottom: "4rem", width: "90%" }}>
+              <div className="d-flex flex-wrap" style={{ marginBottom: "4rem", width: "90%", maxWidth: "50rem" }}>
                 <GameSolver
                   numberCollection={numberCollection}
                   slotNum={slotNum}

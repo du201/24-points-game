@@ -1149,7 +1149,9 @@ class App extends Component {
         );
       case LOADINGPAGE: //9: currently just for the host
         return (
-          <LoadingPage></LoadingPage>
+          <LoadingPage
+            exitRoomButtonPress={this.exitRoomButtonPress}
+          ></LoadingPage>
         );
       case COUNTDOWNPAGE: //10: for both the host and the player
         return (
