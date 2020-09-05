@@ -133,7 +133,7 @@ const MenuSetting = (props) => {
             value={props.roundDuration}
             id="roundDuration"
             onChange={props.handleRoundDurationInput}
-            labelText="Round breaks"
+            labelText="Round duration"
             labelData={props.roundDuration + " seconds"}
           />
 

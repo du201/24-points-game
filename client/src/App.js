@@ -86,7 +86,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: HOMEPAGE, //default should be homePage
+    pageController: SINGLEGAMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeScoresMenuOpen: false, //controls the display of the score menu in multigame page
@@ -296,6 +296,12 @@ class App extends Component {
     });
   };
 
+  exitSingleMode = () => {
+    this.backToDefaultSettings();
+    this.setState({ gameModeSettingMenuOpen: false });
+    this.setState({ pageController: HOMEPAGE });
+  }
+
   /**
    * When quittin gthe game, stop listening to all these events
    */
@@ -458,15 +464,13 @@ class App extends Component {
       numOfRounds: this.state.numOfRound, //int
     };
     socket.emit(START_GAME, settingPackageObject);
-    //first go to the loading page while waiting for the server to finish calculating
-    // this.setState({
-    //   pageController: LOADINGPAGE, //to 9th page
-    // });
+    //console.log("start game message sent");
     this.setState({
       loading: true
     });
     this.startGame();
   };
+
 
 
   /**
@@ -1080,9 +1084,6 @@ class App extends Component {
             playerColor={this.state.playerColor}
             pageController={this.state.pageController}
             switchSettingsMenu={this.switchSettingsMenu}
-            loading={this.state.loading}
-            waitTimeMax={this.state.waitTimeMax}
-            maxPlayerNum={this.state.maxPlayerNum}
             startCountDown={this.startCountDown}
             setGameModeSettingMenuOpenFalse={this.setGameModeSettingMenuOpenFalse}
           ></HostPage>
@@ -1144,7 +1145,39 @@ class App extends Component {
       case SINGLEGAMEPAGE: //8
         return (
           <SingleGamePage
-            handleBack={this.handleBack}
+            gameModeSettingMenuOpen={this.state.gameModeSettingMenuOpen}
+            slotNum={this.state.gameModeBasicSetting.slotNum}
+            targetNum={this.state.gameModeBasicSetting.targetNum}
+            rangeOfAvailableNumberLowBound={
+              this.state.rangeOfAvailableNumberLowBound
+            }
+            rangeOfAvailableNumberHighBound={
+              this.state.rangeOfAvailableNumberHighBound
+            }
+            maxRepeatNum={this.state.maxRepeatNum}
+            roundDuration={this.state.roundDuration}
+            numOfRound={this.state.numOfRound}
+            availableOperator={this.state.availableOperator}
+            handleSlotNumChange={this.handleSlotNumChange}
+            handleTargetNumChange={this.handleTargetNumChange}
+            pressMenuCloseButton={this.pressMenuCloseButton}
+            handleRangeOfAvailableNumberLowBoundInput={
+              this.handleRangeOfAvailableNumberLowBoundInput
+            }
+            handleRangeOfAvailableNumberHighBoundInput={
+              this.handleRangeOfAvailableNumberHighBoundInput
+            }
+            handleMaxRepeatNumInput={this.handleMaxRepeatNumInput}
+            handleRoundDurationInput={this.handleRoundDurationInput}
+            handleNumOfRoundInput={this.handleNumOfRoundInput}
+            handleAvailableOperatorCheckbox={
+              this.handleAvailableOperatorCheckbox
+            }
+            backToDefaultSettings={this.backToDefaultSettings}
+            exitRoomButtonPress={this.exitSingleMode}
+            switchSettingsMenu={this.switchSettingsMenu}
+            setGameModeSettingMenuOpenFalse={this.setGameModeSettingMenuOpenFalse}
+
           ></SingleGamePage>
         );
       case LOADINGPAGE: //9: currently just for the host
