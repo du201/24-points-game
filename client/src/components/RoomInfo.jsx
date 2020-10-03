@@ -28,13 +28,15 @@ const RoonInfo = (props) => {
       </h3>
 
       <Roster
-        playerRoster={['Xin', 'Du', 'Gong', 'Zheng', 'zhe', 'Wuhan', 'Hua', 'Kao', 'a', 'b', 'c', 'd', 'e', 'f']}
+        //playerRoster={['Xin', 'Du', 'Gong', 'Zheng', 'zhe', 'Wuhan', 'Hua', 'Kao', 'a', 'b', 'c', 'd', 'e', 'f']}
+        playerRoster={props.playerRoster}
         playerSolved={props.playerSolved}
         pageController={props.pageController}
-        playerColor={{
-          Xin: "#123456", Du: "#123456", Gong: "#123456", Zheng: "#123456", zhe: "#123456", Wuhan: "#123456", Hua: "#123456", Kao: "#123456",
-          a: "#123456", b: "#123456", c: "#123456", d: "#123456", e: "#123456", f: "#123456"
-        }}
+        // playerColor={{
+        //   Xin: "#123456", Du: "#123456", Gong: "#123456", Zheng: "#123456", zhe: "#123456", Wuhan: "#123456", Hua: "#123456", Kao: "#123456",
+        //   a: "#123456", b: "#123456", c: "#123456", d: "#123456", e: "#123456", f: "#123456"
+        // }}
+        playerColor={props.playerColor}
       ></Roster>
       {/* <Roster
           playerRoster={props.playerRoster}
@@ -42,7 +44,7 @@ const RoonInfo = (props) => {
           pageController={props.pageController}
           playerColor={props.playerColor}
         ></Roster> */}
-  </div>
+    </div>
   );
 }
 

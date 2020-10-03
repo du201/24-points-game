@@ -3,14 +3,14 @@
   margin-right:auto;
 }
 
-#rightside-hostpage {
+.rightside-hostpage {
   width:90%;
   margin-left:auto;
   margin-right:auto;
 }
 
 #game-top-text {
-  margin-top: 8rem;
+  margin-top: 0rem;
 }
 
 
@@ -93,6 +93,29 @@
   color: #FFFFFF !important;
 }
 
+.operator-margin-top {
+  margin-top: 4rem;
+}
+
+.submit-margin-top {
+  margin-top: 3.5rem;
+  flex-wrap:wrap;
+}
+
+.number-margin-top {
+  margin-top: 5rem;
+}
+
+.gameboard-background {
+    margin-top:8rem;
+    margin-left:1rem;
+    height:75%;
+    width: 97%;
+    border-radius: 2.5rem !important;
+    border: 3.125rem solid #F0F0F0;
+    background-color:#F0F0F0;
+}
+
 .btn-round-red:hover {
   background-color: #FFFFFF !important;
   color: #C50707 !important;
@@ -164,7 +187,6 @@
   width: 30.25rem;
   background-color:#FFFFFF !important;
   height:100%;
-  /* background-color: #F7F7F7; */
 }
 
 .menu-sidebar-info {
@@ -173,7 +195,7 @@
   margin-left: 3rem;
   margin-top: 8rem;
   background-color:#F0F0F0 !important;
-  border-radius: 5% !important;
+  border-radius: 2.5rem !important;
   border: 50px solid #F0F0F0;
 }
 
@@ -198,7 +220,7 @@
 #menu-sidebar-top {
 }
 
-@media (max-width: 1699.98px) {
+@media (max-width: 1750.98px) {
   .btn-round-green {
     width:7rem;
     height:7rem;
@@ -212,8 +234,8 @@
   .btn-round-red {
     width:7rem;
     height:7rem;
-    margin-left:1rem;
-    margin-right:1rem;
+    margin-left:0.1rem;
+    margin-right:0.1rem;
     border: 0.125rem solid #C50707 !important;
     border-radius: 1.5625rem !important;
     background-color: #C50707 !important;
@@ -261,17 +283,28 @@
   
 }
 
-@media (max-width: 1499.98px) {
+@media (max-width: 1550.98px) {
   .btn-round-blue {
     width:5rem;
     height:5rem;
-    margin-left:1rem;
-    margin-right:1rem;
+    margin-left:0rem;
+    margin-right:0rem;
     border: 0.125rem solid #4194F8 !important;
     border-radius: 1.5625rem !important;
     background-color: #4194F8 !important;
     font-size: 2.5rem !important; /* 19px by default */
     color: #FFFFFF !important;
+  }
+
+  .operator-margin-top {
+    margin-top: 6rem;
+  }
+
+  #delete-button {
+    margin-left:0.00rem !important;
+    margin-right:0.00rem !important;
+    position:relative;
+    left:0.5rem;
   }
 
   .btn-round-green {
@@ -282,24 +315,31 @@
     background-color: #4bb543 !important;
     font-size: 1rem !important; 
     color: #FFFFFF !important;
+    position:relative;
+    left:1rem;
   }
   
   .btn-round-red {
     width:5rem;
     height:5rem;
-    margin-left:1rem;
-    margin-right:1rem;
+    margin-left:0.1rem;
+    margin-right:0.1rem;
     border: 0.125rem solid #C50707 !important;
     border-radius: 1.5625rem !important;
     background-color: #C50707 !important;
     font-size: 0.8rem !important; 
     color: #FFFFFF !important;
   }
+
+  .submit-margin-top {
+    margin-top: 7rem;
+    flex-wrap:nowrap;
+  }
   
   
   .btn-operator {
-    width: 5rem;
-    height: 5rem;
+    width: 4.6rem;
+    height: 4.6rem;
     margin-left:0.1rem !important;
     margin-right:0.1rem !important;
     border: 0.125rem solid #F8C741 !important;
@@ -325,9 +365,11 @@
 
   #expression {
     height: 5rem;
-    width: 25rem;
+    width: 23rem;
     font-size:2rem;
     border-radius: 2.5rem !important;
+    padding-right:0rem !important;
+    margin-right:0rem!important;
   }
   
   #result-text {
@@ -344,6 +386,16 @@
     margin-top:5rem;
   }
 
+  .gameboard-background {
+    margin-top:0rem;
+    margin-left:0rem;
+    height:100%;
+    width: 100%;
+    border-radius: 0rem !important;
+    border: 0rem;
+    background-color:#ffffff;
+  }
+
   .btn-round-blue {
     width:7rem;
     height:7rem;
@@ -354,6 +406,12 @@
     background-color: #4194F8 !important;
     font-size: 3rem !important; /* 19px by default */
     color: #FFFFFF !important;
+  }
+
+  
+  .submit-margin-top {
+    margin-top: 7rem;
+    flex-wrap:wrap;
   }
 
   .btn-round-green {
@@ -520,6 +578,10 @@
     background-color: #F8C741 !important;
     box-shadow: 0rem 0rem 0.01rem #888888;
     font-size:2.5rem !important;
+  }
+
+  .submit-margin-top {
+    margin-top: 2rem;
   }
   
   .btn-operator img {

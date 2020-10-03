@@ -1,12 +1,8 @@
 import React, { useEffect } from "react";
-import ExitRoomButton from "./common/ExitRoomButton";
 import GameBoard from "./GameBoard";
-import Roster from "./Roster";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import './MultiGamePage.css';
 import { useWindowSize } from './common/useWindowSize.js';
+import GameSideBar from "./GameSideBar";
+import './MultiGamePage.css';
 
 const MultiGamePage = (props) => {
   let screenWidth = useWindowSize().width;
@@ -157,61 +153,44 @@ const MultiGamePage = (props) => {
     <div className="container-fluid h-100">
       <div className={props.gameModeScoresMenuOpen === false ? "row h-100" : "row h-100 grey-content"}>
         {/* A fixed width column */}
-        <div className="menu-sidebar">
-          <div id="menu-sidebar-top">
-            <div className="float-left">
-              <ExitRoomButton
-                onCancel={props.exitRoomButtonPress}
-              ></ExitRoomButton>
-            </div>
-            <div className="float-right">
-              <a
-                id="menu-switch"
-                onClick={props.switchScoresMenu}
-              >
-                {props.gameModeScoresMenuOpen === false ?
-                  <FontAwesomeIcon icon={faBars} size="2x" /> :
-                  <FontAwesomeIcon icon={faTimes} size="2x" />}
-              </a>
-            </div>
-          </div>
-          <div className={props.gameModeScoresMenuOpen === false ? "menu-sidebar-info" : "menu-sidebar-info-whentrue"} style={{ clear: "both" }}>
-            <h2 id="round-text" className="fnt-bold">Round</h2>
-            <p>{props.whichRound} of {props.numOfRound}</p>
-            <h2 id="score-text" className="fnt-bold">My Score</h2>
-            <p>{props.multiplayerTotalScore}</p>
-            <h2 id="score-text" className="fnt-bold">Players</h2>
-            <Roster
-              playerRoster={props.playerRoster}
-              playerSolved={props.playerSolved}
-              pageController={props.pageController}
-              playerColor={props.playerColor}
-            ></Roster>
-          </div>
+        <GameSideBar
+          exitRoomButtonPress={props.exitRoomButtonPress}
+          switchScoresMenu={props.switchScoresMenu}
+          gameModeScoresMenuOpen={props.gameModeScoresMenuOpen}
+          whichRound={props.whichRound}
+          numOfRound={props.numOfRound}
+          multiplayerTotalScore={props.multiplayerTotalScore}
+          playerRoster={props.playerRoster}
+          playerSolved={props.playerSolved}
+          pageController={props.pageController}
+          playerColor={props.playerColor}
+        />
 
-        </div>
         {/* The game board area */}
         <div className={props.gameModeScoresMenuOpen === false ? "col" : "display-none"}>
-          <div id="rightside-hostpage" className="d-flex flex-column align-items-center ">
-            <h2 id="game-top-text" className="fnt-bold">
-              Try to reach <span id="goal-text" className="fnt-regular">{props.targetNum}</span> in <span id="timer-text" className="fnt-regular">{props.timeInGame}</span> seconds!
+          <div id="rightside-hostpage" className="w-100 h-100">
+            <div className="gameboard-background d-flex flex-column align-items-center ">
+              <h2 id="game-top-text" className="fnt-bold">
+                Try to reach <span id="goal-text" className="fnt-regular">{props.targetNum}</span> in <span id="timer-text" className="fnt-regular">{props.timeInGame}</span> seconds!
               {/* this.props.targetNum */}
-            </h2>
-            <GameBoard
-              gameNumbers={props.gameNumbers}
-              addNumToInput={props.addNumToInput}
-              expressionInput={props.expressionInput}
-              targetNum={props.targetNum}
-              operators={props.operators}
-              pressDeleteInputButton={props.pressDeleteInputButton}
-              pressCalculateResultButton={props.pressCalculateResultButton}
-              answer={props.answer}
-              multiplayerButtonDisable={props.multiplayerButtonDisable}
-              answerCorrect={props.answerCorrect}
-              pressNoSolutionButton={props.pressNoSolutionButton}
-              submitButtonDisable={props.submitButtonDisable}
-              attemptNum={props.attemptNum}
-            ></GameBoard>
+              </h2>
+              <GameBoard
+                gameNumbers={props.gameNumbers}
+                //gameNumbers={['1', '2', '3', '4', '5', '6']}
+                addNumToInput={props.addNumToInput}
+                expressionInput={props.expressionInput}
+                targetNum={props.targetNum}
+                operators={props.operators}
+                pressDeleteInputButton={props.pressDeleteInputButton}
+                pressCalculateResultButton={props.pressCalculateResultButton}
+                answer={props.answer}
+                multiplayerButtonDisable={props.multiplayerButtonDisable}
+                answerCorrect={props.answerCorrect}
+                pressNoSolutionButton={props.pressNoSolutionButton}
+                submitButtonDisable={props.submitButtonDisable}
+                attemptNum={props.attemptNum}
+              ></GameBoard>
+            </div>
           </div>
         </div>
       </div>

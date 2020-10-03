@@ -5,25 +5,19 @@ import { HOMEPAGE } from './roomConst';
 import ExitRoomButton from './common/ExitRoomButton';
 
 const SummaryPage = (props) => {
-
   return (
-    <div className="container h-100">
-      <div className="row h-25">
-        <div className="col text-center my-auto">
-          <ExitRoomButton
-            onCancel={props.exitRoomButtonPress}
-          />
-          <h1>Game Summary</h1>
-        </div>
+    <div className="d-flex flex-column">
+      <div style={{ marginTop: "1.4rem" }}>
+        <ExitRoomButton
+          onCancel={props.exitRoomButtonPress}
+        />
       </div>
-      <div className="row h-75">
-        <div className="col-4 h-100 overflow-auto text-center">
-          <h3>Player Scores (All the Players)</h3>
-          <ScoresRank
-            scoreRanking={props.scoreRanking}
-          ></ScoresRank>
-        </div>
-      </div>
+      <h1 className="align-self-center fnt-bold" style={{ marginBottom: "3rem" }}>Final Ranking</h1>
+      <ScoresRank
+        scoreRanking={props.scoreRanking}
+      //scoreRanking={[{ name: "Xin", totalScore: 2 }, { name: "Xin", totalScore: 2 }, { name: "Xin", totalScore: 2 }, { name: "Xin", totalScore: 2 }, { name: "Xin", totalScore: 2 }, { name: "Xin", totalScore: 2 }, { name: "Xin", totalScore: 2 }]}
+      ></ScoresRank>
+
     </div>
   );
 }

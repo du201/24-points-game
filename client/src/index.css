@@ -121,3 +121,34 @@ a:active {
   flex-basis: 100%;
   height: 0;
 }
+
+.text-center {
+  text-align:center;
+}
+
+/* .gold-text {
+  color:#FFDFB1;
+  text-shadow: 2px 2px;
+}
+
+.silver-text {
+  color:#C0C0C0;
+  text-shadow: 2px 2px;
+}
+
+.copper-text {
+  color:#CD8032;
+  text-shadow: 2px 2px;
+} */
+
+.gold-text {
+  background-color:#FFDFB1;
+}
+
+.silver-text {
+  background-color:#C0C0C0;
+}
+
+.copper-text {
+  background-color:#CD8032;
+}

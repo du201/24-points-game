@@ -7,16 +7,25 @@ import React from "react";
 const ScoresRank = (props) => {
   return (
     <React.Fragment>
-      {props.scoreRanking.map((pair, index) => {
-        return <div className="card bg-info mb-1" key={index}>
-          <div className="card-body">
-            <div>Name: {pair.name}</div>
-            <div>Total Score: {pair.totalScore}</div>
-          </div>
-        </div>
-      })}
+      <table className="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">POS.</th>
+            <th scope="col">Nickname</th>
+            <th scope="col">Scores</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.scoreRanking.map((pair, index) => {
+            return <tr className={index === 0 ? "gold-text" : index === 1 ? "silver-text" : index === 2 ? "copper-text" : ""}>
+              <th scope="row">{index + 1}</th>
+              <td>{pair.name}</td>
+              <td>{pair.totalScore}</td>
+            </tr>
+          })}
+        </tbody>
+      </table>
     </React.Fragment>
-
   );
 };
 

@@ -86,7 +86,7 @@ const startGameTimtOutSec = 120;
 class App extends Component {
   state = {
     //below are the local states (not received from the server)
-    pageController: SINGLEGAMEPAGE, //default should be homePage
+    pageController: HOMEPAGE, //default should be homePage
     username: "", //the username during the game
     gameModeSettingMenuOpen: false, //controls the display of the game mode setting menu in page 4
     gameModeScoresMenuOpen: false, //controls the display of the score menu in multigame page
@@ -505,8 +505,12 @@ class App extends Component {
         console.log("NEW_ROUND");
         //increase the round number by 1
         this.setState({ whichRound: this.state.whichRound + 1 });
+        this.setState({ answer: null });
         this.reassignSettings(settings);
+        this.setState({ expressionInput: [] });
         this.setState({ multiplayerGameNumbers: numbers });
+        this.setState({ playerSolved: [] });
+        this.setState({ answerCorrect: undefined });
         //give each player three attempts each round
         this.setState({ attemptNum: 3 });
         //create a multiplayerButtonDisable array that has the same length as multiplayerGameNumbers
@@ -521,6 +525,7 @@ class App extends Component {
             answerCorrect: true,
             submitButtonDisable: true,
           });
+
           this.notifySuccess(`🦄 Your solution is correct!`);
           console.log("SOLUTION_CORRECT");
         });
@@ -552,11 +557,11 @@ class App extends Component {
           scoreRanking: scoreRanking
         });
         //empty some states to prepare for the next round
-        this.setState({ answerCorrect: undefined });
+
         this.setState({ multiplayerScore: 0 });
-        this.setState({ playerSolved: [] });
-        this.setState({ expressionInput: [] });
-        this.setState({ answer: null });
+
+
+
         this.setState({ submitButtonDisable: false });
         //stop listen to some game events to prevent duplicate listeners on the same event
         socket.removeAllListeners(SOLUTION_INCORRECT);
@@ -1086,6 +1091,7 @@ class App extends Component {
             switchSettingsMenu={this.switchSettingsMenu}
             startCountDown={this.startCountDown}
             setGameModeSettingMenuOpenFalse={this.setGameModeSettingMenuOpenFalse}
+            maxPlayerNum={this.state.maxPlayerNum}
           ></HostPage>
         );
       case JOINROOMPAGE: //5
@@ -1196,13 +1202,28 @@ class App extends Component {
       case BTWROUNDPAGE: //11: the page being displayed between each round of the game
         return (
           <BetweenRoundPage
+            expressionInput={this.state.expressionInput}
+            setGameModeScoresMenuOpenFalse={this.setGameModeScoresMenuOpenFalse}
+            exitRoomButtonPress={this.exitRoomButtonPress}
+            switchScoresMenu={this.switchScoresMenu}
+            gameModeScoresMenuOpen={this.state.gameModeScoresMenuOpen}
+            numOfRound={this.state.numOfRound}
+            multiplayerTotalScore={this.state.multiplayerTotalScore}
+            playerRoster={this.state.playerRoster}
+            playerSolved={this.state.playerSolved}
+            pageController={this.state.pageController}
+            playerColor={this.state.playerColor}
             whichRound={this.state.whichRound}
             solution={this.state.solution}
             playerSolutions={this.state.playerSolutions}
+            //playerSolutions={[{ name: "Duasdfasdgasdg", solution: "" }, { name: "Du", solution: "1+2+4+5*5+23" }]}
             timeInGame={this.state.timeInGame}
             playerRanking={this.state.playerRanking}
             scoreRanking={this.state.scoreRanking}
+            //scoreRanking={[{ name: "Josepe", totalScore: 123 }, { name: "Joseph", totalScore: 123 }, { name: "Joseph", totalScore: 123 }]}
             isLastRound={this.isLastRound()}
+            answerCorrect={this.state.answerCorrect}
+            hostAnswer={this.state.answer}
           ></BetweenRoundPage>
         );
       case SUMMARYPAGE: //12: the page at the end of the game (after receiving "endGame")

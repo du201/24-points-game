@@ -3,6 +3,7 @@
 // TODO: Write a summary for this file.
 import Solver from "./solver.js";
 import calculate from "./calculate.js";
+import React from 'react';
 
 const TIMES = "×";
 const DIVIDES = "÷";
@@ -43,14 +44,15 @@ class Round {
 
 
 /** @class Room represents game rooms. */
-class Room {
+class Room extends React.Component {
   /**
    * Creates an instance of Room.
    *
    * @constructor
    * @author: Zhengze Gong (harry8698)
    */
-  constructor() {
+  constructor(props) {
+    super(props);
     // Represents the (default) game settings in this room instance.
     this.settings = {
       numOfSlots: 4,
@@ -75,6 +77,10 @@ class Room {
     this.timerPromiseReject = null;
     // Contains all the running setTimeout functions.
     this.timeouts = [];
+
+    this.state = {
+      timer: 0,
+    };
   }
 
   /**
@@ -159,14 +165,6 @@ class Room {
     this.solver = new Solver(this.settings);
   }
 
-  /**
-   * Returns the settings in this room instance.
-   *
-   * @return {object} The settings in this room
-   */
-  getSettings() {
-    return this.settings;
-  }
 
   /**
    * Generates a number combination for each round and calculates their results.
@@ -256,6 +254,7 @@ class Room {
       // Preparation time before the first round starts.
       for (let time = PREP_TIME / ONE_SECOND - 1; time > 0; time--) {
         await this.pause(ONE_SECOND);
+        this.setState({ timer: time });
       }
 
       for (let round = 0; round < this.settings.numOfRounds; round++) {

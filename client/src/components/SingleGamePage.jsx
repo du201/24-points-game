@@ -9,19 +9,24 @@ import Loader from 'react-loader-spinner';
 import Button from "./common/Button";
 import "./SingleGamePage.css";
 import "./HostPage.css";
-import Room from "../room.js";
+import withRoom from './withRoom.jsx';
+import CountDownPage from './CountDownPage';
 /**
  * 
  * Except the settings part and setGameModeSettingMenuOpenFalse, this component should be totally separated from the app.js
  */
-let room = new Room();
+// One second in ms.
+const ONE_SECOND = 1000;
 const SETTINGSPAGE = "settingsPage";
 const PREPAREPAGE = "preparePage";
 const GAMEPAGE = "gamePage";
 const BTWROUNDPAGE = "betweenRoundPage";
 const ENDPAGE = "endPage";
-
+// Contains all the running setTimeout functions.
+let timeouts = [];
+let x = 3;
 const SingleGamePage = (props) => {
+
   let screenWidth = useWindowSize().width;
 
   // states
@@ -29,6 +34,7 @@ const SingleGamePage = (props) => {
   const [solutions, setSolutions] = useState([]);
   const [startGameButtonDisabled, setStartGameButtonDisabled] = useState(false);
   const [pageCtrl, setPageCtrl] = useState(SETTINGSPAGE);
+  const [countDownTime, setCountDownTime] = useState();
 
   useEffect(() => {
     if (screenWidth > 1200 && props.gameModeSettingMenuOpen === true) {
@@ -36,7 +42,15 @@ const SingleGamePage = (props) => {
     }
   });
 
-  const pressStartGameButton = () => {
+  const pause = (ms) => {
+    return new Promise((resolve, reject) => {
+      //this.timeouts.push(setTimeout(resolve, ms));
+      //this.timerPromiseReject = reject;
+      timeouts.push(setTimeout(resolve, ms));
+    });
+  };
+
+  const pressStartGameButton = async () => {
     let settingPackageObject = {
       numOfSlots: props.slotNum, //int
       targetNumber: props.targetNum, //int
@@ -47,9 +61,15 @@ const SingleGamePage = (props) => {
       roundDuration: props.roundDuration * 1000, //int (ms)
       numOfRounds: props.numOfRound, //int
     };
-    setStartGameButtonDisabled(true);
-    room.changeSettings(settingPackageObject);
+    //setCountDownTime(5)
     setPageCtrl(PREPAREPAGE);
+    for (let i = 5; i > 0; i--) {
+      //console.log("here" + countDownTime);
+      setCountDownTime(i);
+      await pause(1000);
+    }
+    setPageCtrl(GAMEPAGE);
+    //setStartGameButtonDisabled(true);
   };
 
   const renderSwitch = () => {
@@ -62,7 +82,7 @@ const SingleGamePage = (props) => {
               <div id="menu-sidebar-top" style={{ clear: "both" }}>
                 <div className="float-left">
                   <ExitRoomButton
-                    onCancel={props.exitRoomButtonPress}
+                    onCancel={() => { timeouts.forEach(clearTimeout); props.exitRoomButtonPress() }}
                   ></ExitRoomButton>
                 </div>
                 <div className="float-right">
@@ -137,7 +157,16 @@ const SingleGamePage = (props) => {
           </div>
         </div>);
       case PREPAREPAGE:
-        return <h1>{room.timer}</h1>;
+        return (
+          <CountDownPage
+            timeInGame={countDownTime}
+          />);
+
+
+
+      case GAMEPAGE:
+        return (<h1>Game</h1>);
+
     }
   }
 
@@ -145,3 +174,4 @@ const SingleGamePage = (props) => {
 }
 
 export default SingleGamePage;
+//export default SingleGamePage;
