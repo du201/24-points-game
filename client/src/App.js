@@ -1202,6 +1202,7 @@ class App extends Component {
       case BTWROUNDPAGE: //11: the page being displayed between each round of the game
         return (
           <BetweenRoundPage
+            //expressionInput={"1x2x3x4"}
             expressionInput={this.state.expressionInput}
             setGameModeScoresMenuOpenFalse={this.setGameModeScoresMenuOpenFalse}
             exitRoomButtonPress={this.exitRoomButtonPress}
@@ -1215,14 +1216,17 @@ class App extends Component {
             playerColor={this.state.playerColor}
             whichRound={this.state.whichRound}
             solution={this.state.solution}
+            //solution={"1x2x3x4"}
             playerSolutions={this.state.playerSolutions}
-            //playerSolutions={[{ name: "Duasdfasdgasdg", solution: "" }, { name: "Du", solution: "1+2+4+5*5+23" }]}
+            //playerSolutions={[{ name: "Duasdfasdgasdg", solution: "" }, { name: "Duasdfasdgasdgasdg", solution: "1+2+4+5*5+23" }, { name: "Du", solution: "1+2+4+5*5+23" }]}
             timeInGame={this.state.timeInGame}
+            //timeInGame={6}
             playerRanking={this.state.playerRanking}
             scoreRanking={this.state.scoreRanking}
             //scoreRanking={[{ name: "Josepe", totalScore: 123 }, { name: "Joseph", totalScore: 123 }, { name: "Joseph", totalScore: 123 }]}
             isLastRound={this.isLastRound()}
             answerCorrect={this.state.answerCorrect}
+            //answerCorrect={true}
             hostAnswer={this.state.answer}
           ></BetweenRoundPage>
         );

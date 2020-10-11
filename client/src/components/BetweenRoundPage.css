@@ -69,7 +69,20 @@
     height:100%;
     width: 100%;
     border-radius: 0rem !important;
-    
+  }
+
+  .solution-box-victory {
+    height:100%;
+    width: 100%;
+    border-radius: 0rem !important;
+    border-color:#E0FFE2;
+  }
+
+  .solution-box-lost {
+    height:100%;
+    width: 100%;
+    border-radius: 0rem !important;
+    border-color: #FFE0E0;
   }
   
   .ranking-box {
@@ -80,10 +93,16 @@
     background-color: #FFDFB1;
   }
 
+  .bottom-time-text {
+    position:relative;
+    bottom:1.7rem;
+  }
+
   .col-content {
     /* This is very weird. When change the padding
     to 0px, the content will just DISAPPEAR! */
     padding:0.01px !important;
+    height:90% !important;
   }
 
   .table-answer {

@@ -170,7 +170,13 @@ const SingleGamePage = (props) => {
     }
   }
 
-  return renderSwitch();
+  //return renderSwitch();
+  return <React.Fragment><ExitRoomButton
+    onCancel={() => { timeouts.forEach(clearTimeout); props.exitRoomButtonPress() }}
+  ></ExitRoomButton>
+    <div className="h-100 w-100 d-flex flex-row align-items-center justify-content-center"><h1 className="fnt-bold">Under Construction...</h1></div>
+  </React.Fragment>
+
 }
 
 export default SingleGamePage;

@@ -50,11 +50,164 @@ class GameBoard extends Component {
       return num;
     });
 
+    let numberLength = this.props.gameNumbers.length;
+
     //add two parentheses to the available operator list
     let final_operators = [...this.props.operators];
     let leftRightParans = ['(', ')'];
 
     let resultText = `You have ${this.props.attemptNum} attemps left`;
+
+    let numberBtns = null;
+    if (this.props.screenWidth > 1200) {
+      numberBtns = <div className="d-flex flex-row flex-wrap justify-content-around w-100 number-margin-top phone-max-width-number" style={{ maxWidth: "1150px" }}>
+        {this.props.gameNumbers.map((eachNum, index) => {
+          return (<div key={index}>
+            <button
+              className="btn btn-round-blue"
+              onClick={() => {
+                this.props.addNumToInput(eachNum, index);
+              }}
+              disabled={this.props.multiplayerButtonDisable[index] || this.props.submitButtonDisable || this.props.attemptNum === 0}>
+              <span>{eachNum}</span>
+            </button>
+          </div>);
+        })}
+      </div>;
+    } else {
+      numberBtns = <div className={"d-flex flex-row flex-wrap justify-content-around w-100 number-margin-top " + (numberLength === 4 ? "phone-max-width-number-4-version" : "phone-max-width-number")} style={{ maxWidth: "1150px" }}>
+        {this.props.gameNumbers.map((eachNum, index) => {
+          return (<React.Fragment><div key={index}>
+            <button
+              className="btn btn-round-blue"
+              onClick={() => {
+                this.props.addNumToInput(eachNum, index);
+              }}
+              disabled={this.props.multiplayerButtonDisable[index] || this.props.submitButtonDisable || this.props.attemptNum === 0}>
+              <span>{eachNum}</span>
+            </button>
+          </div>
+            {(index === 2 && (numberLength === 6 || numberLength === 5)) ? <div className="break"></div> : null}</React.Fragment>);
+        })}
+      </div>;
+    }
+
+    let operateBtns = null;
+    if (this.props.screenWidth > 1200) {
+      operateBtns = <div className="d-flex flex-wrap flex-row justify-content-around w-100 operator-margin-top phone-max-width-operator" style={{ maxWidth: "1150px" }}>
+        {final_operators.map((eachOpe, index) => {
+          return (<div key={index}>
+            <button
+              className="btn btn-operator fnt-medium"
+              onClick={() => {
+                this.props.addNumToInput(eachOpe);
+              }}
+              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+            >{this.findOperatorImage(eachOpe)}</button>
+          </div>);
+        })}
+        {/* <div className="break"></div> */}
+        {leftRightParans.map((eachOpe, index) => {
+          return (<div key={index}>
+            <button
+              className="btn btn-operator fnt-medium"
+              onClick={() => {
+                this.props.addNumToInput(eachOpe);
+              }}
+              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+            >{this.findOperatorImage(eachOpe)}</button>
+          </div>);
+        })}
+        <button
+          className="btn btn-round-red"
+          onClick={this.props.pressNoSolutionButton}
+          disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+        >No Solution</button>
+      </div>;
+    } else {
+      operateBtns = <div className="d-flex flex-row flex-wrap justify-content-around w-100 operator-margin-top phone-max-width-operator" style={{ maxWidth: "1150px" }}>
+        {final_operators.map((eachOpe, index) => {
+          return (<div key={index}>
+            <button
+              className="btn btn-operator fnt-medium"
+              onClick={() => {
+                this.props.addNumToInput(eachOpe);
+              }}
+              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+            >{this.findOperatorImage(eachOpe)}</button>
+          </div>);
+        })}
+        <div className="break"></div>
+        {leftRightParans.map((eachOpe, index) => {
+          return (<div key={index}>
+            <button
+              className="btn btn-operator fnt-medium"
+              onClick={() => {
+                this.props.addNumToInput(eachOpe);
+              }}
+              disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+            >{this.findOperatorImage(eachOpe)}</button>
+          </div>);
+        })}
+        <button
+          className="btn btn-round-red"
+          onClick={this.props.pressNoSolutionButton}
+          disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+
+        >No Solution</button>
+      </div>;
+    }
+
+    let inputField = null;
+    if (this.props.screenWidth > 1200) {
+      inputField = <div className="d-flex flex-row justify-content-around submit-margin-top inputfield-max-width">
+        <div className="form-group">
+          <input id="expression" className="form-control" type="text" value={displayExpression} readOnly />
+          <p id="result-text">{resultText}</p>
+        </div>
+        <button
+          id="delete-button"
+          className="btn btn-round-blue"
+          onClick={() => {
+            this.props.pressDeleteInputButton();
+          }}
+          disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+        ><FontAwesomeIcon icon={faBackspace} size="1x" /></button>
+        <div className="break"></div>
+        <button
+          className="btn btn-round-green"
+          onClick={() => {
+            this.disableSubmitButtonTemp()
+            this.props.pressCalculateResultButton()
+          }}
+          disabled={this.state.submitButtonRest || this.props.submitButtonDisable || this.props.attemptNum === 0}
+        >Submit</button>
+      </div>;
+    } else {
+      inputField = <div className="d-flex flex-row justify-content-around submit-margin-top inputfield-max-width">
+        <div className="form-group">
+          <input id="expression" className="form-control" type="text" value={displayExpression} readOnly />
+          <p id="result-text">{resultText}</p>
+        </div>
+        <button
+          id="delete-button"
+          className="btn btn-round-blue"
+          onClick={() => {
+            this.props.pressDeleteInputButton();
+          }}
+          disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
+        ><FontAwesomeIcon icon={faBackspace} size="1x" /></button>
+        <div className="break"></div>
+        <button
+          className="btn btn-round-green"
+          onClick={() => {
+            this.disableSubmitButtonTemp()
+            this.props.pressCalculateResultButton()
+          }}
+          disabled={this.state.submitButtonRest || this.props.submitButtonDisable || this.props.attemptNum === 0}
+        >Submit</button>
+      </div>;
+    }
     // if (this.props.attemptNum === 3) { //at the beginning
     //   resultText = "You have 3 attemps left";
     // } else if (this.props.answer === null) { //if the player clicked "no solution" but there is a solution
@@ -65,75 +218,9 @@ class GameBoard extends Component {
 
     return (
       <React.Fragment>
-        <div className="d-flex flex-row flex-wrap justify-content-around w-100 number-margin-top" style={{ maxWidth: "1150px" }}>
-          {this.props.gameNumbers.map((eachNum, index) => {
-            return (<div key={index}>
-              <button
-                className="btn btn-round-blue"
-                onClick={() => {
-                  this.props.addNumToInput(eachNum, index);
-                }}
-                disabled={this.props.multiplayerButtonDisable[index] || this.props.submitButtonDisable || this.props.attemptNum === 0}>
-                <span>{eachNum}</span>
-              </button>
-            </div>);
-          })}
-        </div>
-
-        <div className="d-flex flex-wrap flex-row justify-content-around w-100 operator-margin-top" style={{ maxWidth: "1150px" }}>
-          {final_operators.map((eachOpe, index) => {
-            return (<div key={index}>
-              <button
-                className="btn btn-operator fnt-medium"
-                onClick={() => {
-                  this.props.addNumToInput(eachOpe);
-                }}
-                disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
-              >{this.findOperatorImage(eachOpe)}</button>
-            </div>);
-          })}
-          {/* <div className="break"></div> */}
-          {leftRightParans.map((eachOpe, index) => {
-            return (<div key={index}>
-              <button
-                className="btn btn-operator fnt-medium"
-                onClick={() => {
-                  this.props.addNumToInput(eachOpe);
-                }}
-                disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
-              >{this.findOperatorImage(eachOpe)}</button>
-            </div>);
-          })}
-          <button
-            className="btn btn-round-red"
-            onClick={this.props.pressNoSolutionButton}
-            disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
-          >No Solution</button>
-        </div>
-
-        <div className="d-flex flex-row justify-content-around submit-margin-top">
-          <div className="form-group">
-            <input id="expression" className="form-control" type="text" value={displayExpression} readOnly />
-            <p id="result-text">{resultText}</p>
-          </div>
-          <button
-            id="delete-button"
-            className="btn btn-round-blue"
-            onClick={() => {
-              this.props.pressDeleteInputButton();
-            }}
-            disabled={this.props.submitButtonDisable || this.props.attemptNum === 0}
-          ><FontAwesomeIcon icon={faBackspace} size="1x" /></button>
-          <div className="break"></div>
-          <button
-            className="btn btn-round-green"
-            onClick={() => {
-              this.disableSubmitButtonTemp()
-              this.props.pressCalculateResultButton()
-            }}
-            disabled={this.state.submitButtonRest || this.props.submitButtonDisable || this.props.attemptNum === 0}
-          >Submit</button>
-        </div>
+        {numberBtns}
+        {operateBtns}
+        {inputField}
       </React.Fragment>
     );
   }

@@ -165,7 +165,6 @@ const MultiGamePage = (props) => {
           pageController={props.pageController}
           playerColor={props.playerColor}
         />
-
         {/* The game board area */}
         <div className={props.gameModeScoresMenuOpen === false ? "col" : "display-none"}>
           <div id="rightside-hostpage" className="w-100 h-100">
@@ -176,7 +175,8 @@ const MultiGamePage = (props) => {
               </h2>
               <GameBoard
                 gameNumbers={props.gameNumbers}
-                //gameNumbers={['1', '2', '3', '4', '5', '6']}
+                //gameNumbers={['1', '2', '3', '4']}
+                screenWidth={screenWidth}
                 addNumToInput={props.addNumToInput}
                 expressionInput={props.expressionInput}
                 targetNum={props.targetNum}
@@ -189,6 +189,7 @@ const MultiGamePage = (props) => {
                 pressNoSolutionButton={props.pressNoSolutionButton}
                 submitButtonDisable={props.submitButtonDisable}
                 attemptNum={props.attemptNum}
+              //attemptNum={1}
               ></GameBoard>
             </div>
           </div>

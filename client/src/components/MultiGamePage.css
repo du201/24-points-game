@@ -30,7 +30,7 @@
 #expression {
   height: 7rem;
   width: 45.5rem;
-  font-size:3rem;
+  font-size:2.5rem;
   border-radius: 2.5rem !important;
 }
 
@@ -272,7 +272,7 @@
   #expression {
     height: 7rem;
     width: 37rem;
-    font-size:3rem;
+    font-size:2rem;
     border-radius: 2.5rem !important;
   }
   
@@ -366,7 +366,7 @@
   #expression {
     height: 5rem;
     width: 23rem;
-    font-size:2rem;
+    font-size:1.5rem;
     border-radius: 2.5rem !important;
     padding-right:0rem !important;
     margin-right:0rem!important;
@@ -381,6 +381,14 @@
 
 
 @media (max-width: 1199.98px) {
+  #game-top-text {
+    margin-top: 2rem;
+  }
+
+  .number-margin-top {
+    margin-top: 3rem;
+  }
+
   .menu-sidebar-info-whentrue {
     margin-left:3rem;
     margin-top:5rem;
@@ -425,10 +433,10 @@
   }
   
   .btn-round-red {
-    width:10rem;
+    width:20rem;
     height:7rem;
-    margin-left:1rem;
-    margin-right:1rem;
+    margin-left:0rem;
+    margin-right:0.4rem;
     border: 0.125rem solid #C50707 !important;
     border-radius: 1.5625rem !important;
     background-color: #C50707 !important;
@@ -464,15 +472,17 @@
 
   #expression {
     height: 7rem;
-    width: 31rem;
+    width: 34rem;
     font-size:2rem;
     border-radius: 2.5rem !important;
   }
   
   #result-text {
-  position:relative;
-  top: 1rem;
+    position:relative;
+    top: 0.5rem;
+    left: 1rem;
   }
+
   .menu-sidebar-info {
     display: none;
   }
@@ -490,23 +500,146 @@
   .break {
     flex-basis: 100%;
     height: 0;
-    margin-top:0.5rem;
-    margin-bottom:0.5rem;
+    margin-top:0.3rem;
+    margin-bottom:0.3rem;
+  }
+
+  .phone-max-width-number {
+    max-width:940px !important;
+  }
+
+  .phone-max-width-operator {
+    max-width:850px !important;
+  }
+
+  .inputfield-max-width {
+    max-width:900px !important;
+  }
+
+  .phone-max-width-number-4-version {
+    max-width:850px !important;
+  }
+
+  .submit-margin-top {
+    margin-top:2rem;
+  }
+
+  .operator-margin-top {
+    margin-top:2rem;
+  }
+
+  .number-margin-top {
+    margin-top:1rem;
   }
 }
 
 
 @media (max-width: 991.98px) {
+  .phone-max-width-number {
+    max-width:740px !important;
+  }
+
+  .phone-max-width-operator {
+    max-width:670px !important;
+  }
+
+  .inputfield-max-width {
+    max-width:630px !important;
+  }
+
+  .phone-max-width-number-4-version {
+    max-width:670px !important;
+  }
+
   #rightside-hostpage {
     width:98%;
     margin-left:auto;
     margin-right:auto;
   }
 
+  .btn-round-red {
+    width:17rem;
+    height:6.5rem;
+    margin-top:0.5rem;
+    margin-left:0.5rem;
+    margin-right:0rem;
+    border: 0.125rem solid #C50707 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #C50707 !important;
+    font-size: 1rem !important; 
+    color: #FFFFFF !important;
+  }
+
+  #expression {
+    height: 7rem;
+    width: 30rem;
+    font-size:1.5rem;
+    border-radius: 2.5rem !important;
+  }
+
+  #result-text {
+    position:relative;
+    top: 0.4rem;
+    font-size: 1rem;
+    left:1rem;
+  }
+
+  .submit-margin-top {
+    margin-top:2rem;
+  }
+
+  .operator-margin-top {
+    margin-top:2rem;
+  }
+
+  .number-margin-top {
+    margin-top:1rem;
+  }
+
+  .btn-round-green {
+    width:10rem;
+    height:7rem;
+    border: 0.125rem solid #4bb543 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #4bb543 !important;
+    font-size: 1.5rem !important; 
+    color: #FFFFFF !important;
+    position: relative;
+    top: -2rem;
+  }
 
 }
 
 @media (max-width: 767.98px) {
+  .phone-max-width-number {
+    max-width:630px !important;
+  }
+
+  .phone-max-width-operator {
+    max-width:550px !important;
+  }
+
+  .inputfield-max-width {
+    max-width:550px !important;
+  }
+
+  .phone-max-width-number-4-version {
+    max-width:550px !important;
+  }
+
+  .btn-round-red {
+    width:15.5rem;
+    height:6.5rem;
+    margin-top:0.5rem;
+    margin-left:0rem;
+    margin-right:0rem;
+    border: 0.125rem solid #C50707 !important;
+    border-radius: 1.5625rem !important;
+    background-color: #C50707 !important;
+    font-size: 1rem !important; 
+    color: #FFFFFF !important;
+  }
+
   #rightside-hostpage {
     width:90%;
     margin-left:auto;
@@ -514,10 +647,17 @@
   }
 
   #expression {
-    height: 7rem;
-    width: 20rem;
+    height: 6rem;
+    width: 24rem;
     font-size:1.5rem;
     border-radius: 2.5rem !important;
+  }
+
+  #result-text {
+    position:relative;
+    top: 0.4rem;
+    font-size: 1rem;
+    left:1rem;
   }
 
   .btn-round-blue {
@@ -534,11 +674,31 @@
 }
 
 @media (max-width: 575.98px) {
+  .operator-margin-top {
+    margin-top: 2rem;
+  }
+
+  .number-margin-top {
+    margin-top: 1rem;
+  }
+
+  .phone-max-width-number {
+    max-width:360px !important;
+  }
+
+  .phone-max-width-operator {
+    max-width:320px !important;
+  }
+
+  .phone-max-width-number-4-version {
+    max-width:320px !important;
+  }
+
   .btn-round-blue {
     width:4rem;
     height:4rem;
-    margin-left:0.3rem;
-    margin-right:0.3rem;
+    margin-left:0rem;
+    margin-right:0rem;
     border: 0.125rem solid #4194F8 !important;
     border-radius: 0.8rem !important;
     background-color: #4194F8 !important;
@@ -547,7 +707,9 @@
   }
 
   .btn-round-green {
-    width:6rem;
+    position:relative;
+    top:-1rem;
+    width:8rem;
     height:4rem;
     border: 0.125rem solid #4bb543 !important;
     border-radius: 1.5625rem !important;
@@ -557,15 +719,20 @@
   }
   
   .btn-round-red {
-    width:6rem;
+    
+    width:9rem;
     height:4rem;
-    margin-left:1rem;
-    margin-right:1rem;
+    margin-left:0rem;
+    margin-right:0rem;
     border: 0.125rem solid #C50707 !important;
     border-radius: 1.5625rem !important;
     background-color: #C50707 !important;
     font-size: 1rem !important; 
     color: #FFFFFF !important;
+  }
+  
+  .inputfield-max-width {
+    max-width:320px !important;
   }
 
   .btn-operator {
@@ -599,8 +766,9 @@
 
   #expression {
     height: 4rem;
-    width: 100%;
-    font-size:2rem;
+    width: 12.9rem;
+    margin-left:0.2rem;
+    font-size:0.8rem;
     border-radius: 2.5rem !important;
   }
   
@@ -608,6 +776,7 @@
     position:relative;
     top: 0.4rem;
     font-size: 0.8rem;
+    left:1rem;
   }
 
   #rightside-hostpage {
@@ -624,11 +793,11 @@
     margin-left:1rem !important;
     margin-right:0 !important;
     position:relative;
-    left:-0.5rem;
+    left:-0.18rem;
   }
 
   #game-top-text {
-    margin-top: 3rem;
+    margin-top: 0.5rem;
     font-size: 0.95rem !important;
   }
 }

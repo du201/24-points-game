@@ -32,11 +32,11 @@ function HomePage(props) {
     <div className="container-fluid h-100">
       <div className="row" style={{ height: "10%" }}>
         <div className="my-auto">
-          <a id="change-lang"
+          {/* <a id="change-lang"
             onClick={() => changeLang()}
           >
             <FontAwesomeIcon icon={faLanguage} size='3x' />
-          </a>
+          </a> */}
         </div>
       </div>
 

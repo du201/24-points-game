@@ -37,6 +37,7 @@ const BetweenRoundPage = (props) => {
 
 
 
+
   // let secondPlayerName = props.playerRanking[1].name;
   // let thirdPlayerName = props.playerRanking[2].name;
 
@@ -45,41 +46,43 @@ const BetweenRoundPage = (props) => {
 
   slides.push(
     <React.Fragment>
-      <div className="solution-box">
-        <div className="d-flex flex-column align-items-center h-100">
-          <h2 className="fnt-bold" style={{ color: "#FF5F5F", marginBottom: "3rem" }}>Incorrect!</h2>
+      <div className={props.answerCorrect === true ? "solution-box-victory" : "solution-box-lost"}>
+        <div className="d-flex flex-column align-items-center h-100" style={{ backgroundColor: props.answerCorrect === true ? "#E0FFE2" : "#FFE0E0" }}>
+          {props.answerCorrect === true ?
+            <h1 className="fnt-bold text-center" style={{ color: "#76EF8D", marginBottom: "3rem", marginTop: "2rem" }}>Correct!</h1> :
+            <h1 className="fnt-bold text-center" style={{ color: "#FF5F5F", marginBottom: "3rem", marginTop: "2rem" }}>Incorrect!</h1>}
           <h3 className="fnt-regular">
             Your solution
           </h3>
-          <h2 style={{ marginBottom: "1rem" }}>1x2x3x4</h2>
-          <h3>Here's our solution</h3>
-          <h2>1x2x3x4</h2>
+          <h2 style={{ marginBottom: "2rem" }}>{(props.expressionInput === null || props.expressionInput === "" ? "No solution" : props.expressionInput)}</h2>
 
-          <hr style={{ width: "100%", marginBottom: "1rem", marginTop: "1rem" }}></hr>
+          <h3>Here's our solution</h3>
+          <h2>{props.solution}</h2>
+
+          <hr style={{ width: "85%", marginBottom: "2rem", marginTop: "2rem" }}></hr>
           <h3 className="fnt-regular">
             Top solutions
           </h3>
-          {/* <div style={{ marginTop: "1rem" }}></div> */}
-          <table className="table-answer" style={{ backgroundColor: "", width: "100%", margin: "auto" }}>
-            <tr>
-              <td><span className="blue-dot"></span>  {shortenName("不知道叫啥好")}</td>
-              <td><h2 style={{ textAlign: "right" }}>1x2x3x4</h2></td>
-            </tr>
-            <div style={{ marginTop: "0.8rem" }}></div>
-            <tr>
-              <td><span className="red-dot"></span>  Dave</td>
-              <td><h2 style={{ textAlign: "right" }}>1x2x3x4</h2></td>
-            </tr>
-            <div style={{ marginTop: "0.8rem" }}></div>
-            <tr>
-              <td><span className="yellow-dot"></span>  Harry</td>
-              <td><h2 style={{ textAlign: "right" }}>1x2x3x4</h2></td>
-            </tr>
+          <div style={{ marginTop: "1rem" }}></div>
+          <table className="table-answer" style={{ backgroundColor: "", width: "85%", margin: "auto" }}>
+            {props.playerSolutions.map((eachPlayer, index) => {
+              return <React.Fragment>
+                <tr>
+                  <td>
+                    <span className={index === 0 ? "blue-dot" : index === 1 ? "red-dot" : index === 2 ? "yellow-dot" : ""} />
+                    <span className="solution-player-name">{" " + shortenName(eachPlayer.name)}</span>
+                  </td>
+                  <td><h2 className="text-align-right" style={{ textAlign: "right" }}>{eachPlayer.solution === null || eachPlayer.solution === "" ? "" : eachPlayer.solution}</h2></td>
+                </tr>
+                <div style={{ marginTop: "0.8rem" }}></div>
+              </React.Fragment>
+            })}
           </table>
-          <h6 className="mt-auto">{(props.isLastRound === true ?
+          <h6 className="mt-auto bottom-time-text">{(props.isLastRound === true ?
             "The summary page will appear in " :
             "Next round will begin in ")}
-            6 seconds
+            <span className="h3">{props.timeInGame + " "}</span>
+            seconds
           </h6>
         </div>
       </div>
@@ -91,7 +94,8 @@ const BetweenRoundPage = (props) => {
     <React.Fragment>
       <div className="ranking-box">
         <div className="d-flex flex-column align-items-center h-100">
-          <div style={{ marginTop: "10rem" }}><h3 className="text-center">You currently rank No.1</h3></div>
+          <div style={{ marginTop: "10rem" }}><h3 className="text-center">You currently rank No.{props.playerRanking}</h3></div>
+          <div style={{ marginBottom: "1.2rem" }}></div>
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 82.837 115.842">
               <g id="award-fill" transform="translate(0.535 0.563)">
@@ -100,8 +104,10 @@ const BetweenRoundPage = (props) => {
               </g>
               <text id="_1" data-name="1" transform="translate(25.535 65.563)" fill="#fff" font-size="60" font-family="SegoeUI, Segoe UI"><tspan x="0" y="0">1</tspan></text>
             </svg>
-            <h2 className="d-inline-block ranking-name">Harry<br />100</h2>
+            <h2 className="d-inline-block ranking-name">{firstPlayerName}<br />{firstPlayerScore}</h2>
+
           </div>
+          <div style={{ marginBottom: "1.2rem" }}></div>
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 82.837 116.279">
               <g id="award-fill" transform="translate(0.535 1)">
@@ -110,9 +116,9 @@ const BetweenRoundPage = (props) => {
               </g>
               <text id="_2" data-name="2" transform="translate(42.535 65)" fill="#fff" font-size="60" font-family="SegoeUI, Segoe UI"><tspan x="-16.172" y="0">2</tspan></text>
             </svg>
-            <h2 className="d-inline-block ranking-name">Xin<br />90</h2>
+            <h2 className="d-inline-block ranking-name">{secondPlayerName}<br />{secondPlayerScore}</h2>
           </div>
-
+          <div style={{ marginBottom: "1.2rem" }}></div>
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 82.837 115.842">
               <g id="award-fill" transform="translate(0.535 0.563)">
@@ -122,12 +128,13 @@ const BetweenRoundPage = (props) => {
               <text id="_3" data-name="3" transform="translate(41.535 65.563)" fill="#fff" font-size="60" font-family="SegoeUI, Segoe UI"><tspan x="-16.172" y="0">3</tspan></text>
             </svg>
 
-            <h2 className="d-inline-block ranking-name">Duck<br />80</h2>
+            <h2 className="d-inline-block ranking-name">{thirdPlayerName}<br />{thirdPlayerScore}</h2>
           </div>
           <h6 className="mt-auto">{(props.isLastRound === true ?
             "The summary page will appear in " :
             "Next round will begin in ")}
-            6 seconds
+            <span className="h3">{props.timeInGame + " "}</span>
+            seconds
           </h6>
         </div>
       </div>
@@ -151,7 +158,7 @@ const BetweenRoundPage = (props) => {
           playerColor={props.playerColor}
         />
         {/* The game board area */}
-        <div className={props.gameModeScoresMenuOpen === false ? "col w-100 h-100 col-content" : "display-none"}>
+        <div className={props.gameModeScoresMenuOpen === false ? "col w-100 col-content" : "display-none"}>
           <div id="rightside-hostpage" className="d-flex flex-column align-items-center h-100 w-100">
             {screenWidth < 1200 ?
               <Swiper className="swiper-container" pagination>{slides.map((slide) => <SwiperSlide>{slide}</SwiperSlide>)}</Swiper> :
