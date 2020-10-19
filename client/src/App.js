@@ -28,7 +28,7 @@ import LoadingPage from "./components/LoadingPage"; //9
 import CountDownPage from "./components/CountDownPage"; //10
 import BetweenRoundPage from "./components/BetweenRoundPage"; //11
 import SummaryPage from "./components/SummaryPage"; //11
-import { faTextHeight } from "@fortawesome/free-solid-svg-icons";
+import { faTextHeight, faThList } from "@fortawesome/free-solid-svg-icons";
 
 //defined const
 const TIMES = "×";
@@ -78,7 +78,7 @@ const ROOM_CLOSED = "roomClosed";
 //stop listening to disconnect after quitting from a room (either through the exit button or the disconnect listener)
 const DISCONNECT = "disconnect";
 
-const server = "http://localhost:2000";
+const server = "http://192.168.0.24:2000";
 const socket = io.connect(server);
 toast.configure();
 let startGameButtonTimeObj;
@@ -295,6 +295,20 @@ class App extends Component {
       ]
     });
   };
+
+  bugReportButtonClick = () => {
+    confirmAlert({
+      title: 'Bug Report',
+      message: 'You can email us at duslg0114@gmail.com',
+      buttons: [
+        {
+          label: 'Got it',
+        }
+      ]
+    });
+  }
+
+
 
   exitSingleMode = () => {
     this.backToDefaultSettings();
@@ -1029,6 +1043,7 @@ class App extends Component {
             pressSinglePlayModeButton={this.pressSinglePlayModeButton}
             lang={this.state.lang}
             langChange={this.langChange}
+            bugReportButtonClick={this.bugReportButtonClick}
           ></HomePage>
         );
       case SOLVEPAGE: //2
@@ -1235,6 +1250,7 @@ class App extends Component {
           <SummaryPage
             exitRoomButtonPress={this.exitRoomButtonPress}
             scoreRanking={this.state.scoreRanking}
+          //scoreRanking={[{ name: "Josepe", totalScore: 123 }, { name: "Joseph", totalScore: 123 }, { name: "Joseph", totalScore: 123 }]}
           ></SummaryPage>
         );
       default:

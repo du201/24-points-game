@@ -23,3 +23,9 @@
   font-size: 1.1875rem;
   color: #707070 !important;
 }
+
+@media (max-width: 575.98px) {
+  .btn-back {
+    margin-left: 0rem;
+  }
+}

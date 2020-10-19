@@ -790,14 +790,14 @@
   }
 
   #delete-button {
-    margin-left:1rem !important;
+    margin-left:0.3rem !important;
     margin-right:0 !important;
     position:relative;
     left:-0.18rem;
   }
 
   #game-top-text {
-    margin-top: 0.5rem;
-    font-size: 0.95rem !important;
+    margin-top: 0.4rem;
+    font-size: 0.8rem !important;
   }
 }

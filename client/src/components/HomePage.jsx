@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLanguage } from "@fortawesome/free-solid-svg-icons";
-
+import { TwitterShareButton, TwitterIcon, WeiboShareButton, FacebookShareButton, FacebookIcon } from "react-share";
 import HomePageButton from './common/HomePageButton';
+import $ from "jquery";
 import './HomePage.css'
 
 function HomePage(props) {
+  //const elem = "<FacebookShareButton url='https://github.com/du201/24-points-game' quote='This is such a great game!' hashtag='#24points'><FacebookIcon size={32} round={true} /></FacebookShareButton>";
+
   const { t, i18n } = useTranslation();
   useEffect(() => {
     let storedLang = localStorage.getItem('lang');
@@ -27,6 +30,8 @@ function HomePage(props) {
       localStorage.setItem('lang', 'en');
     }
   };
+
+
 
   return (
     <div className="container-fluid h-100">
@@ -70,15 +75,17 @@ function HomePage(props) {
 
       <div className="row" style={{ height: "10%" }}>
         <div className="col text-center my-auto">
-          <div className="d-inline-flex flex-row">
-            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("ABOUT")}</a>
-            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SHARE")}</a>
-            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SOURCE")}</a>
-            <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("BUG REPORT")}</a>
+          <div className="d-inline-flex flex-direction">
+            <a href="https://github.com/du201/24-points-game" target="_blank" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("ABOUT")}</a>
+            <FacebookShareButton url='https://github.com/du201/24-points-game' quote='This is such a great game!' hashtag='#24points'><span className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SHARE")}</span></FacebookShareButton>
+            {/* <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold" data-toggle="popover" title="User Info">{t("SHARE")}</a> */}
+            <a href="https://github.com/du201/24-points-game" target="_blank" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SOURCE")}</a>
+            <a href="#" onClick={props.bugReportButtonClick} className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("BUG REPORT")}</a>
           </div>
         </div>
       </div>
     </div>
+
   );
 }
 

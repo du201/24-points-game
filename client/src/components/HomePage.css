@@ -9,6 +9,10 @@
   transition-duration: 0.15s;
 }
 
+.flex-direction {
+  flex-direction: row;
+}
+
 .btn-homepage {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -18,4 +22,10 @@
   color: #707070;
   opacity: 75%;
   margin-left: 2rem;
+}
+
+@media (max-width: 575.98px) {
+  .flex-direction {
+    flex-direction: column;
+  }
 }

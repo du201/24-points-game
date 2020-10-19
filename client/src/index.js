@@ -19,6 +19,8 @@ const options = {
   transition: transitions.SCALE
 }
 
+console.log(process.env);
+
 ReactDOM.render(
   <React.StrictMode>
     <Suspense fallback={(<div>Loading...</div>)}>

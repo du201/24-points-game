@@ -208,13 +208,6 @@ class GameBoard extends Component {
         >Submit</button>
       </div>;
     }
-    // if (this.props.attemptNum === 3) { //at the beginning
-    //   resultText = "You have 3 attemps left";
-    // } else if (this.props.answer === null) { //if the player clicked "no solution" but there is a solution
-    //   resultText = `There is actually a solution! You have ${this.props.attemptNum} attemps left`;
-    // } else {
-    //   resultText = `Your answer is Incorrect! You have ${this.props.attemptNum} attemps left`;
-    // }
 
     return (
       <React.Fragment>
