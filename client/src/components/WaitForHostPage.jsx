@@ -24,7 +24,7 @@ const WaitForHostPage = (props) => {
             playerRoster={props.playerRoster}
             playerSolved={props.playerSolved}
             maxPlayerNum={props.maxPlayerNum}
-            roomNum={props.roomNum}
+            roomNumber={props.roomNumber}
             pageController={props.pageController}
             playerColor={props.playerColor}
           />

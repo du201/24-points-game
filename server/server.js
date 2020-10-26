@@ -1,11 +1,11 @@
 /** @author Zhengze Gong (harry8698). */
 // TODO: Write a summary for this file.
 
-const EXPRESS = require("EXPRESS");
+const EXPRESS = require("express");
 const APP = EXPRESS();
 const RequestHandler = require("./requestHandler.js");
 // Port number of the backend.
-const PORT = 2000;
+const PORT = process.env.PORT || 2000;
 // Timeout after 10 minutes.
 const TIMEOUT_VALUE = 600000;
 

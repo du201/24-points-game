@@ -8,18 +8,18 @@ const RoonInfo = (props) => {
       <h3 className="fnt-bold grey-text" style={{ marginTop: "3rem" }}>
         Room number
       </h3>
-      {/* <h1 id="room-number-text" className="fnt-thin">
-        {props.roomNumber}
-      </h1> */}
       <h1 id="room-number-text" className="fnt-thin">
-        1234
+        {props.roomNumber}
       </h1>
+      {/* <h1 id="room-number-text" className="fnt-thin">
+        1234
+      </h1> */}
 
       <h3 className="fnt-bold grey-text" style={{ marginTop: "2rem" }}>
         Players
       </h3>
 
-      <h1 id="room-number-text" className="fnt-thin">
+      <h1 id="room-number-text" className="fnt-thin" style={{ fontSize: "1rem" }}>
         {props.playerRoster.length} of {props.maxPlayerNum}
       </h1>
 

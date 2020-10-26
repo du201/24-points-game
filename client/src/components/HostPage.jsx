@@ -94,12 +94,11 @@ const HostPage = (props) => {
           <h1 className="fnt-bold grey-text" style={{ marginTop: "5rem" }}>
             Start the game
           </h1>
-
           <RoomInfo
             playerRoster={props.playerRoster}
             playerSolved={props.playerSolved}
             maxPlayerNum={props.maxPlayerNum}
-            roomNum={props.roomNum}
+            roomNumber={props.roomNumber}
             pageController={props.pageController}
             playerColor={props.playerColor}
           />

@@ -5,7 +5,7 @@
 const MAX_ROOM_COUNT = 10000;
 // Maximum players in a room.
 const MAX_PLAYER_COUNT = 10;
-const Room = require("./Room.js");
+const Room = require("./room.js");
 /*
  * This is a dictionary that stores all the rooms and their users, with room
  * numbers(int) as keys and instances of Room as thier corresponding values.
@@ -197,8 +197,8 @@ class RequestHandler {
    */
   startGameHandler(settings) {
     if (roomList[this.socket.roomNum] !== undefined &&
-        roomList[this.socket.roomNum] !== null &&
-        !roomList[this.socket.roomNum].isRunning()) {
+      roomList[this.socket.roomNum] !== null &&
+      !roomList[this.socket.roomNum].isRunning()) {
       roomList[this.socket.roomNum].changeSettings(settings);
       roomList[this.socket.roomNum].startGame();
     }
