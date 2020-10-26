@@ -76,11 +76,11 @@ function HomePage(props) {
       <div className="row" style={{ height: "10%" }}>
         <div className="col text-center my-auto">
           <div className="d-inline-flex flex-direction">
-            <a href="https://github.com/du201/24-points-game" target="_blank" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("ABOUT")}</a>
+            <a href="https://en.wikipedia.org/wiki/24_Game" target="_blank" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("ABOUT")}</a>
             <FacebookShareButton url='https://github.com/du201/24-points-game' quote='This is such a great game!' hashtag='#24points'><span className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SHARE")}</span></FacebookShareButton>
             {/* <a href="#" className="grey-text no-underline mx-4 link-homepage fnt-bold" data-toggle="popover" title="User Info">{t("SHARE")}</a> */}
             <a href="https://github.com/du201/24-points-game" target="_blank" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("SOURCE")}</a>
-            <a href="#" onClick={props.bugReportButtonClick} className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("BUG REPORT")}</a>
+            <a href="https://docs.google.com/forms/d/1vYDJRUM6xLBfvnsbjfksZvX-IoMUqDuAxNrbHu7diQI/edit?usp=sharing" className="grey-text no-underline mx-4 link-homepage fnt-bold">{t("FEEDBACK")}</a>
           </div>
         </div>
       </div>
