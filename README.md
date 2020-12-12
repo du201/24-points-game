@@ -1,5 +1,5 @@
 # 24 Points Game
-The game is at [here](https://24game.app) (24game.app).
+The game is at [here](https://24game.app) (https://24game.app).
 ## Introduction
 
 24 point game is a fun arithmetical game. The game is usually played with cards, and the goal is to find a way to manipulate some integers (usually 4 integers) such that the computation results in 24. You can use multiplication, division, addition, and subtraction. You can visit [Wiki for 24 point game](https://en.wikipedia.org/wiki/24_Game) if you need more info.
