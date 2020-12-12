@@ -12,9 +12,16 @@ For example:
 
 For a long time, there is no easy way to play this game online with friends. This website creates a platform to make it a reality.
 
+## Special Features
+* Choose between 4 and 6 integers to manipulate with
+* Disable some operators if needed
+* Up to 10 players playing together in a same room
+
 ## How to Play
 (Actually everything should be straightforward even without all the info below :))
 
 For the multiplayer mode, click the `Multiplayer` button on the main page. Then after entering your nickname, you can choose to create your own room with the `Create` button or join other people's room with the `Join` button. 
 
 The singleplayer mode is still under construction...
+
+
